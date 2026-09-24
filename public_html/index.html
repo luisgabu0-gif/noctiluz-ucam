@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NOCTILUZ — Moda urbana con fibra óptica integrada (prototipo académico)</title>
+<meta name="description" content="Prototipo académico de tienda online de moda luminosa urbana. Sin actividad comercial real.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/tienda.css">
+</head>
+<body>
+
+<div class="cabecera" id="cabecera">
+  <div class="aviso-prototipo" role="note">
+    <strong>Prototipo académico (UCAM)</strong> · Tienda ficticia sin actividad comercial: no se cobra ni se envía nada.
+    No introduzcas datos personales ni tarjetas reales. <a href="#/legal">Más información</a>
+  </div>
+  <header>
+    <nav aria-label="Principal">
+      <div style="display:flex; align-items:center; gap:18px;">
+        <button class="hamburger" id="hamburguesa" aria-label="Abrir menú" aria-expanded="false" aria-controls="menuMovil"><span></span><span></span><span></span></button>
+        <a class="logo" href="#/"><span class="logo-dot"></span>NOCTILUZ</a>
+      </div>
+      <div class="nav-center">
+        <a href="#/catalogo">Catálogo</a>
+        <a href="#/como-funciona">Cómo funciona</a>
+        <a href="#/seguimiento">Mis pedidos</a>
+        <a href="#/soporte">Soporte</a>
+      </div>
+      <div class="nav-right">
+        <label class="search-box">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <span class="sr-only">Buscar en el catálogo</span>
+          <input type="search" placeholder="Buscar" data-buscador maxlength="40">
+        </label>
+        <a class="icon-btn" href="#/seguimiento" aria-label="Seguimiento de mis pedidos" title="Mis pedidos">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+        </a>
+        <button class="icon-btn" id="botonCarrito" aria-label="Abrir carrito" aria-controls="carrito">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+          <span class="cart-count" id="contadorCarrito" hidden>0</span>
+        </button>
+      </div>
+    </nav>
+    <div class="mobile-menu" id="menuMovil">
+      <label class="search-box">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <span class="sr-only">Buscar en el catálogo</span>
+        <input type="search" placeholder="Buscar en el catálogo" data-buscador maxlength="40">
+      </label>
+      <a href="#/catalogo">Catálogo</a>
+      <a href="#/como-funciona">Cómo funciona</a>
+      <a href="#/seguimiento">Mis pedidos</a>
+      <a href="#/soporte">Soporte</a>
+    </div>
+  </header>
+</div>
+
+<main id="vista-inicio">
+  <section class="scene hero-scene">
+    <div class="sky-glow"></div>
+    <div class="skyline"></div>
+    <div class="ground"></div>
+    <svg class="figure-svg" viewBox="0 0 200 340" style="--sc:#55DCD4" aria-hidden="true">
+      <path class="fig-body" d="M100 46c15 0 26 12 26 27 0 13-8 23-18 26l5 11c24 6 41 24 45 49l11 96c2 15-9 28-24 28H55c-15 0-26-13-24-28l11-96c4-25 21-43 45-49l5-11c-10-3-18-13-18-26 0-15 11-27 26-27z"/>
+      <circle class="fig-body" cx="100" cy="62" r="22"/>
+      <path class="fig-seam" stroke="#55DCD4" d="M80 118C92 172 86 236 98 292"/>
+      <path class="fig-seam" stroke="#A594F2" d="M120 118C108 172 114 236 102 292"/>
+    </svg>
+    <div class="hero-content">
+      <div class="hero-inner">
+        <div class="hero-tag">Tecnología LED + fibra óptica</div>
+        <h1 class="hero-title">Ilumina<br>la noche.</h1>
+        <p class="hero-sub">Streetwear diseñado para destacar cuando cae el sol. Fibra óptica integrada en la tela, no impresa encima de ella.</p>
+        <div class="hero-actions">
+          <a class="btn btn-solid" href="#/catalogo">Ver colección</a>
+          <a class="btn btn-outline" href="#/como-funciona">Cómo funciona</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap">
+    <div class="catalog-head">
+      <h2>La colección</h2>
+      <p>Filtra por tipo de prenda, color de luz y modo de iluminación. Todos los precios incluyen IVA; envío gratis desde 120 €.</p>
+    </div>
+  </section>
+
+  <div class="filterbar" id="catalogo">
+    <div class="filterbar-inner">
+      <div class="fgroup" role="group" aria-labelledby="lbl-tipo">
+        <span class="fgroup-label" id="lbl-tipo">Tipo</span>
+        <div class="chips" id="filtroTipo"></div>
+      </div>
+      <div class="fgroup" role="group" aria-labelledby="lbl-color">
+        <span class="fgroup-label" id="lbl-color">Color de luz</span>
+        <div class="chips" id="filtroColor"></div>
+      </div>
+      <div class="fgroup" role="group" aria-labelledby="lbl-modo">
+        <span class="fgroup-label" id="lbl-modo">Modo</span>
+        <div class="chips" id="filtroModo"></div>
+      </div>
+      <div class="filterbar-meta">
+        <span class="count-text" id="contadorProductos" aria-live="polite"></span>
+        <button class="reset-link" id="restablecer">Restablecer filtros</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid" id="rejilla"><div class="empty">Cargando catálogo…</div></div>
+
+  <section class="wrap how" id="como-funciona">
+    <h2>No es estampado.<br>Es luz.</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-n">01</div>
+        <h3>Fibra óptica</h3>
+        <p>La luz recorre la prenda mediante fibra óptica integrada en el propio tejido, no aplicada sobre él. Un módulo LED extraíble la alimenta por USB-C.</p>
+      </div>
+      <div class="step">
+        <div class="step-n">02</div>
+        <h3>Modos</h3>
+        <p><strong>Fijo</strong> (luz continua, máxima autonomía), <strong>parpadeo</strong> (muy visible en bici o patinete) o <strong>degradado</strong> (la intensidad sube y baja). Cada prenda indica qué modos admite su controlador.</p>
+      </div>
+      <div class="step">
+        <div class="step-n">03</div>
+        <h3>Cuidado</h3>
+        <p>Retira el módulo y lava la prenda a 30 °C del revés. La fibra aguanta el lavado; la batería, no.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap editorial" id="marca">
+    <div class="editorial-head">
+      <h2>Hecha para la noche.</h2>
+      <p>NOCTILUZ es una marca ficticia creada para un trabajo de la UCAM, pensada para quienes viven la ciudad después del atardecer.</p>
+    </div>
+    <div class="editorial-grid">
+      <div class="escene scene">
+        <div class="sky-glow"></div><div class="skyline"></div><div class="ground"></div>
+        <svg class="figure-svg" viewBox="0 0 200 340" style="position:absolute;left:50%;bottom:0;transform:translateX(-50%);height:88%;--sc:#F3B36B" aria-hidden="true">
+          <path class="fig-body" d="M100 46c15 0 26 12 26 27 0 13-8 23-18 26l5 11c24 6 41 24 45 49l11 96c2 15-9 28-24 28H55c-15 0-26-13-24-28l11-96c4-25 21-43 45-49l5-11c-10-3-18-13-18-26 0-15 11-27 26-27z"/>
+          <circle class="fig-body" cx="100" cy="62" r="22"/>
+          <path class="fig-seam" stroke="#F3B36B" d="M80 118C92 172 86 236 98 292"/>
+        </svg>
+        <span class="cap">Paseo nocturno, ciudad</span>
+      </div>
+      <div class="escene scene">
+        <div class="sky-glow" style="background:radial-gradient(circle at 30% 20%, rgba(242,127,170,.12), transparent 45%), radial-gradient(circle at 70% 60%, rgba(85,220,212,.08), transparent 40%);"></div>
+        <svg class="figure-svg" viewBox="0 0 200 340" style="position:absolute;left:50%;bottom:0;transform:translateX(-50%);height:82%;--sc:#F27FAA" aria-hidden="true">
+          <path class="fig-body" d="M100 46c15 0 26 12 26 27 0 13-8 23-18 26l5 11c24 6 41 24 45 49l11 96c2 15-9 28-24 28H55c-15 0-26-13-24-28l11-96c4-25 21-43 45-49l5-11c-10-3-18-13-18-26 0-15 11-27 26-27z"/>
+          <circle class="fig-body" cx="100" cy="62" r="22"/>
+          <path class="fig-seam" stroke="#F27FAA" d="M80 118C92 172 86 236 98 292"/>
+        </svg>
+        <span class="cap">Rooftop, madrugada</span>
+      </div>
+      <div class="escene scene" style="display:flex; align-items:center; justify-content:center;">
+        <svg viewBox="0 0 220 220" style="width:70%; height:70%;" aria-hidden="true">
+          <path fill="none" stroke="#A594F2" stroke-width="3" stroke-linecap="round" opacity=".9" style="filter:drop-shadow(0 0 10px #A594F2) drop-shadow(0 0 3px #A594F2);" d="M20 40C70 20 60 100 110 90S170 40 200 60"/>
+          <path fill="none" stroke="#A594F2" stroke-width="3" stroke-linecap="round" opacity=".5" d="M20 140C70 120 60 200 110 190S170 140 200 160"/>
+        </svg>
+        <span class="cap">Detalle, fibra óptica encendida</span>
+      </div>
+    </div>
+  </section>
+</main>
+
+<main id="vista-pagina" class="wrap" hidden></main>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="logo"><span class="logo-dot"></span>NOCTILUZ</div>
+        <p>Moda urbana para después del atardecer. Marca ficticia · prototipo académico sin actividad comercial.</p>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h4>Tienda</h4>
+          <a href="#/catalogo" data-categoria="camiseta">Camisetas</a>
+          <a href="#/catalogo" data-categoria="chaqueta">Chaquetas</a>
+          <a href="#/catalogo" data-categoria="mochila">Mochilas</a>
+          <a href="#/catalogo" data-categoria="gorra">Gorras</a>
+        </div>
+        <div class="footer-col">
+          <h4>Ayuda</h4>
+          <a href="#/seguimiento">Seguimiento de pedido</a>
+          <a href="#/soporte">Soporte e incidencias</a>
+          <a href="#/legal/envios">Envíos y devoluciones</a>
+        </div>
+        <div class="footer-col">
+          <h4>Proyecto</h4>
+          <a href="#/legal">Aviso de prototipo</a>
+          <a href="#/legal/privacidad">Privacidad</a>
+          <a href="admin.html">Back-office (equipo)</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>NOCTILUZ © 2026 · Soluciones Informáticas para la Empresa · UCAM</span>
+      <span>Tienda de demostración — sin pagos ni envíos reales</span>
+    </div>
+  </div>
+</footer>
+
+<div class="scrim" id="velo"></div>
+<aside class="drawer" id="carrito" aria-label="Carrito" aria-hidden="true">
+  <div class="drawer-head">
+    <h2>Tu carrito</h2>
+    <button class="drawer-close" id="cerrarCarrito" aria-label="Cerrar carrito"><svg viewBox="0 0 24 24"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg></button>
+  </div>
+  <div class="drawer-lines" id="lineasCarrito"></div>
+  <div class="drawer-foot" id="pieCarrito"></div>
+</aside>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script type="module" src="assets/js/tienda.js"></script>
+</body>
+</html>

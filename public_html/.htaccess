@@ -1,0 +1,21 @@
+# NOCTILUZ · configuración de Apache (hosting DonDominio)
+DirectoryIndex index.html
+Options -Indexes
+
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# Nunca servir archivos ocultos, de configuración ni copias de seguridad
+<FilesMatch "(^\.|\.(sql|sqlite|log|bak|md)$)">
+  Require all denied
+</FilesMatch>
+
+# Descomentar cuando el certificado SSL gratuito (Let's Encrypt) esté activo en DonDominio:
+# <IfModule mod_rewrite.c>
+#   RewriteEngine On
+#   RewriteCond %{HTTPS} off
+#   RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+# </IfModule>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Back-office — NOCTILUZ (prototipo académico)</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/admin.css">
+</head>
+<body>
+<div class="aviso-prototipo" role="note">
+  <strong>Back-office de prueba</strong> · Prototipo académico UCAM. Todos los clientes y pedidos son ficticios.
+</div>
+
+<header class="adm-cab">
+  <div class="wrap">
+    <a class="logo" href="index.html"><span class="logo-dot"></span>NOCTILUZ <small>back-office</small></a>
+    <div class="adm-usuario" id="usuario" hidden>
+      <span id="nombreAdmin"></span>
+      <a class="enlace" href="index.html">Ver tienda</a>
+      <button class="btn btn-outline btn-sm" id="salir">Cerrar sesión</button>
+    </div>
+  </div>
+</header>
+
+<section class="login" id="vistaLogin" hidden>
+  <h1>Acceso del equipo</h1>
+  <p class="pista" style="margin-bottom:22px">Consulta de pedidos, eventos e incidencias.</p>
+  <form class="panel" id="formLogin" novalidate>
+    <div class="campo">
+      <label for="f-email">Email</label>
+      <input id="f-email" name="email" type="email" required autocomplete="username" maxlength="120">
+      <small class="campo-error" data-error-de="email" role="alert"></small>
+    </div>
+    <div class="campo" style="margin-top:14px">
+      <label for="f-clave">Contraseña</label>
+      <input id="f-clave" name="clave" type="password" required autocomplete="current-password" maxlength="100">
+      <small class="campo-error" data-error-de="clave" role="alert"></small>
+    </div>
+    <div id="errorLogin" role="alert" style="margin-top:14px"></div>
+    <button class="btn btn-solid btn-full" style="margin-top:16px">Entrar</button>
+    <p class="pista">Cuenta de prueba: <code>admin@noctiluz.test</code> · contraseña en el README del proyecto.</p>
+  </form>
+</section>
+
+<main class="wrap" id="vistaPanel" hidden style="padding-bottom:80px">
+  <div class="pestanas" role="tablist">
+    <button class="pestana" role="tab" data-pestana="resumen" aria-selected="true">Resumen</button>
+    <button class="pestana" role="tab" data-pestana="pedidos" aria-selected="false">Pedidos</button>
+    <button class="pestana" role="tab" data-pestana="eventos" aria-selected="false">Eventos</button>
+    <button class="pestana" role="tab" data-pestana="incidencias" aria-selected="false">Incidencias <span class="contador" id="contadorIncidencias" hidden></span></button>
+  </div>
+  <div id="contenido" role="tabpanel"></div>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script type="module" src="assets/js/admin.js"></script>
+</body>
+</html>

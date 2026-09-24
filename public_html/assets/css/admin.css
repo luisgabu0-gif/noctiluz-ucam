@@ -1,0 +1,54 @@
+/* NOCTILUZ · back-office */
+.adm-cab{border-bottom:1px solid var(--border-soft); background:var(--bg-alt);}
+.adm-cab .wrap{display:flex; align-items:center; justify-content:space-between; gap:16px; padding-top:16px; padding-bottom:16px; flex-wrap:wrap;}
+.logo{display:flex; align-items:center; gap:9px; font-family:'Sora'; font-weight:700; font-size:1rem; letter-spacing:0.02em;}
+.logo small{font-family:'Inter'; font-weight:500; color:var(--ink-faint); font-size:.78rem; letter-spacing:0;}
+.logo-dot{width:7px; height:7px; border-radius:50%; background:var(--cian); box-shadow:0 0 8px var(--cian);}
+.adm-usuario{display:flex; align-items:center; gap:14px; font-size:.84rem; color:var(--ink-dim); flex-wrap:wrap;}
+
+.login{max-width:420px; margin:80px auto; padding:0 16px;}
+.login h1{font-size:1.5rem; margin-bottom:6px;}
+
+.pestanas{display:flex; gap:4px; border-bottom:1px solid var(--border-soft); margin:28px 0 24px; overflow-x:auto;}
+.pestana{padding:12px 16px; font-size:.86rem; color:var(--ink-dim); border-bottom:2px solid transparent; white-space:nowrap;}
+.pestana[aria-selected="true"]{color:var(--ink); border-bottom-color:var(--cian);}
+.pestana .contador{font-size:.7rem; background:var(--surface-2); padding:1px 7px; border-radius:99px; margin-left:6px;}
+
+.kpis{display:grid; grid-template-columns:repeat(auto-fit, minmax(170px, 1fr)); gap:1px; background:var(--border-soft); border:1px solid var(--border-soft);}
+.kpi{background:var(--bg-alt); padding:18px 20px;}
+.kpi .valor{font-family:'Sora'; font-size:1.5rem; margin-top:6px;}
+.kpi .etiqueta{font-size:.72rem;}
+.rejilla-adm{display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:18px; margin-top:18px;}
+.panel{border:1px solid var(--border-soft); background:var(--bg-alt); padding:20px; border-radius:var(--radius); min-width:0;}
+.panel h2{font-size:.98rem; margin-bottom:14px;}
+.barra{margin-bottom:12px; font-size:.82rem;}
+.barra .fila{display:flex; justify-content:space-between; color:var(--ink-dim); margin-bottom:5px;}
+.barra .pista-barra{height:8px; background:var(--surface-2); border-radius:99px; overflow:hidden;}
+.barra .relleno{height:100%; background:linear-gradient(90deg, var(--cian), var(--violeta)); border-radius:99px;}
+
+.herramientas{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:16px;}
+.herramientas .input{width:auto; min-width:180px; padding:9px 12px; font-size:.85rem;}
+.herramientas .derecha{margin-left:auto; display:flex; gap:8px; flex-wrap:wrap;}
+
+.tabla-wrap{overflow-x:auto; border:1px solid var(--border-soft);}
+table.tabla{width:100%; border-collapse:collapse; font-size:.84rem;}
+.tabla th{text-align:left; font-weight:500; color:var(--ink-faint); font-size:.72rem; text-transform:uppercase; letter-spacing:.05em; padding:10px 12px; background:var(--bg-alt); border-bottom:1px solid var(--border-soft); white-space:nowrap;}
+.tabla td{padding:10px 12px; border-bottom:1px solid var(--border-soft); color:var(--ink-dim); vertical-align:top;}
+.tabla tr.clicable{cursor:pointer;}
+.tabla tr.clicable:hover td, .tabla tr[aria-selected="true"] td{background:var(--surface);}
+.tabla td.num{text-align:right; font-family:'Sora'; color:var(--ink); white-space:nowrap;}
+.tabla code{font-family:ui-monospace,Consolas,monospace; font-size:.76rem; color:var(--ink-dim); white-space:nowrap;}
+.tabla td:last-child code{white-space:normal; word-break:break-all;}
+.tipo-evento{font-family:ui-monospace,Consolas,monospace; font-size:.78rem; color:var(--cian); white-space:nowrap;}
+.tipo-evento.servidor{color:var(--violeta);}
+.vacio{padding:40px; text-align:center; color:var(--ink-faint);}
+
+.detalle{margin-top:22px;}
+.detalle-cab{display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:16px;}
+.detalle-cab h2{font-size:1.2rem;}
+.cambio-estado{display:grid; grid-template-columns:1fr 1.4fr auto; gap:10px; align-items:end;}
+@media (max-width:700px){ .cambio-estado{grid-template-columns:1fr;} }
+.lista-simple{font-size:.84rem; color:var(--ink-dim);}
+.lista-simple div{display:flex; justify-content:space-between; gap:12px; padding:7px 0; border-bottom:1px solid var(--border-soft);}
+.pista{font-size:.78rem; color:var(--ink-faint); margin-top:8px;}
+.pista code{font-family:ui-monospace,Consolas,monospace; color:var(--ink-dim);}

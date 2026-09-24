@@ -1,0 +1,11 @@
+# Configuración con credenciales de la base de datos: NUNCA al repositorio
+public_html/app/config.php
+
+# Base de datos local de pruebas
+public_html/datos/*.sqlite
+
+# Sistema / editores
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
