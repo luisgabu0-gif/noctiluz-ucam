@@ -10,6 +10,8 @@ foreach (['Db', 'Validador', 'ReglasNegocio', 'Catalogo', 'Eventos', 'Clientes',
 }
 
 date_default_timezone_set('Europe/Madrid');
+// Algunos hostings fijan serialize_precision=17 y json_encode saca 14.9000000000000003552...
+ini_set('serialize_precision', '-1');
 header('Content-Type: application/json; charset=utf-8');
 header('X-Content-Type-Options: nosniff');
 header('Cache-Control: no-store');
