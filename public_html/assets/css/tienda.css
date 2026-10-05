@@ -67,9 +67,15 @@ nav{display:flex; align-items:center; justify-content:space-between; padding:18p
 .ciudad-neon .parpadeo.lento{animation-duration:11s; animation-delay:-4s;}
 .ciudad-neon .baliza{animation:neon-baliza 2.4s infinite;}
 .ciudad-neon .ventanas-vivas rect{animation:neon-ventana 9s infinite;}
+/* El tren cruza la vía elevada de derecha a izquierda y vuelve a empezar */
+.ciudad-neon .tren{animation:neon-tren 16s linear infinite;}
+/* Doraemon de LED: el cascabel titila */
+.ciudad-neon .doraemon .cascabel{animation:neon-titileo 1.6s ease-in-out infinite;}
 @keyframes neon-parpadeo{0%,90%,93%,96%,100%{opacity:1;} 91.5%{opacity:.25;} 94.5%{opacity:.4;}}
 @keyframes neon-baliza{0%,60%,100%{opacity:1;} 70%,90%{opacity:.15;}}
 @keyframes neon-ventana{0%,45%{opacity:0;} 50%,85%{opacity:.9;} 90%,100%{opacity:0;}}
+@keyframes neon-titileo{0%,100%{opacity:1;} 50%{opacity:.55;}}
+@keyframes neon-tren{0%{transform:translateX(0);} 60%,100%{transform:translateX(-1900px);}}
 @media (prefers-reduced-motion:reduce){ .ciudad-neon *{animation:none !important;} }
 .scene .ground{position:absolute; bottom:0; left:0; right:0; height:10%; z-index:3;
   background:linear-gradient(90deg, transparent, rgba(85,220,212,.18), rgba(165,148,242,.12), transparent); filter:blur(18px);}
