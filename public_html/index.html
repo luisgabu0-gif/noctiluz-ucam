@@ -63,36 +63,52 @@
 
 <main id="vista-inicio">
   <section class="scene hero-scene">
-    <!-- Ciudad neón de fondo: SVG decorativo. Se ancla a la derecha (xMaxYMax) para que el texto quede sobre la zona más oscura. -->
+    <!-- Ciudad neón de fondo: SVG decorativo dibujado a mano, inspirado en la ciudad de Yokai Watch 1 (Springdale) de noche:
+         torre de oficinas, monte con pagoda, tren elevado, postes con cables, tienda 24 h, ramen con farolillos y arco de un
+         商店街 (calle comercial), con un Doraemon de LED en el centro dibujado a mano en SVG. Se ancla a la derecha (xMaxYMax) para que el texto
+         quede sobre la zona más oscura. -->
     <div class="ciudad-neon" aria-hidden="true">
       <svg viewBox="0 0 1440 600" preserveAspectRatio="xMaxYMax slice">
         <defs>
           <linearGradient id="cn-cielo" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#06060d"/>
-            <stop offset=".55" stop-color="#120f2a"/>
-            <stop offset=".85" stop-color="#26143c"/>
-            <stop offset="1" stop-color="#331844"/>
+            <stop offset="0" stop-color="#070716"/>
+            <stop offset=".5" stop-color="#16123a"/>
+            <stop offset=".8" stop-color="#2e1a52"/>
+            <stop offset="1" stop-color="#4a1f5c"/>
           </linearGradient>
           <radialGradient id="cn-halo-rosa" cx=".72" cy=".86" r=".45">
             <stop offset="0" stop-color="#F27FAA" stop-opacity=".30"/>
             <stop offset="1" stop-color="#F27FAA" stop-opacity="0"/>
           </radialGradient>
-          <radialGradient id="cn-halo-cian" cx=".45" cy=".9" r=".4">
+          <radialGradient id="cn-halo-cian" cx=".5" cy=".9" r=".4">
             <stop offset="0" stop-color="#55DCD4" stop-opacity=".18"/>
             <stop offset="1" stop-color="#55DCD4" stop-opacity="0"/>
           </radialGradient>
+          <radialGradient id="cn-luna" cx=".5" cy=".5" r=".5">
+            <stop offset="0" stop-color="#fff6d8" stop-opacity=".35"/>
+            <stop offset="1" stop-color="#fff6d8" stop-opacity="0"/>
+          </radialGradient>
+          <linearGradient id="cn-monte" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#221a44"/>
+            <stop offset="1" stop-color="#120e26"/>
+          </linearGradient>
           <linearGradient id="cn-lejos" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#1d1638"/>
-            <stop offset="1" stop-color="#0e0b1d"/>
+            <stop offset="0" stop-color="#1b1536"/>
+            <stop offset="1" stop-color="#0d0a1c"/>
           </linearGradient>
           <linearGradient id="cn-calle" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#110d1f"/>
+            <stop offset="0" stop-color="#140f24"/>
             <stop offset="1" stop-color="#040406"/>
+          </linearGradient>
+          <!-- Cono de luz de las farolas -->
+          <linearGradient id="cn-cono" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#ffe9a8" stop-opacity=".35"/>
+            <stop offset="1" stop-color="#ffe9a8" stop-opacity="0"/>
           </linearGradient>
           <!-- Ventanas: una cuadrícula de luces y otra que "apaga" algunas para que no parezca uniforme -->
           <pattern id="cn-vent-cian" width="14" height="18" patternUnits="userSpaceOnUse"><rect x="4" y="4" width="6" height="8" fill="#9ff3ea" opacity=".55"/></pattern>
           <pattern id="cn-vent-violeta" width="14" height="18" patternUnits="userSpaceOnUse"><rect x="4" y="4" width="6" height="8" fill="#c9b8ff" opacity=".5"/></pattern>
-          <pattern id="cn-vent-rosa" width="14" height="18" patternUnits="userSpaceOnUse"><rect x="4" y="4" width="6" height="8" fill="#ffb8d2" opacity=".5"/></pattern>
+          <pattern id="cn-vent-amarilla" width="14" height="18" patternUnits="userSpaceOnUse"><rect x="4" y="4" width="6" height="8" fill="#ffe3a0" opacity=".55"/></pattern>
           <pattern id="cn-apagadas" width="42" height="54" patternUnits="userSpaceOnUse">
             <g fill="#0b0a17"><rect x="4" y="4" width="6" height="8"/><rect x="32" y="4" width="6" height="8"/><rect x="18" y="22" width="6" height="8"/><rect x="32" y="22" width="6" height="8"/><rect x="4" y="40" width="6" height="8"/></g>
           </pattern>
@@ -101,6 +117,27 @@
             <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
           </filter>
           <filter id="cn-difuso" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="12"/></filter>
+          <!-- Casa japonesa de tejado a dos aguas -->
+          <g id="cn-casa">
+            <path d="M-46 -50L0 -82L46 -50Z" fill="#1a1430"/>
+            <path d="M-52 -48L0 -84L52 -48" fill="none" stroke="#3a2c5c" stroke-width="3"/>
+            <rect x="-40" y="-50" width="80" height="50" fill="#0e0b1c"/>
+            <rect x="-28" y="-38" width="18" height="14" fill="#ffd98a" opacity=".75"/>
+            <rect x="10" y="-38" width="18" height="14" fill="#ffd98a" opacity=".25"/>
+          </g>
+          <!-- Farolillo de papel (chōchin) -->
+          <g id="cn-farolillo">
+            <ellipse cx="0" cy="0" rx="8" ry="11" fill="#ff5a4e"/>
+            <path d="M-8 0H8M-6 -6H6M-6 6H6" stroke="#b52b25" stroke-width="1"/>
+            <rect x="-4" y="-13" width="8" height="3" fill="#1a1110"/><rect x="-4" y="10" width="8" height="3" fill="#1a1110"/>
+          </g>
+          <!-- Poste de la luz con travesaño y transformador -->
+          <g id="cn-poste">
+            <rect x="-4" y="-280" width="8" height="280" fill="#0a0912"/>
+            <rect x="-26" y="-262" width="52" height="5" fill="#0a0912"/>
+            <rect x="-18" y="-236" width="36" height="4" fill="#0a0912"/>
+            <rect x="5" y="-200" width="14" height="24" rx="3" fill="#121022"/>
+          </g>
           <!-- Transeúnte con ropa de costuras luminosas (el color llega por la variable --c) -->
           <g id="cn-persona">
             <circle cx="0" cy="-62" r="7" fill="#050508"/>
@@ -109,78 +146,219 @@
           </g>
         </defs>
 
-        <!-- Cielo -->
+        <!-- Cielo con luna grande -->
         <rect width="1440" height="600" fill="url(#cn-cielo)"/>
         <rect width="1440" height="600" fill="url(#cn-halo-rosa)"/>
         <rect width="1440" height="600" fill="url(#cn-halo-cian)"/>
         <g fill="#fff" class="estrellas">
-          <circle cx="620" cy="40" r="1"/><circle cx="760" cy="90" r="1.2"/><circle cx="880" cy="30" r=".9"/><circle cx="1010" cy="70" r="1"/>
-          <circle cx="1300" cy="40" r="1.1"/><circle cx="1390" cy="120" r=".9"/><circle cx="540" cy="120" r=".8"/><circle cx="1100" cy="20" r=".8"/>
+          <circle cx="620" cy="40" r="1"/><circle cx="760" cy="90" r="1.2"/><circle cx="1010" cy="40" r=".9"/><circle cx="1060" cy="140" r="1"/>
+          <circle cx="1390" cy="40" r="1.1"/><circle cx="1400" cy="170" r=".9"/><circle cx="540" cy="120" r=".8"/><circle cx="700" cy="20" r=".8"/>
         </g>
-        <circle cx="1240" cy="110" r="70" fill="#A594F2" opacity=".12" filter="url(#cn-difuso)"/>
-        <circle cx="1240" cy="110" r="30" fill="#ece6ff" opacity=".16"/>
+        <circle cx="1210" cy="110" r="120" fill="url(#cn-luna)"/>
+        <circle cx="1210" cy="110" r="46" fill="#fff3cf" opacity=".9"/>
+        <circle cx="1196" cy="98" r="8" fill="#e8dcb4" opacity=".5"/><circle cx="1224" cy="124" r="5" fill="#e8dcb4" opacity=".5"/>
+
+        <!-- Monte con pagoda al fondo -->
+        <path d="M560 420Q700 330 820 350Q930 300 1040 330Q1160 250 1260 270Q1360 290 1440 330V420Z" fill="url(#cn-monte)"/>
+        <g fill="#0f0b20">
+          <rect x="1252" y="232" width="20" height="40"/>
+          <path d="M1240 246H1284L1262 236Z M1236 260H1288L1262 248Z M1244 234H1280L1262 222Z"/>
+          <path d="M1262 222V206" stroke="#0f0b20" stroke-width="2"/>
+        </g>
+        <circle cx="1262" cy="254" r="2.5" fill="#ffd98a" opacity=".8"/>
 
         <!-- Edificios lejanos -->
-        <path d="M0 520V330H60V300H110V340H170V270H200V250H230V270H260V320H330V290H390V230H420V210H440V230H470V310H540V280H600V330H650V260H700V240H760V300H820V270H880V220H900V190H920V220H950V300H1010V280H1070V250H1130V310H1190V240H1230V200H1260V240H1300V290H1360V270H1440V520Z" fill="url(#cn-lejos)"/>
-        <path d="M0 520V330H60V300H110V340H170V270H200V250H230V270H260V320H330V290H390V230H420V210H440V230H470V310H540V280H600V330H650V260H700V240H760V300H820V270H880V220H900V190H920V220H950V300H1010V280H1070V250H1130V310H1190V240H1230V200H1260V240H1300V290H1360V270H1440V520Z" fill="url(#cn-vent-violeta)" opacity=".18"/>
+        <path d="M0 520V330H60V300H110V340H170V270H200V250H230V270H260V320H330V290H390V230H420V210H440V230H470V310H540V280H600V350H660V320H720V360H800V330H860V380H1000V350H1080V370H1160V340H1240V380H1440V520Z" fill="url(#cn-lejos)"/>
+        <path d="M0 520V330H60V300H110V340H170V270H200V250H230V270H260V320H330V290H390V230H420V210H440V230H470V310H540V280H600V350H660V320H720V360H800V330H860V380H1000V350H1080V370H1160V340H1240V380H1440V520Z" fill="url(#cn-vent-violeta)" opacity=".18"/>
 
-        <!-- Edificios cercanos: cuerpo, ventanas, ventanas apagadas y borde de neón -->
-        <g class="edificio" style="--c:#55DCD4"><rect class="cuerpo" x="10" y="370" width="130" height="150"/><rect x="18" y="382" width="114" height="130" fill="url(#cn-vent-cian)"/><rect x="18" y="382" width="114" height="130" fill="url(#cn-apagadas)"/><rect class="borde" x="10" y="370" width="130" height="150"/></g>
-        <g class="edificio" style="--c:#A594F2"><rect class="cuerpo" x="150" y="310" width="96" height="210"/><rect x="158" y="322" width="80" height="190" fill="url(#cn-vent-violeta)"/><rect x="158" y="322" width="80" height="190" fill="url(#cn-apagadas)"/><rect class="borde" x="150" y="310" width="96" height="210"/></g>
-        <g class="edificio" style="--c:#F27FAA"><rect class="cuerpo" x="256" y="390" width="96" height="130"/><rect x="264" y="402" width="80" height="110" fill="url(#cn-vent-rosa)"/><rect x="264" y="402" width="80" height="110" fill="url(#cn-apagadas)"/><rect class="borde" x="256" y="390" width="96" height="130"/></g>
-        <g class="edificio" style="--c:#F27FAA"><rect class="cuerpo" x="470" y="340" width="104" height="180"/><rect x="478" y="352" width="88" height="160" fill="url(#cn-vent-rosa)"/><rect x="478" y="352" width="88" height="160" fill="url(#cn-apagadas)"/><rect class="borde" x="470" y="340" width="104" height="180"/></g>
-        <g class="edificio" style="--c:#55DCD4"><rect class="cuerpo" x="590" y="250" width="100" height="270"/><rect x="598" y="262" width="84" height="250" fill="url(#cn-vent-cian)"/><rect x="598" y="262" width="84" height="250" fill="url(#cn-apagadas)"/><rect class="borde" x="590" y="250" width="100" height="270"/><path class="borde" d="M640 250V200"/><circle class="baliza" cx="640" cy="198" r="3.5" fill="#ff4f7a"/></g>
-        <g class="edificio" style="--c:#BFE86E"><rect class="cuerpo" x="712" y="312" width="128" height="208"/><rect x="720" y="324" width="112" height="188" fill="url(#cn-vent-cian)"/><rect x="720" y="324" width="112" height="188" fill="url(#cn-apagadas)"/><rect class="borde" x="712" y="312" width="128" height="208"/></g>
-        <g class="edificio" style="--c:#A594F2"><path class="cuerpo" d="M908 190L928 140L948 190Z"/><rect class="cuerpo" x="868" y="190" width="120" height="330"/><rect x="876" y="202" width="104" height="310" fill="url(#cn-vent-violeta)"/><rect x="876" y="202" width="104" height="310" fill="url(#cn-apagadas)"/><path class="borde" d="M868 520V190H908L928 140L948 190H988V520"/></g>
-        <g class="edificio" style="--c:#F27FAA"><rect class="cuerpo" x="1008" y="286" width="112" height="234"/><rect x="1016" y="298" width="96" height="214" fill="url(#cn-vent-rosa)"/><rect x="1016" y="298" width="96" height="214" fill="url(#cn-apagadas)"/><rect class="borde" x="1008" y="286" width="112" height="234"/></g>
-        <g class="edificio" style="--c:#55DCD4"><rect class="cuerpo" x="1140" y="226" width="104" height="294"/><rect x="1148" y="238" width="88" height="274" fill="url(#cn-vent-cian)"/><rect x="1148" y="238" width="88" height="274" fill="url(#cn-apagadas)"/><rect class="borde" x="1140" y="226" width="104" height="294"/></g>
-        <g class="edificio" style="--c:#A594F2"><rect class="cuerpo" x="1264" y="318" width="176" height="202"/><rect x="1272" y="330" width="160" height="182" fill="url(#cn-vent-violeta)"/><rect x="1272" y="330" width="160" height="182" fill="url(#cn-apagadas)"/><rect class="borde" x="1264" y="318" width="176" height="202"/></g>
+        <!-- Torre de oficinas del centro, con baliza roja en la antena -->
+        <g class="edificio" style="--c:#A594F2">
+          <rect class="cuerpo" x="890" y="120" width="90" height="300"/>
+          <rect class="cuerpo" x="902" y="96" width="66" height="24"/>
+          <rect class="cuerpo" x="918" y="78" width="34" height="18"/>
+          <rect x="898" y="132" width="74" height="280" fill="url(#cn-vent-violeta)"/>
+          <rect x="898" y="132" width="74" height="280" fill="url(#cn-apagadas)"/>
+          <path class="borde" d="M890 420V120H902V96H918V78H952V96H968V120H980V420"/>
+          <path class="borde" d="M935 78V44"/>
+          <circle class="baliza" cx="935" cy="42" r="4" fill="#ff4f7a"/>
+        </g>
+        <g class="edificio" style="--c:#55DCD4">
+          <rect class="cuerpo" x="1000" y="230" width="80" height="190"/>
+          <rect x="1008" y="242" width="64" height="170" fill="url(#cn-vent-cian)"/>
+          <rect x="1008" y="242" width="64" height="170" fill="url(#cn-apagadas)"/>
+          <rect class="borde" x="1000" y="230" width="80" height="190"/>
+        </g>
+        <g class="edificio" style="--c:#F27FAA">
+          <rect class="cuerpo" x="760" y="250" width="100" height="170"/>
+          <rect x="768" y="262" width="84" height="150" fill="url(#cn-vent-amarilla)"/>
+          <rect x="768" y="262" width="84" height="150" fill="url(#cn-apagadas)"/>
+          <rect class="borde" x="760" y="250" width="100" height="170"/>
+        </g>
 
         <!-- Ventanas que se encienden y apagan -->
         <g class="ventanas-vivas">
-          <rect x="606" y="300" width="6" height="8" fill="#e8fffc" style="animation-delay:-1s"/>
-          <rect x="890" y="256" width="6" height="8" fill="#efe9ff" style="animation-delay:-3s"/>
-          <rect x="1030" y="370" width="6" height="8" fill="#ffe3ee" style="animation-delay:-5s"/>
-          <rect x="1176" y="292" width="6" height="8" fill="#e8fffc" style="animation-delay:-2s"/>
-          <rect x="1300" y="384" width="6" height="8" fill="#efe9ff" style="animation-delay:-6s"/>
-          <rect x="748" y="396" width="6" height="8" fill="#e8fffc" style="animation-delay:-4s"/>
+          <rect x="912" y="174" width="6" height="8" fill="#efe9ff" style="animation-delay:-1s"/>
+          <rect x="954" y="282" width="6" height="8" fill="#efe9ff" style="animation-delay:-3s"/>
+          <rect x="1022" y="300" width="6" height="8" fill="#e8fffc" style="animation-delay:-5s"/>
+          <rect x="786" y="318" width="6" height="8" fill="#fff1c8" style="animation-delay:-2s"/>
         </g>
 
-        <!-- Cartel principal de la marca -->
-        <g class="cartel">
-          <path d="M1030 262V286M1150 262V286" stroke="#2a2440" stroke-width="4"/>
-          <rect x="996" y="208" width="188" height="54" rx="4" fill="#0a0814" stroke="#A594F2" stroke-width="1.6" filter="url(#cn-neon)"/>
-          <text class="parpadeo" x="1090" y="245" text-anchor="middle" font-family="Sora, sans-serif" font-weight="700" font-size="28" letter-spacing="3" fill="#7ff2e6" filter="url(#cn-neon)">NOCTILUZ</text>
-        </g>
-        <!-- Rótulo vertical "LED" -->
-        <g class="rotulo-led">
-          <rect x="722" y="340" width="32" height="100" rx="3" fill="#0a0814" stroke="#F27FAA" stroke-width="1.4" filter="url(#cn-neon)"/>
-          <g class="parpadeo lento" font-family="Sora, sans-serif" font-weight="700" font-size="22" fill="#ff9cc2" text-anchor="middle" filter="url(#cn-neon)">
-            <text x="738" y="370">L</text><text x="738" y="399">E</text><text x="738" y="428">D</text>
+        <!-- Doraemon de LED en la azotea del edificio rosa, dibujado a mano en contornos de neón: cabeza azul, cara
+             blanca, nariz roja, bigotes, collar rojo con cascabel, barriga con bolsillo y una mano saludando.
+             Los pies están en (0,0). -->
+        <g class="doraemon" transform="translate(812 250) scale(.9)">
+          <circle cx="0" cy="-90" r="84" fill="#4fb6ff" opacity=".14" filter="url(#cn-difuso)"/>
+          <path d="M-24 0V-10M24 0V-10" stroke="#2a2440" stroke-width="5"/>
+          <g fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" filter="url(#cn-neon)">
+            <!-- Cuerpo y brazos azules (uno abajo y otro saludando) -->
+            <path stroke="#4fb6ff" d="M-28 -64Q-32 -30 -26 -10H26Q32 -30 28 -64M-28 -58Q-42 -50 -46 -40M28 -58Q44 -66 48 -82"/>
+            <!-- Manos, pies, barriga y bolsillo blancos -->
+            <path stroke="#f2fbff" d="M-30 -10H30"/>
+            <circle stroke="#f2fbff" cx="-48" cy="-34" r="7"/><circle stroke="#f2fbff" cx="50" cy="-89" r="7"/>
+            <ellipse stroke="#f2fbff" cx="-14" cy="-5" rx="14" ry="5"/><ellipse stroke="#f2fbff" cx="14" cy="-5" rx="14" ry="5"/>
+            <circle stroke="#f2fbff" cx="0" cy="-36" r="20"/>
+            <path stroke="#f2fbff" d="M-13 -36Q0 -22 13 -36Z"/>
+            <!-- Cabeza azul y cara blanca -->
+            <circle stroke="#4fb6ff" cx="0" cy="-104" r="40"/>
+            <ellipse stroke="#f2fbff" cx="0" cy="-96" rx="32" ry="28"/>
+            <!-- Ojos, línea de la nariz, sonrisa y bigotes -->
+            <ellipse stroke="#f2fbff" cx="-8" cy="-122" rx="8" ry="11"/><ellipse stroke="#f2fbff" cx="8" cy="-122" rx="8" ry="11"/>
+            <path stroke="#f2fbff" d="M0 -103V-80M-22 -90Q0 -64 22 -90M-8 -100L-28 -106M-8 -95H-30M-8 -90L-28 -84M8 -100L28 -106M8 -95H30M8 -90L28 -84"/>
+            <!-- Collar rojo -->
+            <path stroke="#ff4f5e" stroke-width="3.5" d="M-30 -66Q0 -58 30 -66"/>
+          </g>
+          <!-- Pupilas, nariz y cascabel (rellenos) -->
+          <g fill="#f2fbff"><circle cx="-4" cy="-118" r="3"/><circle cx="4" cy="-118" r="3"/></g>
+          <circle cx="0" cy="-108" r="5" fill="#ff4f5e" filter="url(#cn-neon)"/>
+          <g class="cascabel" filter="url(#cn-neon)">
+            <circle cx="0" cy="-57" r="6" fill="#ffd36e"/>
+            <path d="M-6 -58H6M0 -56V-52" stroke="#8a6a1e" stroke-width="1.2"/>
           </g>
         </g>
-        <!-- Escaparate: camiseta de neón y rótulo de tienda -->
-        <g fill="none" stroke="#BFE86E" stroke-width="2.2" stroke-linejoin="round" filter="url(#cn-neon)">
-          <path d="M1322 374L1340 364H1352Q1357 372 1362 364H1374L1392 374L1382 390L1374 385V424H1340V385L1332 390Z"/>
-        </g>
-        <text x="1357" y="456" text-anchor="middle" font-family="Sora, sans-serif" font-size="13" letter-spacing="3" fill="#d6f59a" filter="url(#cn-neon)">MODA LUMINOSA</text>
 
-        <!-- Calle mojada con reflejos -->
+        <!-- Vía elevada del tren con un tren que cruza -->
+        <g fill="#0c0a18">
+          <rect x="0" y="398" width="1440" height="14"/>
+          <rect x="120" y="412" width="16" height="108"/><rect x="280" y="412" width="16" height="108"/><rect x="440" y="412" width="16" height="108"/>
+          <rect x="600" y="412" width="16" height="108"/><rect x="760" y="412" width="16" height="108"/>
+          <rect x="920" y="412" width="16" height="108"/><rect x="1080" y="412" width="16" height="108"/>
+          <rect x="1240" y="412" width="16" height="108"/><rect x="1400" y="412" width="16" height="108"/>
+        </g>
+        <path d="M0 398H1440" stroke="#55DCD4" stroke-width="1" opacity=".5"/>
+        <path d="M0 384H1440" stroke="#2a2346" stroke-width="1.2"/>
+        <g class="tren">
+          <g transform="translate(1460 0)">
+            <rect x="0" y="372" width="118" height="26" rx="6" fill="#1b1a2e"/>
+            <rect x="122" y="372" width="118" height="26" rx="4" fill="#1b1a2e"/>
+            <rect x="244" y="372" width="118" height="26" rx="4" fill="#1b1a2e"/>
+            <path d="M0 392H362" stroke="#55DCD4" stroke-width="2" filter="url(#cn-neon)"/>
+            <g fill="#fff3cf" opacity=".85">
+              <rect x="14" y="377" width="20" height="9"/><rect x="40" y="377" width="20" height="9"/><rect x="66" y="377" width="20" height="9"/><rect x="92" y="377" width="20" height="9"/>
+              <rect x="134" y="377" width="20" height="9"/><rect x="160" y="377" width="20" height="9"/><rect x="186" y="377" width="20" height="9"/><rect x="212" y="377" width="20" height="9"/>
+              <rect x="256" y="377" width="20" height="9"/><rect x="282" y="377" width="20" height="9"/><rect x="308" y="377" width="20" height="9"/><rect x="334" y="377" width="20" height="9"/>
+            </g>
+            <circle cx="4" cy="390" r="2.5" fill="#fff" filter="url(#cn-neon)"/>
+          </g>
+        </g>
+
+        <!-- Casas bajas de barrio -->
+        <use href="#cn-casa" x="470" y="520"/>
+        <use href="#cn-casa" x="1130" y="520"/>
+
+        <!-- Puesto de ramen: tejadillo, noren rojo y farolillos -->
+        <g>
+          <rect x="560" y="440" width="120" height="80" fill="#120d18"/>
+          <path d="M552 442H688L676 428H564Z" fill="#2a1a22"/>
+          <g fill="#c8342c"><rect x="578" y="446" width="18" height="26"/><rect x="600" y="446" width="18" height="26"/><rect x="622" y="446" width="18" height="26"/><rect x="644" y="446" width="18" height="26"/></g>
+          <rect x="574" y="476" width="92" height="44" fill="#ffcf86" opacity=".35"/>
+          <use href="#cn-farolillo" x="562" y="462"/>
+          <use href="#cn-farolillo" x="678" y="462"/>
+          <rect x="584" y="404" width="22" height="24" rx="2" fill="#0a0814" stroke="#ff7a5e" stroke-width="1.2" filter="url(#cn-neon)"/>
+          <text class="parpadeo lento" x="595" y="422" text-anchor="middle" font-family="'Noto Sans JP', sans-serif" font-weight="700" font-size="15" fill="#ffb199" filter="url(#cn-neon)">麺</text>
+        </g>
+
+        <!-- Tienda 24 horas con el escaparate muy iluminado -->
+        <g>
+          <rect x="690" y="430" width="130" height="90" fill="#0f0d1c"/>
+          <rect x="690" y="430" width="130" height="14" fill="#2f7fd8"/>
+          <rect x="690" y="444" width="130" height="5" fill="#55DCD4"/>
+          <rect x="698" y="456" width="114" height="64" fill="#e9fbff" opacity=".8"/>
+          <g fill="#9fb4c8" opacity=".6"><rect x="704" y="466" width="30" height="4"/><rect x="704" y="480" width="30" height="4"/><rect x="776" y="466" width="30" height="4"/><rect x="776" y="480" width="30" height="4"/></g>
+          <text x="755" y="441" text-anchor="middle" font-family="Sora, sans-serif" font-weight="700" font-size="11" letter-spacing="2" fill="#fff">24H</text>
+        </g>
+        <!-- Máquinas expendedoras -->
+        <g>
+          <rect x="828" y="466" width="22" height="54" rx="2" fill="#d33a5a"/><rect x="831" y="470" width="16" height="22" fill="#fff3f6" opacity=".9"/>
+          <rect x="852" y="466" width="22" height="54" rx="2" fill="#2a6fd0"/><rect x="855" y="470" width="16" height="22" fill="#f0f8ff" opacity=".9"/>
+        </g>
+
+        <!-- Tienda NOCTILUZ: cartel de neón, rótulo vertical y escaparate con prendas luminosas -->
+        <g class="edificio" style="--c:#55DCD4">
+          <rect class="cuerpo" x="884" y="420" width="190" height="100"/>
+          <rect class="borde" x="884" y="420" width="190" height="100"/>
+        </g>
+        <g class="cartel">
+          <rect x="904" y="426" width="150" height="30" rx="3" fill="#0a0814" stroke="#A594F2" stroke-width="1.4" filter="url(#cn-neon)"/>
+          <text class="parpadeo" x="979" y="448" text-anchor="middle" font-family="Sora, sans-serif" font-weight="700" font-size="18" letter-spacing="3" fill="#7ff2e6" filter="url(#cn-neon)">NOCTILUZ</text>
+        </g>
+        <g fill="none" stroke-width="2" stroke-linejoin="round" filter="url(#cn-neon)">
+          <path stroke="#BFE86E" d="M912 472L924 466H932Q935 471 938 466H946L958 472L952 482L946 479V506H924V479L918 482Z"/>
+          <path stroke="#F27FAA" d="M1002 472L1014 464H1034L1046 472L1040 484L1036 482V506H1012V482L1008 484Z M1016 464Q1024 476 1032 464"/>
+        </g>
+        <g class="rotulo-led">
+          <rect x="1078" y="400" width="26" height="80" rx="3" fill="#0a0814" stroke="#F27FAA" stroke-width="1.4" filter="url(#cn-neon)"/>
+          <g class="parpadeo lento" font-family="'Noto Sans JP', sans-serif" font-weight="700" font-size="17" fill="#ff9cc2" text-anchor="middle" filter="url(#cn-neon)">
+            <text x="1091" y="422">光</text><text x="1091" y="446">の</text><text x="1091" y="470">服</text>
+          </g>
+        </g>
+
+        <!-- Arco de la calle comercial con guirnalda de farolillos -->
+        <g>
+          <rect x="1196" y="400" width="10" height="120" fill="#0c0a18"/>
+          <rect x="1426" y="400" width="10" height="120" fill="#0c0a18"/>
+          <path d="M1190 404Q1316 352 1440 404" fill="none" stroke="#0c0a18" stroke-width="30"/>
+          <path d="M1190 404Q1316 352 1440 404" fill="none" stroke="#F27FAA" stroke-width="1.4" filter="url(#cn-neon)"/>
+          <text class="parpadeo" x="1316" y="392" text-anchor="middle" font-family="'Noto Sans JP', sans-serif" font-weight="700" font-size="15" letter-spacing="4" fill="#ffd36e" filter="url(#cn-neon)">ネオン商店街</text>
+          <path d="M1206 430Q1316 460 1426 430" fill="none" stroke="#2a2346" stroke-width="1"/>
+          <use href="#cn-farolillo" x="1240" y="448"/><use href="#cn-farolillo" x="1290" y="456"/>
+          <use href="#cn-farolillo" x="1342" y="456"/><use href="#cn-farolillo" x="1392" y="448"/>
+        </g>
+
+        <!-- Postes de la luz con cables (muy típicos de la ciudad del juego) -->
+        <use href="#cn-poste" x="548" y="526"/>
+        <use href="#cn-poste" x="1180" y="526"/>
+        <g fill="none" stroke="#0a0912" stroke-width="1.4">
+          <path d="M526 266Q860 330 1158 266"/><path d="M570 266Q860 340 1202 266"/>
+          <path d="M530 292Q860 350 1162 292"/><path d="M1202 266Q1330 300 1440 280"/>
+        </g>
+
+        <!-- Farolas con su cono de luz -->
+        <g>
+          <path d="M680 430L640 520H720Z" fill="url(#cn-cono)"/>
+          <path d="M1150 430L1110 520H1190Z" fill="url(#cn-cono)"/>
+          <circle cx="680" cy="428" r="4" fill="#ffe9a8" filter="url(#cn-neon)"/>
+          <circle cx="1150" cy="428" r="4" fill="#ffe9a8" filter="url(#cn-neon)"/>
+        </g>
+
+        <!-- Calle mojada con paso de cebra y reflejos -->
         <rect y="520" width="1440" height="80" fill="url(#cn-calle)"/>
         <path d="M0 520H1440" stroke="#55DCD4" stroke-width="1.2" opacity=".6" filter="url(#cn-neon)"/>
-        <g filter="url(#cn-difuso)" opacity=".55">
-          <rect x="1040" y="526" width="100" height="70" fill="#55DCD4"/>
-          <rect x="726" y="526" width="26" height="60" fill="#F27FAA"/>
-          <rect x="1330" y="526" width="56" height="60" fill="#BFE86E" opacity=".7"/>
-          <rect x="900" y="526" width="60" height="50" fill="#A594F2" opacity=".7"/>
+        <g fill="#ffffff" opacity=".1">
+          <path d="M760 532H786L780 598H748Z"/><path d="M806 532H832L830 598H798Z"/><path d="M852 532H878L880 598H848Z"/>
+          <path d="M898 532H924L930 598H898Z"/><path d="M944 532H970L980 598H948Z"/>
         </g>
-        <path d="M0 578H1440" stroke="#ffffff" stroke-width="2" stroke-dasharray="40 50" opacity=".08"/>
+        <g filter="url(#cn-difuso)" opacity=".55">
+          <rect x="700" y="526" width="110" height="60" fill="#e9fbff" opacity=".6"/>
+          <rect x="910" y="526" width="130" height="60" fill="#55DCD4"/>
+          <rect x="580" y="526" width="90" height="50" fill="#ff5a4e" opacity=".7"/>
+          <rect x="1230" y="526" width="170" height="50" fill="#F27FAA" opacity=".6"/>
+        </g>
 
         <!-- Transeúntes con prendas luminosas -->
-        <use href="#cn-persona" x="780" y="548" style="--c:#60E7D8"/>
-        <use href="#cn-persona" x="935" y="552" style="--c:#F27FAA"/>
-        <use href="#cn-persona" x="1205" y="546" style="--c:#A594F2"/>
-        <use href="#cn-persona" x="1300" y="552" style="--c:#BFE86E"/>
+        <use href="#cn-persona" x="640" y="552" style="--c:#60E7D8"/>
+        <use href="#cn-persona" x="1000" y="552" style="--c:#F27FAA"/>
+        <use href="#cn-persona" x="1270" y="548" style="--c:#A594F2"/>
+        <use href="#cn-persona" x="1360" y="554" style="--c:#BFE86E"/>
       </svg>
     </div>
     <div class="hero-content">
