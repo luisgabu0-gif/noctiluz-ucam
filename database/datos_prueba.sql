@@ -65,7 +65,7 @@ INSERT INTO variantes (id, sku, producto_id, color_id, imagen, stock) VALUES
 (2,  'chaqueta-circuito-violeta', 1, 'violeta', NULL, 8),
 (3,  'chaqueta-perimetro-lima',   2, 'lima',    'assets/img/productos/chaqueta-perimetro-lima.jpg', 6),
 (4,  'chaqueta-perimetro-blanco', 2, 'blanco',  NULL, 0),
-(5,  'camiseta-pulso-cian',       3, 'cian',    NULL, 25),
+(5,  'camiseta-pulso-cian',       3, 'cian',    'assets/img/productos/camiseta-pulso-cian.jpg', 25),
 (6,  'camiseta-pulso-rosa',       3, 'rosa',    'assets/img/productos/camiseta-pulso-rosa.jpg', 17),
 (7,  'camiseta-linea-blanco',     4, 'blanco',  'assets/img/productos/camiseta-linea-blanco.jpg', 20),
 (8,  'camiseta-linea-ambar',      4, 'ambar',   NULL, 14),
