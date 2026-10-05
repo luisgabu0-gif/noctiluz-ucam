@@ -67,6 +67,14 @@ Abre `http://localhost:8000` (tienda) y `http://localhost:8000/admin.html` (back
 
 > El servidor integrado de PHP no lee `.htaccess`: en local, las carpetas `app/` y `datos/` no están protegidas. En el hosting (Apache) sí.
 
+### Pruebas automáticas de las reglas de negocio
+
+```bash
+php tests/pruebas_reglas_negocio.php
+```
+
+Comprueba totales, IVA, envío (gratis desde 120 € tras descuento), cupones y stock con los datos de `database/datos_prueba.sql`, en una base SQLite en memoria: no toca la base local. Termina con `Todas las pruebas pasan` (código 0) o con la lista de las que fallan (código 1). Conviene ejecutarlo antes de subir cualquier cambio en `ReglasNegocio.php`.
+
 ## 4. Despliegue en DonDominio (hosting real)
 
 1. **Dominio y alojamiento** (lo hace una persona del grupo, con sus propios datos): seguir `Guía-DonDominio.pdf` — crear la cuenta de cliente, registrar `noctiluz.<extensión>` aplicando el **código de dominio** de la hoja compartida del Tema 1, esperar 5-10 min y ampliar a **Alojamiento Básico** aplicando el **código de alojamiento**.

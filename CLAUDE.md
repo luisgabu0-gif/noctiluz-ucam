@@ -33,7 +33,15 @@ php database/instalar_local.php
 php -S localhost:8000 -t public_html
 ```
 
-`instalar_local.php` crea una base SQLite de pruebas y un `public_html/app/config.php` local, y al volver a ejecutarlo deja la base como recién instalada. No hay tests automatizados ni dependencias que instalar.
+`instalar_local.php` crea una base SQLite de pruebas y un `public_html/app/config.php` local, y al volver a ejecutarlo deja la base como recién instalada. No hay dependencias que instalar.
+
+Pruebas automáticas de las reglas de negocio (totales, IVA, envío, cupones y stock), sobre una base SQLite en memoria:
+
+```bash
+php tests/pruebas_reglas_negocio.php
+```
+
+Ejecútalas después de cualquier cambio en `ReglasNegocio.php`, `Pedidos.php` o los datos de prueba; si cambia una regla a propósito, actualiza también la prueba correspondiente.
 
 ## Arquitectura
 
