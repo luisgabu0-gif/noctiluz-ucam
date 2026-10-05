@@ -63,15 +63,126 @@
 
 <main id="vista-inicio">
   <section class="scene hero-scene">
-    <div class="sky-glow"></div>
-    <div class="skyline"></div>
-    <div class="ground"></div>
-    <svg class="figure-svg" viewBox="0 0 200 340" style="--sc:#55DCD4" aria-hidden="true">
-      <path class="fig-body" d="M100 46c15 0 26 12 26 27 0 13-8 23-18 26l5 11c24 6 41 24 45 49l11 96c2 15-9 28-24 28H55c-15 0-26-13-24-28l11-96c4-25 21-43 45-49l5-11c-10-3-18-13-18-26 0-15 11-27 26-27z"/>
-      <circle class="fig-body" cx="100" cy="62" r="22"/>
-      <path class="fig-seam" stroke="#55DCD4" d="M80 118C92 172 86 236 98 292"/>
-      <path class="fig-seam" stroke="#A594F2" d="M120 118C108 172 114 236 102 292"/>
-    </svg>
+    <!-- Ciudad neón de fondo: SVG decorativo. Se ancla a la derecha (xMaxYMax) para que el texto quede sobre la zona más oscura. -->
+    <div class="ciudad-neon" aria-hidden="true">
+      <svg viewBox="0 0 1440 600" preserveAspectRatio="xMaxYMax slice">
+        <defs>
+          <linearGradient id="cn-cielo" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#06060d"/>
+            <stop offset=".55" stop-color="#120f2a"/>
+            <stop offset=".85" stop-color="#26143c"/>
+            <stop offset="1" stop-color="#331844"/>
+          </linearGradient>
+          <radialGradient id="cn-halo-rosa" cx=".72" cy=".86" r=".45">
+            <stop offset="0" stop-color="#F27FAA" stop-opacity=".30"/>
+            <stop offset="1" stop-color="#F27FAA" stop-opacity="0"/>
+          </radialGradient>
+          <radialGradient id="cn-halo-cian" cx=".45" cy=".9" r=".4">
+            <stop offset="0" stop-color="#55DCD4" stop-opacity=".18"/>
+            <stop offset="1" stop-color="#55DCD4" stop-opacity="0"/>
+          </radialGradient>
+          <linearGradient id="cn-lejos" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#1d1638"/>
+            <stop offset="1" stop-color="#0e0b1d"/>
+          </linearGradient>
+          <linearGradient id="cn-calle" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#110d1f"/>
+            <stop offset="1" stop-color="#040406"/>
+          </linearGradient>
+          <!-- Ventanas: una cuadrícula de luces y otra que "apaga" algunas para que no parezca uniforme -->
+          <pattern id="cn-vent-cian" width="14" height="18" patternUnits="userSpaceOnUse"><rect x="4" y="4" width="6" height="8" fill="#9ff3ea" opacity=".55"/></pattern>
+          <pattern id="cn-vent-violeta" width="14" height="18" patternUnits="userSpaceOnUse"><rect x="4" y="4" width="6" height="8" fill="#c9b8ff" opacity=".5"/></pattern>
+          <pattern id="cn-vent-rosa" width="14" height="18" patternUnits="userSpaceOnUse"><rect x="4" y="4" width="6" height="8" fill="#ffb8d2" opacity=".5"/></pattern>
+          <pattern id="cn-apagadas" width="42" height="54" patternUnits="userSpaceOnUse">
+            <g fill="#0b0a17"><rect x="4" y="4" width="6" height="8"/><rect x="32" y="4" width="6" height="8"/><rect x="18" y="22" width="6" height="8"/><rect x="32" y="22" width="6" height="8"/><rect x="4" y="40" width="6" height="8"/></g>
+          </pattern>
+          <filter id="cn-neon" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="3.5" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <filter id="cn-difuso" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="12"/></filter>
+          <!-- Transeúnte con ropa de costuras luminosas (el color llega por la variable --c) -->
+          <g id="cn-persona">
+            <circle cx="0" cy="-62" r="7" fill="#050508"/>
+            <path d="M-10 -52 Q0 -56 10 -52 L13 -24 L8 -24 L7 0 L2 0 L0 -20 L-2 0 L-7 0 L-8 -24 L-13 -24 Z" fill="#050508"/>
+            <path class="costura" d="M-6 -50 L-5 -26 M6 -50 L5 -26 M-9 -58 Q0 -72 9 -58"/>
+          </g>
+        </defs>
+
+        <!-- Cielo -->
+        <rect width="1440" height="600" fill="url(#cn-cielo)"/>
+        <rect width="1440" height="600" fill="url(#cn-halo-rosa)"/>
+        <rect width="1440" height="600" fill="url(#cn-halo-cian)"/>
+        <g fill="#fff" class="estrellas">
+          <circle cx="620" cy="40" r="1"/><circle cx="760" cy="90" r="1.2"/><circle cx="880" cy="30" r=".9"/><circle cx="1010" cy="70" r="1"/>
+          <circle cx="1300" cy="40" r="1.1"/><circle cx="1390" cy="120" r=".9"/><circle cx="540" cy="120" r=".8"/><circle cx="1100" cy="20" r=".8"/>
+        </g>
+        <circle cx="1240" cy="110" r="70" fill="#A594F2" opacity=".12" filter="url(#cn-difuso)"/>
+        <circle cx="1240" cy="110" r="30" fill="#ece6ff" opacity=".16"/>
+
+        <!-- Edificios lejanos -->
+        <path d="M0 520V330H60V300H110V340H170V270H200V250H230V270H260V320H330V290H390V230H420V210H440V230H470V310H540V280H600V330H650V260H700V240H760V300H820V270H880V220H900V190H920V220H950V300H1010V280H1070V250H1130V310H1190V240H1230V200H1260V240H1300V290H1360V270H1440V520Z" fill="url(#cn-lejos)"/>
+        <path d="M0 520V330H60V300H110V340H170V270H200V250H230V270H260V320H330V290H390V230H420V210H440V230H470V310H540V280H600V330H650V260H700V240H760V300H820V270H880V220H900V190H920V220H950V300H1010V280H1070V250H1130V310H1190V240H1230V200H1260V240H1300V290H1360V270H1440V520Z" fill="url(#cn-vent-violeta)" opacity=".18"/>
+
+        <!-- Edificios cercanos: cuerpo, ventanas, ventanas apagadas y borde de neón -->
+        <g class="edificio" style="--c:#55DCD4"><rect class="cuerpo" x="10" y="370" width="130" height="150"/><rect x="18" y="382" width="114" height="130" fill="url(#cn-vent-cian)"/><rect x="18" y="382" width="114" height="130" fill="url(#cn-apagadas)"/><rect class="borde" x="10" y="370" width="130" height="150"/></g>
+        <g class="edificio" style="--c:#A594F2"><rect class="cuerpo" x="150" y="310" width="96" height="210"/><rect x="158" y="322" width="80" height="190" fill="url(#cn-vent-violeta)"/><rect x="158" y="322" width="80" height="190" fill="url(#cn-apagadas)"/><rect class="borde" x="150" y="310" width="96" height="210"/></g>
+        <g class="edificio" style="--c:#F27FAA"><rect class="cuerpo" x="256" y="390" width="96" height="130"/><rect x="264" y="402" width="80" height="110" fill="url(#cn-vent-rosa)"/><rect x="264" y="402" width="80" height="110" fill="url(#cn-apagadas)"/><rect class="borde" x="256" y="390" width="96" height="130"/></g>
+        <g class="edificio" style="--c:#F27FAA"><rect class="cuerpo" x="470" y="340" width="104" height="180"/><rect x="478" y="352" width="88" height="160" fill="url(#cn-vent-rosa)"/><rect x="478" y="352" width="88" height="160" fill="url(#cn-apagadas)"/><rect class="borde" x="470" y="340" width="104" height="180"/></g>
+        <g class="edificio" style="--c:#55DCD4"><rect class="cuerpo" x="590" y="250" width="100" height="270"/><rect x="598" y="262" width="84" height="250" fill="url(#cn-vent-cian)"/><rect x="598" y="262" width="84" height="250" fill="url(#cn-apagadas)"/><rect class="borde" x="590" y="250" width="100" height="270"/><path class="borde" d="M640 250V200"/><circle class="baliza" cx="640" cy="198" r="3.5" fill="#ff4f7a"/></g>
+        <g class="edificio" style="--c:#BFE86E"><rect class="cuerpo" x="712" y="312" width="128" height="208"/><rect x="720" y="324" width="112" height="188" fill="url(#cn-vent-cian)"/><rect x="720" y="324" width="112" height="188" fill="url(#cn-apagadas)"/><rect class="borde" x="712" y="312" width="128" height="208"/></g>
+        <g class="edificio" style="--c:#A594F2"><path class="cuerpo" d="M908 190L928 140L948 190Z"/><rect class="cuerpo" x="868" y="190" width="120" height="330"/><rect x="876" y="202" width="104" height="310" fill="url(#cn-vent-violeta)"/><rect x="876" y="202" width="104" height="310" fill="url(#cn-apagadas)"/><path class="borde" d="M868 520V190H908L928 140L948 190H988V520"/></g>
+        <g class="edificio" style="--c:#F27FAA"><rect class="cuerpo" x="1008" y="286" width="112" height="234"/><rect x="1016" y="298" width="96" height="214" fill="url(#cn-vent-rosa)"/><rect x="1016" y="298" width="96" height="214" fill="url(#cn-apagadas)"/><rect class="borde" x="1008" y="286" width="112" height="234"/></g>
+        <g class="edificio" style="--c:#55DCD4"><rect class="cuerpo" x="1140" y="226" width="104" height="294"/><rect x="1148" y="238" width="88" height="274" fill="url(#cn-vent-cian)"/><rect x="1148" y="238" width="88" height="274" fill="url(#cn-apagadas)"/><rect class="borde" x="1140" y="226" width="104" height="294"/></g>
+        <g class="edificio" style="--c:#A594F2"><rect class="cuerpo" x="1264" y="318" width="176" height="202"/><rect x="1272" y="330" width="160" height="182" fill="url(#cn-vent-violeta)"/><rect x="1272" y="330" width="160" height="182" fill="url(#cn-apagadas)"/><rect class="borde" x="1264" y="318" width="176" height="202"/></g>
+
+        <!-- Ventanas que se encienden y apagan -->
+        <g class="ventanas-vivas">
+          <rect x="606" y="300" width="6" height="8" fill="#e8fffc" style="animation-delay:-1s"/>
+          <rect x="890" y="256" width="6" height="8" fill="#efe9ff" style="animation-delay:-3s"/>
+          <rect x="1030" y="370" width="6" height="8" fill="#ffe3ee" style="animation-delay:-5s"/>
+          <rect x="1176" y="292" width="6" height="8" fill="#e8fffc" style="animation-delay:-2s"/>
+          <rect x="1300" y="384" width="6" height="8" fill="#efe9ff" style="animation-delay:-6s"/>
+          <rect x="748" y="396" width="6" height="8" fill="#e8fffc" style="animation-delay:-4s"/>
+        </g>
+
+        <!-- Cartel principal de la marca -->
+        <g class="cartel">
+          <path d="M1030 262V286M1150 262V286" stroke="#2a2440" stroke-width="4"/>
+          <rect x="996" y="208" width="188" height="54" rx="4" fill="#0a0814" stroke="#A594F2" stroke-width="1.6" filter="url(#cn-neon)"/>
+          <text class="parpadeo" x="1090" y="245" text-anchor="middle" font-family="Sora, sans-serif" font-weight="700" font-size="28" letter-spacing="3" fill="#7ff2e6" filter="url(#cn-neon)">NOCTILUZ</text>
+        </g>
+        <!-- Rótulo vertical "LED" -->
+        <g class="rotulo-led">
+          <rect x="722" y="340" width="32" height="100" rx="3" fill="#0a0814" stroke="#F27FAA" stroke-width="1.4" filter="url(#cn-neon)"/>
+          <g class="parpadeo lento" font-family="Sora, sans-serif" font-weight="700" font-size="22" fill="#ff9cc2" text-anchor="middle" filter="url(#cn-neon)">
+            <text x="738" y="370">L</text><text x="738" y="399">E</text><text x="738" y="428">D</text>
+          </g>
+        </g>
+        <!-- Escaparate: camiseta de neón y rótulo de tienda -->
+        <g fill="none" stroke="#BFE86E" stroke-width="2.2" stroke-linejoin="round" filter="url(#cn-neon)">
+          <path d="M1322 374L1340 364H1352Q1357 372 1362 364H1374L1392 374L1382 390L1374 385V424H1340V385L1332 390Z"/>
+        </g>
+        <text x="1357" y="456" text-anchor="middle" font-family="Sora, sans-serif" font-size="13" letter-spacing="3" fill="#d6f59a" filter="url(#cn-neon)">MODA LUMINOSA</text>
+
+        <!-- Calle mojada con reflejos -->
+        <rect y="520" width="1440" height="80" fill="url(#cn-calle)"/>
+        <path d="M0 520H1440" stroke="#55DCD4" stroke-width="1.2" opacity=".6" filter="url(#cn-neon)"/>
+        <g filter="url(#cn-difuso)" opacity=".55">
+          <rect x="1040" y="526" width="100" height="70" fill="#55DCD4"/>
+          <rect x="726" y="526" width="26" height="60" fill="#F27FAA"/>
+          <rect x="1330" y="526" width="56" height="60" fill="#BFE86E" opacity=".7"/>
+          <rect x="900" y="526" width="60" height="50" fill="#A594F2" opacity=".7"/>
+        </g>
+        <path d="M0 578H1440" stroke="#ffffff" stroke-width="2" stroke-dasharray="40 50" opacity=".08"/>
+
+        <!-- Transeúntes con prendas luminosas -->
+        <use href="#cn-persona" x="780" y="548" style="--c:#60E7D8"/>
+        <use href="#cn-persona" x="935" y="552" style="--c:#F27FAA"/>
+        <use href="#cn-persona" x="1205" y="546" style="--c:#A594F2"/>
+        <use href="#cn-persona" x="1300" y="552" style="--c:#BFE86E"/>
+      </svg>
+    </div>
     <div class="hero-content">
       <div class="hero-inner">
         <div class="hero-tag">Tecnología LED + fibra óptica</div>

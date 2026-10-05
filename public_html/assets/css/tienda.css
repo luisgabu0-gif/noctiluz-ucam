@@ -40,32 +40,53 @@ nav{display:flex; align-items:center; justify-content:space-between; padding:18p
 
 /* ============ HERO ============ */
 .scene{position:relative; overflow:hidden; background:linear-gradient(180deg,#0D0E12 0%, #050506 100%);}
-.scene .sky-glow{position:absolute; inset:0;
+.scene .sky-glow{
+  position:absolute; inset:0; z-index:0;
   background:
-    radial-gradient(ellipse 45% 35% at 22% 18%, rgba(85,220,212,.10), transparent 60%),
-    radial-gradient(ellipse 40% 30% at 82% 10%, rgba(165,148,242,.09), transparent 55%);
+    radial-gradient(circle at 20% 18%, rgba(92, 245, 216, .30), transparent 16%),
+    radial-gradient(circle at 62% 20%, rgba(191, 120, 255, .26), transparent 18%),
+    radial-gradient(circle at 50% 42%, rgba(242, 127, 170, .12), transparent 24%),
+    linear-gradient(180deg, rgba(8,10,17,0) 0%, rgba(18,12,32,.18) 44%, rgba(3,4,7,.72) 100%);
 }
 .scene .skyline{
-  position:absolute; left:0; right:0; bottom:0; height:38%; background:#050506; opacity:.9;
-  clip-path:polygon(0% 100%,0% 55%,4% 55%,4% 40%,9% 40%,9% 62%,14% 62%,14% 30%,19% 30%,19% 50%,25% 50%,25% 20%,31% 20%,31% 58%,37% 58%,37% 35%,43% 35%,43% 65%,49% 65%,49% 15%,55% 15%,55% 45%,61% 45%,61% 25%,67% 25%,67% 55%,73% 55%,73% 38%,79% 38%,79% 60%,85% 60%,85% 22%,91% 22%,91% 48%,96% 48%,96% 100%);
+  position:absolute; left:0; right:0; bottom:0; height:45%; background:linear-gradient(180deg, rgba(14,17,22,.12), rgba(5,7,10,.98)); opacity:1; z-index:1;
+  clip-path:polygon(0% 100%,0% 60%,6% 60%,6% 32%,12% 32%,12% 68%,17% 68%,17% 24%,22% 24%,22% 58%,29% 58%,29% 17%,36% 17%,36% 62%,41% 62%,41% 27%,47% 27%,47% 72%,52% 72%,52% 12%,58% 12%,58% 50%,64% 50%,64% 20%,70% 20%,70% 57%,77% 57%,77% 30%,83% 30%,83% 66%,90% 66%,90% 18%,96% 18%,96% 100%);
+  box-shadow: inset 0 18px 26px rgba(85,220,212,.10), inset 0 -12px 18px rgba(0,0,0,.45);
 }
-.scene .ground{position:absolute; bottom:0; left:0; right:0; height:10%;
-  background:linear-gradient(90deg, transparent, rgba(85,220,212,.10), rgba(165,148,242,.08), transparent); filter:blur(18px);}
-.figure-svg{position:relative; z-index:2;}
+/* Ciudad neón del hero (SVG en index.html) */
+.ciudad-neon{position:absolute; inset:0; z-index:1; pointer-events:none;}
+.ciudad-neon svg{display:block; width:100%; height:100%;}
+/* Oscurece la izquierda para que el titular se lea bien sobre la ciudad */
+.ciudad-neon::after{content:""; position:absolute; inset:0;
+  background:linear-gradient(90deg, rgba(6,6,8,.82) 0%, rgba(6,6,8,.45) 38%, rgba(6,6,8,0) 62%);}
+.ciudad-neon .cuerpo{fill:#0b0a17;}
+.ciudad-neon .borde{fill:none; stroke:var(--c); stroke-width:1.6; opacity:.8; filter:url(#cn-neon);}
+.ciudad-neon .costura{fill:none; stroke:var(--c); stroke-width:2.2; stroke-linecap:round; filter:url(#cn-neon);}
+.ciudad-neon .estrellas{opacity:.55;}
+.ciudad-neon .parpadeo{animation:neon-parpadeo 7s infinite;}
+.ciudad-neon .parpadeo.lento{animation-duration:11s; animation-delay:-4s;}
+.ciudad-neon .baliza{animation:neon-baliza 2.4s infinite;}
+.ciudad-neon .ventanas-vivas rect{animation:neon-ventana 9s infinite;}
+@keyframes neon-parpadeo{0%,90%,93%,96%,100%{opacity:1;} 91.5%{opacity:.25;} 94.5%{opacity:.4;}}
+@keyframes neon-baliza{0%,60%,100%{opacity:1;} 70%,90%{opacity:.15;}}
+@keyframes neon-ventana{0%,45%{opacity:0;} 50%,85%{opacity:.9;} 90%,100%{opacity:0;}}
+@media (prefers-reduced-motion:reduce){ .ciudad-neon *{animation:none !important;} }
+.scene .ground{position:absolute; bottom:0; left:0; right:0; height:10%; z-index:3;
+  background:linear-gradient(90deg, transparent, rgba(85,220,212,.18), rgba(165,148,242,.12), transparent); filter:blur(18px);}
+.figure-svg{position:relative; z-index:2; filter:drop-shadow(0 0 12px rgba(85,220,212,.35));}
 .figure-svg .fig-body{fill:#06070A;}
 .figure-svg .fig-seam{fill:none; stroke-width:2.2; stroke-linecap:round; opacity:.85; filter:drop-shadow(0 0 5px var(--sc)) drop-shadow(0 0 1px var(--sc));}
 
-.hero-scene{height:min(80vh, 700px); min-height:500px; display:flex; align-items:flex-end;}
-.hero-scene .figure-svg{position:absolute; right:8%; bottom:0; height:96%; width:auto;}
-.hero-content{position:relative; z-index:3; width:100%;
-  background:linear-gradient(0deg, rgba(6,6,8,0.92) 10%, rgba(6,6,8,0.55) 55%, transparent 100%); padding:80px 28px 52px;}
+.hero-scene{height:min(82vh, 760px); min-height:520px; display:flex; align-items:flex-end; background:linear-gradient(180deg,#090B11 0%, #07080A 22%, #0A0D12 52%, #05070A 100%);}
+.hero-content{position:relative; z-index:4; width:100%;
+  background:linear-gradient(0deg, rgba(6,6,8,0.94) 8%, rgba(6,6,8,0.68) 44%, rgba(6,6,8,0.08) 100%); padding:80px 28px 52px;}
 .hero-inner{max-width:1240px; margin:0 auto;}
 .hero-tag{font-size:.72rem; letter-spacing:0.12em; color:var(--ink-dim); text-transform:uppercase; margin-bottom:20px;}
 .hero-tag::before{content:"—  "; color:var(--cian);}
 h1.hero-title{font-size:clamp(2.6rem, 7vw, 5.4rem); line-height:0.96; max-width:11ch;}
 .hero-sub{margin-top:22px; max-width:38ch; color:var(--ink-dim); font-size:1.02rem;}
 .hero-actions{display:flex; gap:14px; margin-top:36px; flex-wrap:wrap;}
-@media (max-width:640px){ .hero-content{padding:60px 16px 40px;} .hero-scene .figure-svg{right:-10%; opacity:.6;} }
+@media (max-width:640px){ .hero-content{padding:60px 16px 40px;} }
 
 /* ============ FILTROS ============ */
 .catalog-head{padding:80px 0 8px;}
