@@ -4,7 +4,7 @@
 
 **Equipo:** Luis Galindo Buendia · Roberto Ciller Miñana · Javier Zamora Lopez · JunJie Yang Jao
 
-**URL pública:** `https://__PENDIENTE__` (se rellena tras el despliegue en DonDominio)
+**URL pública:** https://algo.free.je (despliegue provisional en InfinityFree)
 
 ---
 
