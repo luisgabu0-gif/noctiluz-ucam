@@ -93,6 +93,17 @@ h1.hero-title{font-size:clamp(2.6rem, 7vw, 5.4rem); line-height:0.96; max-width:
 .hero-sub{margin-top:22px; max-width:38ch; color:var(--ink-dim); font-size:1.02rem;}
 .hero-actions{display:flex; gap:14px; margin-top:36px; flex-wrap:wrap;}
 @media (max-width:640px){ .hero-content{padding:60px 16px 40px;} }
+/* Móvil y tablet: con la ciudad anclada a la derecha solo se veía la luna y el dibujo quedaba detrás del texto.
+   Aquí la ciudad se dibuja entera arriba, con una altura fija (--alto-ciudad), y el texto va debajo. */
+@media (max-width:900px){
+  .hero-scene{--alto-ciudad:max(320px, 41.67vw); height:auto; min-height:0;}
+  .ciudad-neon svg{position:absolute; top:0; left:50%; height:var(--alto-ciudad); width:auto; aspect-ratio:1440/600; max-width:none; transform:translateX(-50%);}
+  /* Funde la calle con el fondo para que la ciudad no acabe en una línea recta */
+  .ciudad-neon::after{background:linear-gradient(180deg, rgba(6,6,8,0) calc(var(--alto-ciudad) - 110px), #060608 var(--alto-ciudad));}
+  .hero-content{padding-top:calc(var(--alto-ciudad) - 30px); background:none;}
+}
+/* En el móvil no cabe la ciudad entera: se centra en la torre y Doraemon (x ≈ 870 de 1440, el 60 % del dibujo) */
+@media (max-width:640px){ .ciudad-neon svg{transform:translateX(-60%);} }
 
 /* ============ FILTROS ============ */
 .catalog-head{padding:80px 0 8px;}
