@@ -73,7 +73,7 @@ INSERT INTO producto_modos (producto_id, modo_id) VALUES
 
 -- Variantes (SKU = producto + color de luz). imagen NULL = se muestra la ilustración provisional.
 INSERT INTO variantes (id, sku, producto_id, color_id, imagen, stock) VALUES
-(1,  'chaqueta-circuito-ambar',   1, 'ambar',   'assets/img/productos/chaqueta-circuito-ambar.svg', 11),
+(1,  'chaqueta-circuito-ambar',   1, 'ambar',   'assets/img/productos/chaqueta-circuito-ambar-modelo.webp', 11),
 (2,  'chaqueta-circuito-violeta', 1, 'violeta', NULL, 8),
 (3,  'chaqueta-perimetro-lima',   2, 'lima',    'assets/img/productos/chaqueta-perimetro-lima.jpg', 6),
 (4,  'chaqueta-perimetro-blanco', 2, 'blanco',  NULL, 0),
