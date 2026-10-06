@@ -150,7 +150,7 @@ Los errores de validación devuelven `422` con `{ "error": "...", "campos": { "c
 - Una única cuenta de back-office, sin roles ni recuperación de contraseña; su contraseña de prueba es pública en este README.
 - Sin límite de peticiones: el endpoint de eventos podría recibir eventos falsos en grandes cantidades.
 - No se envían emails ni se integra con logística; los estados de envío los cambia el back-office a mano.
-- Las fotos de producto son de baja resolución y 4 de las 16 variantes usan una ilustración provisional.
+- Las fotos de producto son de baja resolución y 1 de las 16 variantes usa una ilustración provisional.
 - Las exportaciones de eventos están limitadas a 1.000 registros por petición.
 
 ## 10. Uso de IA generativa

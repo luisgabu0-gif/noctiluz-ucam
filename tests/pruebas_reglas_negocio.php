@@ -217,16 +217,16 @@ $l = ReglasNegocio::validarLineas([['sku' => 'camiseta-pulso-cian', 'cantidad' =
 comprobar('El precio sale de la base de datos aunque el navegador envíe otro', 6900, $l[0]['precio']);
 comprobar('Importe de la línea = precio × cantidad (2 × 69 €)', 13800, $l[0]['importe']);
 
-$l = ReglasNegocio::validarLineas([linea('mochila-trayecto-blanco', 3, 'fijo', 'Única')]);
+$l = ReglasNegocio::validarLineas([linea('mochila-trayecto-rojo', 3, 'fijo', 'Única')]);
 comprobar('Se pueden comprar justo las unidades que hay en stock (3 de 3)', 3, $l[0]['cantidad']);
 
 comprobarError('Un producto agotado (stock 0) no se puede comprar',
     fn () => ReglasNegocio::validarLineas([linea('chaqueta-perimetro-blanco', 1)]), 'Chaqueta Perímetro · Blanco frío está agotado.', 'lineas.0');
 comprobarError('No se pueden pedir más unidades que el stock (4 de 3)',
-    fn () => ReglasNegocio::validarLineas([linea('mochila-trayecto-blanco', 4, 'fijo', 'Única')]), 'Solo quedan 3 unidades de Mochila Trayecto · Blanco frío.', 'lineas.0');
+    fn () => ReglasNegocio::validarLineas([linea('mochila-trayecto-rojo', 4, 'fijo', 'Única')]), 'Solo quedan 3 unidades de Mochila Trayecto · Rojo neón.', 'lineas.0');
 comprobarError('El stock se suma entre líneas del mismo SKU (2 + 2 de 3)',
-    fn () => ReglasNegocio::validarLineas([linea('mochila-trayecto-blanco', 2, 'fijo', 'Única'), linea('mochila-trayecto-blanco', 2, 'parpadeo', 'Única')]),
-    'Solo quedan 3 unidades de Mochila Trayecto · Blanco frío.', 'lineas.1');
+    fn () => ReglasNegocio::validarLineas([linea('mochila-trayecto-rojo', 2, 'fijo', 'Única'), linea('mochila-trayecto-rojo', 2, 'parpadeo', 'Única')]),
+    'Solo quedan 3 unidades de Mochila Trayecto · Rojo neón.', 'lineas.1');
 comprobarError('Máximo 9 unidades por línea',
     fn () => ReglasNegocio::validarLineas([linea('camiseta-pulso-cian', 10)]), 'La cantidad debe estar entre 1 y 9.', 'lineas.0');
 comprobarError('Cantidad 0 no permitida',

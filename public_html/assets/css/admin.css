@@ -49,6 +49,8 @@ table.tabla{width:100%; border-collapse:collapse; font-size:.84rem;}
 .cambio-estado{display:grid; grid-template-columns:1fr 1.4fr auto; gap:10px; align-items:end;}
 @media (max-width:700px){ .cambio-estado{grid-template-columns:1fr;} }
 .lista-simple{font-size:.84rem; color:var(--ink-dim);}
-.lista-simple div{display:flex; justify-content:space-between; gap:12px; padding:7px 0; border-bottom:1px solid var(--border-soft);}
+.lista-simple div, .lista-simple .fila-estado{display:flex; justify-content:space-between; align-items:center; gap:12px; padding:7px 0; border-bottom:1px solid var(--border-soft);}
+.fila-estado{width:100%; background:none; border:0; border-bottom:1px solid var(--border-soft); color:inherit; font:inherit; text-align:left; cursor:pointer;}
+.fila-estado:hover, .fila-estado:focus-visible{background:var(--surface);}
 .pista{font-size:.78rem; color:var(--ink-faint); margin-top:8px;}
 .pista code{font-family:ui-monospace,Consolas,monospace; color:var(--ink-dim);}

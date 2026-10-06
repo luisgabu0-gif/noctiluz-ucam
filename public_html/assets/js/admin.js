@@ -105,7 +105,7 @@ async function resumen() {
         <p class="pista">Calculado a partir de la tabla <code>eventos</code>: sesiones anónimas distintas que llegan a cada paso.</p>
       </div>
       <div class="panel"><h2>Pedidos por estado</h2>
-        <div class="lista-simple">${Object.keys(m.estados).map((e) => `<div>${etiquetaEstado(e)}<span>${m.por_estado[e] ?? 0}</span></div>`).join('')}</div>
+        <div class="lista-simple">${Object.keys(m.estados).map((e) => `<button type="button" class="fila-estado" data-ver-estado="${esc(e)}" title="Ver los pedidos en este estado">${etiquetaEstado(e)}<span>${m.por_estado[e] ?? 0}</span></button>`).join('')}</div>
       </div>
       <div class="panel"><h2>Eventos registrados por tipo</h2>
         ${barras(Object.entries(m.eventos_por_tipo), maxEventos)}
@@ -116,11 +116,23 @@ async function resumen() {
         <div class="lista-simple">${m.stock_bajo.length ? m.stock_bajo.map((v) => `<div><code>${esc(v.sku)}</code><span>${v.stock === 0 ? '<span class="estado estado-cancelado">agotado</span>' : `${v.stock} ud.`}</span></div>`).join('') : '<p class="pista">Todo el catálogo tiene stock suficiente.</p>'}</div>
       </div>
     </div>`;
+
+  // Pulsar un estado lleva a la pestaña Pedidos ya filtrada por ese estado.
+  contenido.querySelectorAll('[data-ver-estado]').forEach((b) => b.addEventListener('click', () => irAPedidos({ estado: b.dataset.verEstado })));
 }
 
 // ---------- Pedidos ----------
 
 const filtroPedidos = { estado: '', q: '' };
+
+/** Cambia a la pestaña Pedidos con un filtro de estado y, opcionalmente, un pedido abierto. */
+async function irAPedidos({ estado = '', codigo = null } = {}) {
+  filtroPedidos.estado = estado;
+  filtroPedidos.q = '';
+  pestanaActual = 'pedidos';
+  document.querySelectorAll('[data-pestana]').forEach((x) => x.setAttribute('aria-selected', String(x.dataset.pestana === 'pedidos')));
+  await pedidos(codigo);
+}
 
 async function pedidos(codigoAbierto = null) {
   const r = await llamar('admin/pedidos.php', { params: { estado: filtroPedidos.estado, q: filtroPedidos.q } });
@@ -289,13 +301,7 @@ async function incidencias() {
       incidencias();
     } catch (e) { toast(e.message, 'error'); }
   }));
-  contenido.querySelectorAll('[data-ver-pedido]').forEach((b) => b.addEventListener('click', async () => {
-    filtroPedidos.estado = '';
-    filtroPedidos.q = '';
-    pestanaActual = 'pedidos';
-    document.querySelectorAll('[data-pestana]').forEach((x) => x.setAttribute('aria-selected', String(x.dataset.pestana === 'pedidos')));
-    await pedidos(b.dataset.verPedido);
-  }));
+  contenido.querySelectorAll('[data-ver-pedido]').forEach((b) => b.addEventListener('click', () => irAPedidos({ codigo: b.dataset.verPedido })));
 }
 
 comprobarSesion().catch((e) => {
