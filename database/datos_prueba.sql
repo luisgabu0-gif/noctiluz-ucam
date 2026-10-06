@@ -31,7 +31,7 @@ INSERT INTO productos (id, slug, nombre, categoria_id, descripcion, material, au
 (2, 'chaqueta-perimetro', 'Chaqueta Perímetro', 'chaqueta',
  'Silueta recta y costuras marcadas con hilo luminoso perimetral. Pensada para trayectos en bici y noches largas de ciudad.',
  'Softshell cortavientos con membrana transpirable', 10, 159.00, 1, 4.6, 21, 1),
-(3, 'camiseta-pulso', 'Camiseta Pulso', 'camiseta',
+(3, 'camiseta-pulso', 'Onda Vibrante', 'camiseta',
  'Camiseta de algodón técnico con una línea de fibra óptica central que sigue la costura: de día invisible y de noche presente.',
  'Algodón técnico 95 % y elastano 5 %', 6, 69.00, 1, 4.7, 44, 1),
 (4, 'camiseta-linea', 'Camiseta Línea', 'camiseta',
@@ -48,7 +48,11 @@ INSERT INTO productos (id, slug, nombre, categoria_id, descripcion, material, au
  'Sarga de algodón con cierre ajustable', 5, 49.00, 0, 4.4, 12, 1),
 (8, 'gorra-faro', 'Gorra Faro', 'gorra',
  'Gorra técnica resistente al agua con línea luminosa frontal integrada en la costura de la visera.',
- 'Poliéster técnico impermeable', 5, 59.00, 0, 4.7, 23, 1);
+ 'Poliéster técnico impermeable', 5, 59.00, 0, 4.7, 23, 1),
+-- La Camiseta Línea azul se vende como producto propio: misma prenda, precio y modos que la Camiseta Línea.
+(9, 'estetica-azul', 'Estética azul', 'camiseta',
+ 'Corte oversize con doble línea luminosa lateral. Tejido ligero y transpirable para uso durante todo el año.',
+ 'Algodón orgánico peinado de 180 g/m²', 6, 69.00, 1, 4.5, 15, 1);
 
 -- Modos de iluminación que admite cada producto (depende del controlador que lleva).
 INSERT INTO producto_modos (producto_id, modo_id) VALUES
@@ -59,7 +63,8 @@ INSERT INTO producto_modos (producto_id, modo_id) VALUES
 (5, 'fijo'), (5, 'parpadeo'), (5, 'degradado'),
 (6, 'fijo'), (6, 'parpadeo'),
 (7, 'fijo'), (7, 'degradado'),
-(8, 'fijo'), (8, 'parpadeo');
+(8, 'fijo'), (8, 'parpadeo'),
+(9, 'fijo');
 
 -- Variantes (SKU = producto + color de luz). imagen NULL = se muestra la ilustración provisional.
 INSERT INTO variantes (id, sku, producto_id, color_id, imagen, stock) VALUES
@@ -69,7 +74,7 @@ INSERT INTO variantes (id, sku, producto_id, color_id, imagen, stock) VALUES
 (4,  'chaqueta-perimetro-blanco', 2, 'blanco',  NULL, 0),
 (5,  'camiseta-pulso-cian',       3, 'cian',    'assets/img/productos/camiseta-pulso-cian.jpg', 25),
 (6,  'camiseta-pulso-rosa',       3, 'rosa',    'assets/img/productos/camiseta-pulso-rosa.jpg', 17),
-(7,  'camiseta-linea-azul',       4, 'azul',    'assets/img/productos/camiseta-linea-azul.jpg', 20),
+(7,  'camiseta-linea-azul',       9, 'azul',   'assets/img/productos/camiseta-linea-azul.jpg', 20),
 (8,  'camiseta-linea-lima',       4, 'lima',    'assets/img/productos/camiseta-linea-lima.jpg', 14),
 (9,  'mochila-halo-cian',         5, 'cian',    'assets/img/productos/mochila-halo-cian.jpg', 9),
 (10, 'mochila-halo-lima',         5, 'lima',    'assets/img/productos/mochila-halo-lima.jpg', 12),
