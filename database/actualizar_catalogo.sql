@@ -2,7 +2,7 @@
 -- Se ejecuta desde phpMyAdmin (pestaña SQL o Importar). No borra pedidos, eventos ni stock.
 -- Se puede ejecutar más de una vez: si ya se aplicó una versión anterior, solo hace lo que falte.
 -- En una instalación nueva no hace falta: datos_prueba.sql ya incluye estos cambios.
--- Archivos que hay que subir antes: public_html/assets/img/productos/chaqueta-circuito-ambar.svg (el resto de SKU y fotos no cambian).
+-- Archivos que hay que subir antes: public_html/assets/img/productos/chaqueta-circuito-ambar-modelo.webp (el resto de SKU y fotos no cambian).
 
 START TRANSACTION;
 
@@ -55,8 +55,8 @@ DELETE FROM producto_modos WHERE producto_id = (SELECT id FROM productos WHERE s
 
 
 -- Nuevo diseño de la Chaqueta Circuito: ilustración vectorial para la ámbar y descripción renovada.
--- Antes hay que subir public_html/assets/img/productos/chaqueta-circuito-ambar.svg.
-UPDATE variantes SET imagen = 'assets/img/productos/chaqueta-circuito-ambar.svg' WHERE sku = 'chaqueta-circuito-ambar';
+-- Antes hay que subir public_html/assets/img/productos/chaqueta-circuito-ambar-modelo.webp
+UPDATE variantes SET imagen = 'assets/img/productos/chaqueta-circuito-ambar-modelo.webp' WHERE sku = 'chaqueta-circuito-ambar';
 UPDATE productos SET descripcion = 'Chaqueta técnica de cuello alto con pistas de fibra óptica que recorren el pecho y las mangas como un circuito impreso. Bolsillo diagonal con cremallera y módulo LED extraíble en el pecho: luz continua y discreta para la ciudad de noche.'
 WHERE slug = 'chaqueta-circuito';
 
