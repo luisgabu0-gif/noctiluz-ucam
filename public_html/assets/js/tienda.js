@@ -128,8 +128,6 @@ document.querySelectorAll('[data-buscador]').forEach((input) => {
   });
 });
 
-$('[data-arriba]')?.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-
 document.querySelectorAll('[data-categoria]').forEach((a) => a.addEventListener('click', () => {
   if (!estado.catalogo) return;
   restablecerFiltros();
