@@ -34,7 +34,7 @@ INSERT INTO productos (id, slug, nombre, categoria_id, descripcion, material, au
 (3, 'camiseta-pulso', 'Onda Vibrante', 'camiseta',
  'Camiseta de algodón técnico con una línea de fibra óptica central que sigue la costura: de día invisible y de noche presente.',
  'Algodón técnico 95 % y elastano 5 %', 6, 69.00, 1, 4.7, 44, 1),
-(4, 'camiseta-linea', 'Camiseta Línea', 'camiseta',
+(4, 'camiseta-linea', 'Explosión refrescante', 'camiseta',
  'Corte oversize con doble línea luminosa lateral. Tejido ligero y transpirable para uso durante todo el año.',
  'Algodón orgánico peinado de 180 g/m²', 6, 69.00, 1, 4.5, 15, 1),
 (5, 'mochila-halo', 'Mochila Halo', 'mochila',
@@ -49,7 +49,7 @@ INSERT INTO productos (id, slug, nombre, categoria_id, descripcion, material, au
 (8, 'gorra-faro', 'Gorra Faro', 'gorra',
  'Gorra técnica resistente al agua con línea luminosa frontal integrada en la costura de la visera.',
  'Poliéster técnico impermeable', 5, 59.00, 0, 4.7, 23, 1),
--- La Camiseta Línea azul se vende como producto propio: misma prenda, precio y modos que la Camiseta Línea.
+-- La antigua Camiseta Línea azul se vende como producto propio: misma prenda, precio y modos que «Explosión refrescante» (la lima).
 (9, 'estetica-azul', 'Estética azul', 'camiseta',
  'Corte oversize con doble línea luminosa lateral. Tejido ligero y transpirable para uso durante todo el año.',
  'Algodón orgánico peinado de 180 g/m²', 6, 69.00, 1, 4.5, 15, 1);

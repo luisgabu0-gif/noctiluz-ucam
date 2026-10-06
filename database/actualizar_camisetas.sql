@@ -1,7 +1,8 @@
 -- NOCTILUZ · Nuevos nombres de las camisetas, para una base MySQL YA instalada (hosting).
--- Se ejecuta una sola vez desde phpMyAdmin (pestaña SQL o Importar). No borra pedidos, eventos ni stock.
+-- Se ejecuta desde phpMyAdmin (pestaña SQL o Importar). No borra pedidos, eventos ni stock.
+-- Se puede ejecutar más de una vez: si ya se aplicó una versión anterior, solo hace lo que falte.
 -- En una instalación nueva no hace falta: datos_prueba.sql ya incluye estos cambios.
--- No hay que subir archivos: el SKU y la foto de la camiseta azul no cambian.
+-- No hay que subir archivos: los SKU y las fotos no cambian.
 
 START TRANSACTION;
 
@@ -10,11 +11,12 @@ UPDATE productos SET nombre = 'Onda Vibrante' WHERE slug = 'camiseta-pulso';
 
 -- La Camiseta Línea azul se vende como producto propio, «Estética azul»:
 -- misma prenda, precio, tallas y modos que la Camiseta Línea, que se queda solo con el color verde lima.
-INSERT INTO productos (slug, nombre, categoria_id, descripcion, material, autonomia_h, precio, tiene_tallas, valoracion, num_resenas, activo)
+-- INSERT IGNORE: si el producto ya existe (slug único), no se duplica.
+INSERT IGNORE INTO productos (slug, nombre, categoria_id, descripcion, material, autonomia_h, precio, tiene_tallas, valoracion, num_resenas, activo)
 SELECT 'estetica-azul', 'Estética azul', categoria_id, descripcion, material, autonomia_h, precio, tiene_tallas, valoracion, num_resenas, activo
   FROM productos WHERE slug = 'camiseta-linea';
 
-INSERT INTO producto_modos (producto_id, modo_id)
+INSERT IGNORE INTO producto_modos (producto_id, modo_id)
 SELECT nuevo.id, pm.modo_id
   FROM producto_modos pm
   JOIN productos linea ON linea.id = pm.producto_id AND linea.slug = 'camiseta-linea'
@@ -23,5 +25,8 @@ SELECT nuevo.id, pm.modo_id
 -- La variante azul (mismo id, SKU, foto y stock) pasa al producto nuevo.
 UPDATE variantes SET producto_id = (SELECT id FROM productos WHERE slug = 'estetica-azul')
 WHERE sku = 'camiseta-linea-azul';
+
+-- La Camiseta Línea, que se queda solo con el verde lima, pasa a llamarse Explosión refrescante.
+UPDATE productos SET nombre = 'Explosión refrescante' WHERE slug = 'camiseta-linea';
 
 COMMIT;
