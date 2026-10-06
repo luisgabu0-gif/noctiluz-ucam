@@ -15,7 +15,8 @@ INSERT INTO colores (id, nombre, hex) VALUES
 ('ambar',   'Ámbar',       '#F3B36B'),
 ('violeta', 'Violeta',     '#A594F2'),
 ('lima',    'Verde lima',  '#BFE86E'),
-('blanco',  'Blanco frío', '#E9EEF7');
+('blanco',  'Blanco frío', '#E9EEF7'),
+('rojo',    'Rojo neón',   '#F25C5C');
 
 INSERT INTO modos (id, nombre, descripcion) VALUES
 ('fijo',      'Fijo',      'Luz continua a intensidad constante. Máxima autonomía.'),
@@ -36,11 +37,11 @@ INSERT INTO productos (id, slug, nombre, categoria_id, descripcion, material, au
  'Corte oversize con doble línea luminosa lateral. Tejido ligero y transpirable para uso durante todo el año.',
  'Algodón orgánico peinado de 180 g/m²', 6, 69.00, 1, 4.5, 15, 1),
 (5, 'mochila-halo', 'Mochila Halo', 'mochila',
- 'Mochila urbana con perímetro luminoso en el contorno frontal, visible desde cualquier ángulo en la carretera.',
- 'Poliéster 600D reciclado, capacidad de 20 L', 12, 89.00, 0, 4.9, 27, 1),
+ 'Mochila urbana de frontal liso con un hilo de fibra óptica que recorre todo su contorno y la dibuja en la oscuridad, visible desde cualquier ángulo en la carretera.',
+ 'Poliéster 600D reciclado con frontal semirrígido, capacidad de 20 L', 12, 89.00, 0, 4.9, 27, 1),
 (6, 'mochila-trayecto', 'Mochila Trayecto', 'mochila',
- 'Compartimento acolchado para portátil y correas reflectantes con fibra óptica integrada en el asa superior.',
- 'Lona encerada y poliéster, 24 L con funda para portátil de 15"', 14, 119.00, 0, 4.6, 19, 1),
+ 'Mochila para el trayecto diario con funda acolchada para portátil y bolsillos laterales. Según el color, la fibra óptica perfila asa, tirantes y bolsillos con flechas de dirección o dibuja un patrón geométrico en el frontal.',
+ 'Poliéster técnico resistente al agua, 24 L con funda para portátil de 15"', 14, 119.00, 0, 4.6, 19, 1),
 (7, 'gorra-aura', 'Gorra Aura', 'gorra',
  'Gorra de visera curva con un halo luminoso alrededor de la copa, alimentado por una batería plana en el ajuste trasero.',
  'Sarga de algodón con cierre ajustable', 5, 49.00, 0, 4.4, 12, 1),
@@ -70,9 +71,9 @@ INSERT INTO variantes (id, sku, producto_id, color_id, imagen, stock) VALUES
 (7,  'camiseta-linea-blanco',     4, 'blanco',  'assets/img/productos/camiseta-linea-blanco.jpg', 20),
 (8,  'camiseta-linea-ambar',      4, 'ambar',   NULL, 14),
 (9,  'mochila-halo-cian',         5, 'cian',    'assets/img/productos/mochila-halo-cian.jpg', 9),
-(10, 'mochila-halo-violeta',      5, 'violeta', 'assets/img/productos/mochila-halo-violeta.jpg', 12),
-(11, 'mochila-trayecto-rosa',     6, 'rosa',    NULL, 7),
-(12, 'mochila-trayecto-blanco',   6, 'blanco',  NULL, 3),
+(10, 'mochila-halo-lima',         5, 'lima',    'assets/img/productos/mochila-halo-lima.jpg', 12),
+(11, 'mochila-trayecto-rosa',     6, 'rosa',    'assets/img/productos/mochila-trayecto-rosa.jpg', 7),
+(12, 'mochila-trayecto-rojo',     6, 'rojo',    'assets/img/productos/mochila-trayecto-rojo.jpg', 3),
 (13, 'gorra-aura-violeta',        7, 'violeta', 'assets/img/productos/gorra-aura-violeta.jpg', 18),
 (14, 'gorra-aura-blanco',         7, 'blanco',  'assets/img/productos/gorra-aura-blanco.jpg', 15),
 (15, 'gorra-faro-cian',           8, 'cian',    NULL, 10),
