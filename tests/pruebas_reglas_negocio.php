@@ -234,7 +234,7 @@ comprobarError('Cantidad 0 no permitida',
 comprobarError('Un SKU que no existe se rechaza',
     fn () => ReglasNegocio::validarLineas([linea('camiseta-fantasma-negro', 1)]), 'Este producto ya no está disponible.', 'lineas.0');
 comprobarError('Un modo de iluminación que el producto no admite se rechaza',
-    fn () => ReglasNegocio::validarLineas([linea('camiseta-linea-blanco', 1, 'parpadeo')]), 'Camiseta Línea no admite el modo de iluminación elegido.', 'lineas.0');
+    fn () => ReglasNegocio::validarLineas([linea('camiseta-linea-azul', 1, 'parpadeo')]), 'Camiseta Línea no admite el modo de iluminación elegido.', 'lineas.0');
 comprobarError('Una mochila no tiene tallas de ropa',
     fn () => ReglasNegocio::validarLineas([linea('mochila-halo-cian', 1, 'fijo', 'M')]), 'Talla no válida para Mochila Halo.', 'lineas.0');
 comprobarError('Una camiseta no tiene talla única',

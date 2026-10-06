@@ -15,7 +15,8 @@ INSERT INTO colores (id, nombre, hex) VALUES
 ('ambar',   'Ámbar',       '#F3B36B'),
 ('violeta', 'Violeta',     '#A594F2'),
 ('lima',    'Verde lima',  '#BFE86E'),
-('blanco',  'Blanco frío', '#E9EEF7');
+('blanco',  'Blanco frío', '#E9EEF7'),
+('azul',    'Azul',        '#4D8DFF');
 
 INSERT INTO modos (id, nombre, descripcion) VALUES
 ('fijo',      'Fijo',      'Luz continua a intensidad constante. Máxima autonomía.'),
@@ -65,10 +66,10 @@ INSERT INTO variantes (id, sku, producto_id, color_id, imagen, stock) VALUES
 (2,  'chaqueta-circuito-violeta', 1, 'violeta', NULL, 8),
 (3,  'chaqueta-perimetro-lima',   2, 'lima',    'assets/img/productos/chaqueta-perimetro-lima.jpg', 6),
 (4,  'chaqueta-perimetro-blanco', 2, 'blanco',  NULL, 0),
-(5,  'camiseta-pulso-cian',       3, 'cian',    NULL, 25),
+(5,  'camiseta-pulso-cian',       3, 'cian',    'assets/img/productos/camiseta-pulso-cian.jpg', 25),
 (6,  'camiseta-pulso-rosa',       3, 'rosa',    'assets/img/productos/camiseta-pulso-rosa.jpg', 17),
-(7,  'camiseta-linea-blanco',     4, 'blanco',  'assets/img/productos/camiseta-linea-blanco.jpg', 20),
-(8,  'camiseta-linea-ambar',      4, 'ambar',   NULL, 14),
+(7,  'camiseta-linea-azul',       4, 'azul',    'assets/img/productos/camiseta-linea-azul.jpg', 20),
+(8,  'camiseta-linea-lima',       4, 'lima',    'assets/img/productos/camiseta-linea-lima.jpg', 14),
 (9,  'mochila-halo-cian',         5, 'cian',    'assets/img/productos/mochila-halo-cian.jpg', 9),
 (10, 'mochila-halo-violeta',      5, 'violeta', 'assets/img/productos/mochila-halo-violeta.jpg', 12),
 (11, 'mochila-trayecto-rosa',     6, 'rosa',    NULL, 7),
