@@ -58,18 +58,18 @@ INSERT INTO productos (id, slug, nombre, categoria_id, descripcion, material, au
  'Camiseta de algodón técnico con una línea de fibra óptica central que sigue la costura: de día invisible y de noche presente.',
  'Algodón técnico 95 % y elastano 5 %', 6, 69.00, 1, 4.7, 44, 1);
 
--- Modos de iluminación que admite cada producto (depende del controlador que lleva).
+-- Modo de iluminación de cada producto: uno solo, el que mejor encaja con su diseño (depende del controlador que lleva).
 INSERT INTO producto_modos (producto_id, modo_id) VALUES
-(1, 'fijo'), (1, 'parpadeo'), (1, 'degradado'),
-(2, 'fijo'), (2, 'degradado'),
-(3, 'parpadeo'),
-(4, 'fijo'),
-(5, 'fijo'), (5, 'parpadeo'), (5, 'degradado'),
-(6, 'fijo'), (6, 'parpadeo'),
-(7, 'fijo'), (7, 'degradado'),
-(8, 'fijo'), (8, 'parpadeo'),
-(9, 'fijo'),
-(10, 'fijo');
+(1, 'fijo'),         -- Chaqueta Circuito: luz discreta y continua
+(2, 'degradado'),    -- Chaqueta Perímetro: el contorno sube y baja de intensidad
+(3, 'parpadeo'),     -- Onda Vibrante
+(4, 'fijo'),         -- Explosión refrescante
+(5, 'fijo'),         -- Mochila Halo: el contorno la dibuja en la oscuridad
+(6, 'parpadeo'),     -- Mochila Trayecto: flechas de dirección, como un intermitente
+(7, 'degradado'),    -- Gorra Aura: halo que respira
+(8, 'fijo'),         -- Gorra Faro: ilumina como un faro
+(9, 'fijo'),         -- Estética azul
+(10, 'fijo');       -- Camiseta Pulso (cian)
 
 -- Variantes (SKU = producto + color de luz). imagen NULL = se muestra la ilustración provisional.
 INSERT INTO variantes (id, sku, producto_id, color_id, imagen, stock) VALUES

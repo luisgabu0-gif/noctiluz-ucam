@@ -1,4 +1,4 @@
--- NOCTILUZ · Nuevos nombres de las camisetas, para una base MySQL YA instalada (hosting).
+-- NOCTILUZ · Cambios del catálogo (nombres de las camisetas y un solo modo de luz por producto), para una base MySQL YA instalada (hosting).
 -- Se ejecuta desde phpMyAdmin (pestaña SQL o Importar). No borra pedidos, eventos ni stock.
 -- Se puede ejecutar más de una vez: si ya se aplicó una versión anterior, solo hace lo que falte.
 -- En una instalación nueva no hace falta: datos_prueba.sql ya incluye estos cambios.
@@ -43,5 +43,14 @@ WHERE sku = 'camiseta-pulso-cian';
 -- Onda Vibrante se queda con la rosa y solo con el modo parpadeo.
 DELETE FROM producto_modos
 WHERE producto_id = (SELECT id FROM productos WHERE slug = 'camiseta-pulso') AND modo_id <> 'parpadeo';
+
+-- Cada producto tiene un solo modo de iluminación: se borran los demás.
+-- (Onda Vibrante, Explosión refrescante, Estética azul y Camiseta Pulso ya tienen uno solo.)
+DELETE FROM producto_modos WHERE producto_id = (SELECT id FROM productos WHERE slug = 'chaqueta-circuito')  AND modo_id <> 'fijo';
+DELETE FROM producto_modos WHERE producto_id = (SELECT id FROM productos WHERE slug = 'chaqueta-perimetro') AND modo_id <> 'degradado';
+DELETE FROM producto_modos WHERE producto_id = (SELECT id FROM productos WHERE slug = 'mochila-halo')       AND modo_id <> 'fijo';
+DELETE FROM producto_modos WHERE producto_id = (SELECT id FROM productos WHERE slug = 'mochila-trayecto')   AND modo_id <> 'parpadeo';
+DELETE FROM producto_modos WHERE producto_id = (SELECT id FROM productos WHERE slug = 'gorra-aura')         AND modo_id <> 'degradado';
+DELETE FROM producto_modos WHERE producto_id = (SELECT id FROM productos WHERE slug = 'gorra-faro')         AND modo_id <> 'fijo';
 
 COMMIT;

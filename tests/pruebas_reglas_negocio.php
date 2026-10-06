@@ -217,15 +217,15 @@ $l = ReglasNegocio::validarLineas([['sku' => 'camiseta-pulso-cian', 'cantidad' =
 comprobar('El precio sale de la base de datos aunque el navegador envíe otro', 6900, $l[0]['precio']);
 comprobar('Importe de la línea = precio × cantidad (2 × 69 €)', 13800, $l[0]['importe']);
 
-$l = ReglasNegocio::validarLineas([linea('mochila-trayecto-rojo', 3, 'fijo', 'Única')]);
+$l = ReglasNegocio::validarLineas([linea('mochila-trayecto-rojo', 3, 'parpadeo', 'Única')]);
 comprobar('Se pueden comprar justo las unidades que hay en stock (3 de 3)', 3, $l[0]['cantidad']);
 
 comprobarError('Un producto agotado (stock 0) no se puede comprar',
-    fn () => ReglasNegocio::validarLineas([linea('chaqueta-perimetro-blanco', 1)]), 'Chaqueta Perímetro · Blanco frío está agotado.', 'lineas.0');
+    fn () => ReglasNegocio::validarLineas([linea('chaqueta-perimetro-blanco', 1, 'degradado')]), 'Chaqueta Perímetro · Blanco frío está agotado.', 'lineas.0');
 comprobarError('No se pueden pedir más unidades que el stock (4 de 3)',
-    fn () => ReglasNegocio::validarLineas([linea('mochila-trayecto-rojo', 4, 'fijo', 'Única')]), 'Solo quedan 3 unidades de Mochila Trayecto · Rojo neón.', 'lineas.0');
+    fn () => ReglasNegocio::validarLineas([linea('mochila-trayecto-rojo', 4, 'parpadeo', 'Única')]), 'Solo quedan 3 unidades de Mochila Trayecto · Rojo neón.', 'lineas.0');
 comprobarError('El stock se suma entre líneas del mismo SKU (2 + 2 de 3)',
-    fn () => ReglasNegocio::validarLineas([linea('mochila-trayecto-rojo', 2, 'fijo', 'Única'), linea('mochila-trayecto-rojo', 2, 'parpadeo', 'Única')]),
+    fn () => ReglasNegocio::validarLineas([linea('mochila-trayecto-rojo', 2, 'parpadeo', 'Única'), linea('mochila-trayecto-rojo', 2, 'parpadeo', 'Única')]),
     'Solo quedan 3 unidades de Mochila Trayecto · Rojo neón.', 'lineas.1');
 comprobarError('Máximo 9 unidades por línea',
     fn () => ReglasNegocio::validarLineas([linea('camiseta-pulso-cian', 10)]), 'La cantidad debe estar entre 1 y 9.', 'lineas.0');
@@ -239,6 +239,8 @@ comprobarError('La Camiseta Pulso (cian) solo admite luz fija',
     fn () => ReglasNegocio::validarLineas([linea('camiseta-pulso-cian', 1, 'parpadeo')]), 'Camiseta Pulso no admite el modo de iluminación elegido.', 'lineas.0');
 comprobarError('Onda Vibrante (rosa) solo admite parpadeo',
     fn () => ReglasNegocio::validarLineas([linea('camiseta-pulso-rosa', 1, 'fijo')]), 'Onda Vibrante no admite el modo de iluminación elegido.', 'lineas.0');
+$modosPorProducto = Db::todos('SELECT p.nombre, COUNT(pm.modo_id) AS n FROM productos p LEFT JOIN producto_modos pm ON pm.producto_id = p.id GROUP BY p.id, p.nombre HAVING COUNT(pm.modo_id) <> 1');
+comprobar('Cada producto tiene exactamente un modo de iluminación', [], array_column($modosPorProducto, 'nombre'));
 comprobarError('Una mochila no tiene tallas de ropa',
     fn () => ReglasNegocio::validarLineas([linea('mochila-halo-cian', 1, 'fijo', 'M')]), 'Talla no válida para Mochila Halo.', 'lineas.0');
 comprobarError('Una camiseta no tiene talla única',
@@ -249,7 +251,7 @@ comprobarError('Más de 20 líneas en el carrito se rechaza',
     fn () => ReglasNegocio::validarLineas(array_fill(0, 21, linea('camiseta-pulso-cian', 1))), 'El carrito tiene demasiadas líneas.');
 
 try {
-    ReglasNegocio::validarLineas([linea('chaqueta-perimetro-blanco', 1), linea('camiseta-pulso-cian', 1), linea('mochila-halo-cian', 1, 'fijo', 'XL')]);
+    ReglasNegocio::validarLineas([linea('chaqueta-perimetro-blanco', 1, 'degradado'), linea('camiseta-pulso-cian', 1), linea('mochila-halo-cian', 1, 'fijo', 'XL')]);
     comprobar('Se informa de todas las líneas con error a la vez', ['lineas.0', 'lineas.2'], 'no se lanzó ningún error');
 } catch (ErrorNegocio $e) {
     comprobar('Se informa de todas las líneas con error a la vez', ['lineas.0', 'lineas.2'], array_keys($e->detalles));
@@ -257,7 +259,7 @@ try {
 
 // El stock real se descuenta al crear el pedido y se devuelve si se cancela.
 $antes = stock('gorra-faro-violeta');
-$pedido = Pedidos::crear(datosCheckout([linea('gorra-faro-violeta', 3, 'parpadeo', 'Única')]));
+$pedido = Pedidos::crear(datosCheckout([linea('gorra-faro-violeta', 3, 'fijo', 'Única')]));
 comprobar('Al crear el pedido se descuenta el stock (4 → 1)', $antes - 3, stock('gorra-faro-violeta'));
 comprobar('El total guardado es el calculado (3 × 59 € = 177 €, envío gratis)', 177.0, $pedido['total']);
 
