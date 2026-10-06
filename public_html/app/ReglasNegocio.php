@@ -30,8 +30,8 @@ final class ReglasNegocio
     /** Máquina de estados del pedido: desde cada estado, a cuáles se puede pasar. */
     public const TRANSICIONES = [
         'creado'         => ['pagado', 'cancelado'],
-        'pagado'         => ['en_preparacion', 'incidencia', 'cancelado'],
-        'en_preparacion' => ['enviado', 'incidencia', 'cancelado'],
+        'pagado'         => ['en_preparacion', 'enviado', 'entregado', 'incidencia', 'cancelado'],
+        'en_preparacion' => ['enviado', 'entregado', 'incidencia', 'cancelado'],
         'enviado'        => ['entregado', 'incidencia'],
         'entregado'      => ['incidencia'],
         'incidencia'     => ['en_preparacion', 'enviado', 'entregado', 'cancelado'],

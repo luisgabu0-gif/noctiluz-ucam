@@ -105,7 +105,7 @@ Cualquier otra tarjeta, aunque sea válida, se rechaza: así nadie puede introdu
 - Envío estándar 4,95 € (gratis si el pedido, tras descuento, llega a 120 €); exprés 9,95 € siempre.
 - Solo se puede comprar un modo de iluminación que el producto admita y una talla válida; máximo 9 unidades por línea y nunca más que el stock.
 - El stock se descuenta al crear el pedido (con control de concurrencia) y se devuelve si se cancela.
-- Estados: `creado → pagado → en_preparacion → enviado → entregado`, más `incidencia` y `cancelado`. Solo se permiten las transiciones definidas en `ReglasNegocio::TRANSICIONES`; `pagado` solo lo asigna la pasarela simulada.
+- Estados: `creado → pagado → en_preparacion → enviado → entregado`, más `incidencia` y `cancelado`. Desde `pagado` el back-office también puede marcar directamente `enviado` o `entregado`, y desde `en_preparacion`, `entregado`. Solo se permiten las transiciones definidas en `ReglasNegocio::TRANSICIONES`; `pagado` solo lo asigna la pasarela simulada.
 
 ## 7. Eventos de negocio
 
