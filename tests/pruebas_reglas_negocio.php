@@ -213,7 +213,7 @@ comprobar('Vista previa: el total se calcula igual, sin el cupón', 5395, $t['to
 
 seccion('Stock y validación de las líneas del carrito');
 
-$l = ReglasNegocio::validarLineas([['sku' => 'camiseta-pulso-cian', 'cantidad' => 2, 'modo' => 'parpadeo', 'talla' => 'L', 'precio' => 0.01]]);
+$l = ReglasNegocio::validarLineas([['sku' => 'camiseta-pulso-cian', 'cantidad' => 2, 'modo' => 'fijo', 'talla' => 'L', 'precio' => 0.01]]);
 comprobar('El precio sale de la base de datos aunque el navegador envíe otro', 6900, $l[0]['precio']);
 comprobar('Importe de la línea = precio × cantidad (2 × 69 €)', 13800, $l[0]['importe']);
 
@@ -235,10 +235,14 @@ comprobarError('Un SKU que no existe se rechaza',
     fn () => ReglasNegocio::validarLineas([linea('camiseta-fantasma-negro', 1)]), 'Este producto ya no está disponible.', 'lineas.0');
 comprobarError('Un modo de iluminación que el producto no admite se rechaza',
     fn () => ReglasNegocio::validarLineas([linea('camiseta-linea-lima', 1, 'parpadeo')]), 'Explosión refrescante no admite el modo de iluminación elegido.', 'lineas.0');
+comprobarError('La Camiseta Pulso (cian) solo admite luz fija',
+    fn () => ReglasNegocio::validarLineas([linea('camiseta-pulso-cian', 1, 'parpadeo')]), 'Camiseta Pulso no admite el modo de iluminación elegido.', 'lineas.0');
+comprobarError('Onda Vibrante (rosa) solo admite parpadeo',
+    fn () => ReglasNegocio::validarLineas([linea('camiseta-pulso-rosa', 1, 'fijo')]), 'Onda Vibrante no admite el modo de iluminación elegido.', 'lineas.0');
 comprobarError('Una mochila no tiene tallas de ropa',
     fn () => ReglasNegocio::validarLineas([linea('mochila-halo-cian', 1, 'fijo', 'M')]), 'Talla no válida para Mochila Halo.', 'lineas.0');
 comprobarError('Una camiseta no tiene talla única',
-    fn () => ReglasNegocio::validarLineas([linea('camiseta-pulso-cian', 1, 'fijo', 'Única')]), 'Talla no válida para Onda Vibrante.', 'lineas.0');
+    fn () => ReglasNegocio::validarLineas([linea('camiseta-pulso-rosa', 1, 'parpadeo', 'Única')]), 'Talla no válida para Onda Vibrante.', 'lineas.0');
 comprobarError('El carrito vacío no se puede comprar',
     fn () => ReglasNegocio::validarLineas([]), 'El carrito está vacío.');
 comprobarError('Más de 20 líneas en el carrito se rechaza',

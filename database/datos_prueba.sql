@@ -52,19 +52,24 @@ INSERT INTO productos (id, slug, nombre, categoria_id, descripcion, material, au
 -- La antigua Camiseta Línea azul se vende como producto propio: misma prenda, precio y modos que «Explosión refrescante» (la lima).
 (9, 'estetica-azul', 'Estética azul', 'camiseta',
  'Corte oversize con doble línea luminosa lateral. Tejido ligero y transpirable para uso durante todo el año.',
- 'Algodón orgánico peinado de 180 g/m²', 6, 69.00, 1, 4.5, 15, 1);
+ 'Algodón orgánico peinado de 180 g/m²', 6, 69.00, 1, 4.5, 15, 1),
+-- La cian de la antigua Camiseta Pulso se vende como producto propio (solo luz fija); Onda Vibrante se queda con la rosa (solo parpadeo).
+(10, 'pulso-cian', 'Camiseta Pulso', 'camiseta',
+ 'Camiseta de algodón técnico con una línea de fibra óptica central que sigue la costura: de día invisible y de noche presente.',
+ 'Algodón técnico 95 % y elastano 5 %', 6, 69.00, 1, 4.7, 44, 1);
 
 -- Modos de iluminación que admite cada producto (depende del controlador que lleva).
 INSERT INTO producto_modos (producto_id, modo_id) VALUES
 (1, 'fijo'), (1, 'parpadeo'), (1, 'degradado'),
 (2, 'fijo'), (2, 'degradado'),
-(3, 'fijo'), (3, 'parpadeo'),
+(3, 'parpadeo'),
 (4, 'fijo'),
 (5, 'fijo'), (5, 'parpadeo'), (5, 'degradado'),
 (6, 'fijo'), (6, 'parpadeo'),
 (7, 'fijo'), (7, 'degradado'),
 (8, 'fijo'), (8, 'parpadeo'),
-(9, 'fijo');
+(9, 'fijo'),
+(10, 'fijo');
 
 -- Variantes (SKU = producto + color de luz). imagen NULL = se muestra la ilustración provisional.
 INSERT INTO variantes (id, sku, producto_id, color_id, imagen, stock) VALUES
@@ -72,7 +77,7 @@ INSERT INTO variantes (id, sku, producto_id, color_id, imagen, stock) VALUES
 (2,  'chaqueta-circuito-violeta', 1, 'violeta', NULL, 8),
 (3,  'chaqueta-perimetro-lima',   2, 'lima',    'assets/img/productos/chaqueta-perimetro-lima.jpg', 6),
 (4,  'chaqueta-perimetro-blanco', 2, 'blanco',  NULL, 0),
-(5,  'camiseta-pulso-cian',       3, 'cian',    'assets/img/productos/camiseta-pulso-cian.jpg', 25),
+(5,  'camiseta-pulso-cian',      10, 'cian',   'assets/img/productos/camiseta-pulso-cian.jpg', 25),
 (6,  'camiseta-pulso-rosa',       3, 'rosa',    'assets/img/productos/camiseta-pulso-rosa.jpg', 17),
 (7,  'camiseta-linea-azul',       9, 'azul',   'assets/img/productos/camiseta-linea-azul.jpg', 20),
 (8,  'camiseta-linea-lima',       4, 'lima',    'assets/img/productos/camiseta-linea-lima.jpg', 14),

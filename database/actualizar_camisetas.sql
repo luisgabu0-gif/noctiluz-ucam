@@ -29,4 +29,19 @@ WHERE sku = 'camiseta-linea-azul';
 -- La Camiseta Línea, que se queda solo con el verde lima, pasa a llamarse Explosión refrescante.
 UPDATE productos SET nombre = 'Explosión refrescante' WHERE slug = 'camiseta-linea';
 
+-- La cian de Onda Vibrante se vende como producto propio, «Camiseta Pulso», solo con luz fija.
+INSERT IGNORE INTO productos (slug, nombre, categoria_id, descripcion, material, autonomia_h, precio, tiene_tallas, valoracion, num_resenas, activo)
+SELECT 'pulso-cian', 'Camiseta Pulso', categoria_id, descripcion, material, autonomia_h, precio, tiene_tallas, valoracion, num_resenas, activo
+  FROM productos WHERE slug = 'camiseta-pulso';
+
+INSERT IGNORE INTO producto_modos (producto_id, modo_id)
+SELECT id, 'fijo' FROM productos WHERE slug = 'pulso-cian';
+
+UPDATE variantes SET producto_id = (SELECT id FROM productos WHERE slug = 'pulso-cian')
+WHERE sku = 'camiseta-pulso-cian';
+
+-- Onda Vibrante se queda con la rosa y solo con el modo parpadeo.
+DELETE FROM producto_modos
+WHERE producto_id = (SELECT id FROM productos WHERE slug = 'camiseta-pulso') AND modo_id <> 'parpadeo';
+
 COMMIT;
