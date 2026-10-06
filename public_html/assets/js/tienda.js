@@ -80,6 +80,7 @@ function tarjeta({ p, v }) {
       <div class="pcard-type">${esc(p.categoria_nombre)}</div>
       <div class="pcard-name">${esc(p.nombre)}</div>
       <div class="pcard-color" style="--gc:${esc(v.hex)}"><i></i>Luz ${esc(v.color_nombre.toLowerCase())}</div>
+      <div class="pcard-modes" aria-label="Modos disponibles">${p.modos.map((m) => `<span>${esc(nombreModo(m))}</span>`).join('')}</div>
       <div class="pcard-foot"><span class="pcard-price">${eur(p.precio)}</span><span class="pcard-cta">Ver producto</span></div>
     </div>
   </a>`;

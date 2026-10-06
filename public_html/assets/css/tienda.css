@@ -156,6 +156,8 @@ h1.hero-title{font-size:clamp(2.6rem, 7vw, 5.4rem); line-height:0.96; max-width:
 .pcard-name{margin-top:7px; font-size:1rem; font-weight:600;}
 .pcard-color{margin-top:4px; font-size:.84rem; color:var(--ink-dim); display:flex; align-items:center; gap:7px;}
 .pcard-color i{width:8px; height:8px; border-radius:50%; background:var(--gc); box-shadow:0 0 6px var(--gc);}
+.pcard-modes{margin-top:10px; display:flex; gap:6px; flex-wrap:wrap;}
+.pcard-modes span{font-size:.68rem; color:var(--ink-faint); border:1px solid var(--border-soft); padding:3px 8px; border-radius:99px;}
 .pcard-foot{margin-top:auto; padding-top:16px; display:flex; align-items:center; justify-content:space-between;}
 .pcard-price{font-family:'Sora'; font-weight:600; font-size:1.02rem;}
 .pcard-cta{font-size:.76rem; color:var(--ink-dim); border-bottom:1px solid var(--border); padding-bottom:1px;}
