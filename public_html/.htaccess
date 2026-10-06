@@ -1,4 +1,4 @@
-# NOCTILUZ · configuración de Apache (hosting DonDominio)
+# NOCTILUZ · configuración de Apache
 DirectoryIndex index.html
 Options -Indexes
 
@@ -6,6 +6,14 @@ Options -Indexes
   Header always set X-Content-Type-Options "nosniff"
   Header always set X-Frame-Options "SAMEORIGIN"
   Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+  # El hosting manda guardar HTML, CSS, JS e imágenes 30 días, así que quien ya había entrado no veía
+  # los cambios. Con "no-cache" el navegador pregunta cada vez si hay versión nueva: si no la hay,
+  # el servidor responde "304 sin cambios" y no se vuelve a descargar nada.
+  <FilesMatch "\.(html|css|js|jpe?g|png|svg|webp)$">
+    Header set Cache-Control "no-cache"
+    Header unset Expires
+  </FilesMatch>
 </IfModule>
 
 # Nunca servir archivos ocultos, de configuración ni copias de seguridad
