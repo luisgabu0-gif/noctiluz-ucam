@@ -431,43 +431,38 @@
       <p>NOCTILUZ es una marca ficticia creada para un trabajo de la UCAM, pensada para quienes viven la ciudad después del atardecer.</p>
     </div>
     <div class="editorial-grid">
-      <div class="escene scene">
-        <div class="sky-glow"></div><div class="skyline"></div><div class="ground"></div>
-        <svg class="figure-svg" viewBox="0 0 200 340" style="position:absolute;left:50%;bottom:0;transform:translateX(-50%);height:88%;--sc:#F3B36B" aria-hidden="true">
-          <path class="fig-body" d="M100 46c15 0 26 12 26 27 0 13-8 23-18 26l5 11c24 6 41 24 45 49l11 96c2 15-9 28-24 28H55c-15 0-26-13-24-28l11-96c4-25 21-43 45-49l5-11c-10-3-18-13-18-26 0-15 11-27 26-27z"/>
-          <circle class="fig-body" cx="100" cy="62" r="22"/>
-          <path class="fig-seam" stroke="#F3B36B" d="M80 118C92 172 86 236 98 292"/>
-        </svg>
-        <span class="cap">Paseo nocturno, ciudad</span>
-      </div>
-      <div class="escene scene">
-        <div class="sky-glow" style="background:radial-gradient(circle at 30% 20%, rgba(242,127,170,.12), transparent 45%), radial-gradient(circle at 70% 60%, rgba(85,220,212,.08), transparent 40%);"></div>
-        <svg class="figure-svg" viewBox="0 0 200 340" style="position:absolute;left:50%;bottom:0;transform:translateX(-50%);height:82%;--sc:#F27FAA" aria-hidden="true">
-          <path class="fig-body" d="M100 46c15 0 26 12 26 27 0 13-8 23-18 26l5 11c24 6 41 24 45 49l11 96c2 15-9 28-24 28H55c-15 0-26-13-24-28l11-96c4-25 21-43 45-49l5-11c-10-3-18-13-18-26 0-15 11-27 26-27z"/>
-          <circle class="fig-body" cx="100" cy="62" r="22"/>
-          <path class="fig-seam" stroke="#F27FAA" d="M80 118C92 172 86 236 98 292"/>
-        </svg>
-        <span class="cap">Rooftop, madrugada</span>
-      </div>
-      <div class="escene scene" style="display:flex; align-items:center; justify-content:center;">
-        <svg viewBox="0 0 220 220" style="width:70%; height:70%;" aria-hidden="true">
-          <path fill="none" stroke="#A594F2" stroke-width="3" stroke-linecap="round" opacity=".9" style="filter:drop-shadow(0 0 10px #A594F2) drop-shadow(0 0 3px #A594F2);" d="M20 40C70 20 60 100 110 90S170 40 200 60"/>
-          <path fill="none" stroke="#A594F2" stroke-width="3" stroke-linecap="round" opacity=".5" d="M20 140C70 120 60 200 110 190S170 140 200 160"/>
-        </svg>
-        <span class="cap">Detalle, fibra óptica encendida</span>
-      </div>
+      <figure class="escene">
+        <img src="assets/img/editorial/chaqueta-azotea.jpg" alt="Mujer en una azotea de noche con una chaqueta negra de fibra óptica verde" loading="lazy">
+        <figcaption class="cap"><b>Azotea, madrugada</b>Chaqueta con fibra óptica en verde</figcaption>
+      </figure>
+      <figure class="escene">
+        <img src="assets/img/editorial/mochila-callejon.jpg" alt="Chico de espaldas en un callejón con neones y una mochila con dibujo geométrico luminoso" loading="lazy">
+        <figcaption class="cap"><b>Callejón de neón</b>Mochila con patrón geométrico</figcaption>
+      </figure>
+      <figure class="escene">
+        <img src="assets/img/editorial/gorra-lluvia.jpg" alt="Mujer bajo la lluvia ajustándose una gorra con la visera iluminada" loading="lazy">
+        <figcaption class="cap"><b>Lluvia en la ciudad</b>Gorra con línea luminosa en la visera</figcaption>
+      </figure>
     </div>
   </section>
 </main>
 
 <main id="vista-pagina" class="wrap" hidden></main>
 
-<footer>
+<footer class="pie">
+  <div class="pie-luz" aria-hidden="true"></div>
   <div class="wrap">
+    <div class="pie-lema">
+      <p class="pie-titulo">La ciudad se apaga.<br><span>Tú no.</span></p>
+      <a class="pie-cta" href="#/catalogo">Ver la colección <span aria-hidden="true">→</span></a>
+    </div>
     <div class="footer-top">
       <div class="footer-brand">
         <div class="logo"><span class="logo-dot"></span>NOCTILUZ</div>
-        <p>Moda urbana para después del atardecer. Marca ficticia · prototipo académico sin actividad comercial.</p>
+        <p>Moda urbana con fibra óptica para después del atardecer. Marca ficticia · prototipo académico sin actividad comercial.</p>
+        <ul class="pie-colores" aria-label="Colores de luz">
+          <li style="--c:var(--cian)" title="Cian"></li><li style="--c:var(--rosa)" title="Rosa"></li><li style="--c:var(--ambar)" title="Ámbar"></li><li style="--c:var(--violeta)" title="Violeta"></li><li style="--c:var(--lima)" title="Verde lima"></li><li style="--c:var(--blanco)" title="Blanco frío"></li><li style="--c:#F25C5C" title="Rojo neón"></li><li style="--c:#4D8DFF" title="Azul"></li>
+        </ul>
       </div>
       <div class="footer-cols">
         <div class="footer-col">
@@ -491,9 +486,14 @@
         </div>
       </div>
     </div>
+    <div class="pie-sellos">
+      <span><b>Pago simulado</b>Sin cobros reales</span>
+      <span><b>Envío gratis</b>Desde 120 € (simulado)</span>
+      <span><b>Equipo</b>Luis · Roberto · Javier · JunJie</span>
+    </div>
     <div class="footer-bottom">
       <span>NOCTILUZ © 2026 · Soluciones Informáticas para la Empresa · UCAM</span>
-      <span>Tienda de demostración — sin pagos ni envíos reales</span>
+      <button type="button" class="pie-arriba" data-arriba>Volver arriba ↑</button>
     </div>
   </div>
 </footer>
