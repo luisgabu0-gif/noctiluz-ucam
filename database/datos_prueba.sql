@@ -75,8 +75,8 @@ INSERT INTO variantes (id, sku, producto_id, color_id, imagen, stock) VALUES
 (12, 'mochila-trayecto-blanco',   6, 'blanco',  NULL, 3),
 (13, 'gorra-aura-violeta',        7, 'violeta', 'assets/img/productos/gorra-aura-violeta.jpg', 18),
 (14, 'gorra-aura-blanco',         7, 'blanco',  'assets/img/productos/gorra-aura-blanco.jpg', 15),
-(15, 'gorra-faro-cian',           8, 'cian',    NULL, 10),
-(16, 'gorra-faro-violeta',        8, 'violeta', NULL, 4);
+(15, 'gorra-faro-cian',           8, 'cian',    'assets/img/productos/gorra-faro-cian.jpg', 10),
+(16, 'gorra-faro-violeta',        8, 'violeta', 'assets/img/productos/gorra-faro-violeta.jpg', 4);
 
 INSERT INTO cupones (codigo, descripcion, tipo, valor, minimo, activo) VALUES
 ('NOCHE10',     '10 % de descuento en pedidos desde 50 €',         'porcentaje', 10.00, 50.00, 1),
