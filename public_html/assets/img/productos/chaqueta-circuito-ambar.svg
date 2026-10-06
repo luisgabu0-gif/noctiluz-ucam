@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" role="img" aria-label="Chaqueta Circuito con fibra óptica ámbar">
+  <!-- Ilustración original de NOCTILUZ (sin personas ni marcas de terceros). -->
+  <defs>
+    <radialGradient id="fondo" cx="50%" cy="42%" r="70%">
+      <stop offset="0" stop-color="#1d1a17"/>
+      <stop offset="0.55" stop-color="#0d0c0d"/>
+      <stop offset="1" stop-color="#050506"/>
+    </radialGradient>
+    <linearGradient id="tejido" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#25262c"/>
+      <stop offset="0.5" stop-color="#18191d"/>
+      <stop offset="1" stop-color="#101114"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2d2f36"/>
+      <stop offset="1" stop-color="#1f2026"/>
+    </linearGradient>
+    <linearGradient id="manga" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#121316"/>
+      <stop offset="1" stop-color="#1e1f24"/>
+    </linearGradient>
+    <filter id="brillo" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="7" result="difuso"/>
+      <feMerge><feMergeNode in="difuso"/><feMergeNode in="difuso"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="halo" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="40"/>
+    </filter>
+  </defs>
+
+  <rect width="800" height="1000" fill="url(#fondo)"/>
+  <!-- Resplandor ámbar detrás de la prenda y sombra en el suelo -->
+  <ellipse cx="400" cy="470" rx="250" ry="300" fill="#F3B36B" opacity="0.10" filter="url(#halo)"/>
+  <ellipse cx="400" cy="880" rx="240" ry="26" fill="#000" opacity="0.7" filter="url(#halo)"/>
+
+  <!-- Mangas -->
+  <path d="M240 235 L178 296 Q150 520 128 760 L198 776 Q228 560 270 380 Z" fill="url(#manga)" stroke="#33353d" stroke-width="2"/>
+  <path d="M560 235 L622 296 Q650 520 672 760 L602 776 Q572 560 530 380 Z" fill="url(#manga)" stroke="#33353d" stroke-width="2"/>
+  <!-- Puños -->
+  <path d="M128 760 L198 776 L194 812 L124 796 Z" fill="#26272d" stroke="#3a3c44" stroke-width="2"/>
+  <path d="M672 760 L602 776 L606 812 L676 796 Z" fill="#26272d" stroke="#3a3c44" stroke-width="2"/>
+
+  <!-- Cuerpo -->
+  <path d="M345 192 L240 235 L270 380 L262 822 L538 822 L530 380 L560 235 L455 192 Q400 226 345 192 Z" fill="url(#tejido)" stroke="#33353d" stroke-width="2"/>
+  <!-- Canesú (panel superior en otro tono) -->
+  <path d="M345 192 L240 235 L252 302 Q400 336 548 302 L560 235 L455 192 Q400 226 345 192 Z" fill="url(#panel)" stroke="#3a3c44" stroke-width="2"/>
+  <!-- Paneles laterales -->
+  <path d="M270 380 Q300 520 296 822" fill="none" stroke="#2c2e35" stroke-width="2"/>
+  <path d="M530 380 Q500 520 504 822" fill="none" stroke="#2c2e35" stroke-width="2"/>
+  <!-- Bajo elástico -->
+  <path d="M262 790 L538 790 L538 834 L262 834 Z" fill="#202126" stroke="#3a3c44" stroke-width="2"/>
+  <path d="M262 804 H538 M262 818 H538" stroke="#2a2b31" stroke-width="2"/>
+
+  <!-- Cuello alto -->
+  <path d="M338 148 L462 148 L472 196 Q400 232 328 196 Z" fill="#26272d" stroke="#3a3c44" stroke-width="2"/>
+  <path d="M338 148 Q400 162 462 148" fill="none" stroke="#3a3c44" stroke-width="2"/>
+
+  <!-- Cremallera central y tirador -->
+  <path d="M400 156 V834" stroke="#0b0b0d" stroke-width="7"/>
+  <path d="M400 156 V834" stroke="#4a4c55" stroke-width="2" stroke-dasharray="3 4"/>
+  <rect x="393" y="246" width="14" height="30" rx="4" fill="#9a9ca6"/>
+  <rect x="397" y="276" width="6" height="18" rx="3" fill="#F3B36B"/>
+
+  <!-- Bolsillo diagonal con cremallera -->
+  <path d="M296 452 L364 420" stroke="#0b0b0d" stroke-width="6" stroke-linecap="round"/>
+  <path d="M296 452 L364 420" stroke="#4a4c55" stroke-width="1.5" stroke-dasharray="2 3"/>
+  <!-- Bolsillos bajos -->
+  <path d="M312 640 Q330 690 330 720" fill="none" stroke="#2c2e35" stroke-width="3"/>
+  <path d="M488 640 Q470 690 470 720" fill="none" stroke="#2c2e35" stroke-width="3"/>
+
+  <!-- Módulo LED (USB-C) en el pecho -->
+  <rect x="440" y="352" width="44" height="22" rx="6" fill="#111215" stroke="#F3B36B" stroke-opacity="0.6" stroke-width="1.5"/>
+  <circle cx="452" cy="363" r="3" fill="#FFD9A0" filter="url(#brillo)"/>
+
+  <!-- Pistas de fibra óptica ámbar en forma de circuito -->
+  <g fill="none" stroke="#F3B36B" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" filter="url(#brillo)">
+    <!-- borde del cuello -->
+    <path d="M344 158 Q400 172 456 158"/>
+    <!-- pecho derecho: salen del módulo LED -->
+    <path d="M484 363 H506 L522 379 V430 L540 448"/>
+    <path d="M462 374 V420 L478 436 H500 L514 450 V520"/>
+    <path d="M440 363 H424 V470 L440 486 V560"/>
+    <!-- pecho izquierdo -->
+    <path d="M384 300 V350 L368 366 H336 L318 384 V420"/>
+    <path d="M372 470 V540 L348 564 H310"/>
+    <path d="M384 470 V620 L362 642"/>
+    <!-- abdomen y bajo -->
+    <path d="M440 600 V700 L460 720 H520"/>
+    <path d="M416 640 V760"/>
+    <path d="M300 700 H350 L372 722 V776"/>
+    <!-- mangas, siguiendo la costura -->
+    <path d="M212 290 L194 470 L176 488 L160 700"/>
+    <path d="M588 290 L606 470 L624 488 L640 700"/>
+    <!-- puños -->
+    <path d="M134 782 L192 795"/>
+    <path d="M666 782 L608 795"/>
+    <!-- canesú -->
+    <path d="M262 296 Q330 318 384 300"/>
+    <path d="M538 296 Q470 318 416 300"/>
+  </g>
+
+  <!-- Nodos del circuito -->
+  <g fill="#FFE2B8" filter="url(#brillo)">
+    <circle cx="540" cy="448" r="6"/>
+    <circle cx="514" cy="520" r="6"/>
+    <circle cx="440" cy="560" r="6"/>
+    <circle cx="318" cy="420" r="6"/>
+    <circle cx="310" cy="564" r="6"/>
+    <circle cx="362" cy="642" r="6"/>
+    <circle cx="520" cy="720" r="6"/>
+    <circle cx="416" cy="760" r="6"/>
+    <circle cx="372" cy="776" r="6"/>
+    <circle cx="160" cy="700" r="6"/>
+    <circle cx="640" cy="700" r="6"/>
+    <circle cx="384" cy="300" r="5"/>
+    <circle cx="416" cy="300" r="5"/>
+  </g>
+  <!-- Núcleo blanco cálido de las pistas para que parezcan luz -->
+  <g fill="none" stroke="#FFF1DC" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.9">
+    <path d="M484 363 H506 L522 379 V430 L540 448"/>
+    <path d="M462 374 V420 L478 436 H500 L514 450 V520"/>
+    <path d="M440 363 H424 V470 L440 486 V560"/>
+    <path d="M384 300 V350 L368 366 H336 L318 384 V420"/>
+    <path d="M372 470 V540 L348 564 H310"/>
+    <path d="M384 470 V620 L362 642"/>
+    <path d="M440 600 V700 L460 720 H520"/>
+    <path d="M416 640 V760"/>
+    <path d="M300 700 H350 L372 722 V776"/>
+    <path d="M212 290 L194 470 L176 488 L160 700"/>
+    <path d="M588 290 L606 470 L624 488 L640 700"/>
+  </g>
+</svg>

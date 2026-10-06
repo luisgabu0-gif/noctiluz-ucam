@@ -1,8 +1,8 @@
--- NOCTILUZ · Cambios del catálogo (nombres de las camisetas y un solo modo de luz por producto), para una base MySQL YA instalada (hosting).
+-- NOCTILUZ · Cambios del catálogo (nombres de las camisetas, un solo modo de luz por producto y nuevo diseño de la Chaqueta Circuito), para una base MySQL YA instalada (hosting).
 -- Se ejecuta desde phpMyAdmin (pestaña SQL o Importar). No borra pedidos, eventos ni stock.
 -- Se puede ejecutar más de una vez: si ya se aplicó una versión anterior, solo hace lo que falte.
 -- En una instalación nueva no hace falta: datos_prueba.sql ya incluye estos cambios.
--- No hay que subir archivos: los SKU y las fotos no cambian.
+-- Archivos que hay que subir antes: public_html/assets/img/productos/chaqueta-circuito-ambar.svg (el resto de SKU y fotos no cambian).
 
 START TRANSACTION;
 
@@ -52,5 +52,12 @@ DELETE FROM producto_modos WHERE producto_id = (SELECT id FROM productos WHERE s
 DELETE FROM producto_modos WHERE producto_id = (SELECT id FROM productos WHERE slug = 'mochila-trayecto')   AND modo_id <> 'parpadeo';
 DELETE FROM producto_modos WHERE producto_id = (SELECT id FROM productos WHERE slug = 'gorra-aura')         AND modo_id <> 'degradado';
 DELETE FROM producto_modos WHERE producto_id = (SELECT id FROM productos WHERE slug = 'gorra-faro')         AND modo_id <> 'fijo';
+
+
+-- Nuevo diseño de la Chaqueta Circuito: ilustración vectorial para la ámbar y descripción renovada.
+-- Antes hay que subir public_html/assets/img/productos/chaqueta-circuito-ambar.svg.
+UPDATE variantes SET imagen = 'assets/img/productos/chaqueta-circuito-ambar.svg' WHERE sku = 'chaqueta-circuito-ambar';
+UPDATE productos SET descripcion = 'Chaqueta técnica de cuello alto con pistas de fibra óptica que recorren el pecho y las mangas como un circuito impreso. Bolsillo diagonal con cremallera y módulo LED extraíble en el pecho: luz continua y discreta para la ciudad de noche.'
+WHERE slug = 'chaqueta-circuito';
 
 COMMIT;

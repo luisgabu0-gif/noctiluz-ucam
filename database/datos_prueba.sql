@@ -26,7 +26,7 @@ INSERT INTO modos (id, nombre, descripcion) VALUES
 
 INSERT INTO productos (id, slug, nombre, categoria_id, descripcion, material, autonomia_h, precio, tiene_tallas, valoracion, num_resenas, activo) VALUES
 (1, 'chaqueta-circuito', 'Chaqueta Circuito', 'chaqueta',
- 'Una chaqueta urbana con fibra óptica integrada que transforma el diseño en una fuente de luz discreta. Diseñada para la ciudad, la noche y el movimiento.',
+ 'Chaqueta técnica de cuello alto con pistas de fibra óptica que recorren el pecho y las mangas como un circuito impreso. Bolsillo diagonal con cremallera y módulo LED extraíble en el pecho: luz continua y discreta para la ciudad de noche.',
  'Nailon ripstop repelente al agua, forro de malla transpirable', 8, 149.00, 1, 4.8, 32, 1),
 (2, 'chaqueta-perimetro', 'Chaqueta Perímetro', 'chaqueta',
  'Silueta recta y costuras marcadas con hilo luminoso perimetral. Pensada para trayectos en bici y noches largas de ciudad.',
@@ -73,7 +73,7 @@ INSERT INTO producto_modos (producto_id, modo_id) VALUES
 
 -- Variantes (SKU = producto + color de luz). imagen NULL = se muestra la ilustración provisional.
 INSERT INTO variantes (id, sku, producto_id, color_id, imagen, stock) VALUES
-(1,  'chaqueta-circuito-ambar',   1, 'ambar',   'assets/img/productos/chaqueta-circuito-ambar.jpg', 11),
+(1,  'chaqueta-circuito-ambar',   1, 'ambar',   'assets/img/productos/chaqueta-circuito-ambar.svg', 11),
 (2,  'chaqueta-circuito-violeta', 1, 'violeta', NULL, 8),
 (3,  'chaqueta-perimetro-lima',   2, 'lima',    'assets/img/productos/chaqueta-perimetro-lima.jpg', 6),
 (4,  'chaqueta-perimetro-blanco', 2, 'blanco',  NULL, 0),
