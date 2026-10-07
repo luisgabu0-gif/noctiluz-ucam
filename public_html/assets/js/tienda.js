@@ -273,19 +273,20 @@ async function pintarResenas() {
     return;
   }
   $('#listaResenas').innerHTML = datos.resenas.map(tarjetaResena).join('');
-  // El equipo de administración no puede opinar: si hay sesión del back-office se oculta el formulario.
-  $('#avisoAdminResena').hidden = datos.puede_opinar;
+  // No hay cuentas de cliente: "estar registrado" es haberse identificado con un pedido en este navegador
+  // (al comprar o en «Mis pedidos»). Sin pedido, o con la sesión del back-office, no aparece el botón.
+  const pedidos = Object.keys(accesos());
   const caja = $('#resenaNueva');
-  caja.hidden = !datos.puede_opinar;
-  if (!datos.puede_opinar || caja.childElementCount) return;
-  caja.innerHTML = `
-    <button type="button" class="btn btn-outline btn-sm" id="abrirResena" aria-expanded="false" aria-controls="formResena">Escribe tu reseña</button>
+  caja.hidden = !datos.puede_opinar || !pedidos.length;
+  caja.innerHTML = caja.hidden ? '' : `
+    <button type="button" class="btn btn-outline btn-sm" id="abrirResena" aria-expanded="false" aria-controls="formResena">Escribir reseña</button>
     <form class="bloque form-resena" id="formResena" novalidate hidden>
-      <h3>Tu reseña</h3>
-      <p class="campo-ayuda">Para opinar necesitas un pedido ya pagado: escribe su código y el email con el que compraste.</p>
       <div class="form-grid">
-        ${campo({ nombre: 'pedido', etiqueta: 'Código de pedido', atributos: 'maxlength="20" placeholder="NCZ-AAMMDD-XXXXXX" pattern="[Nn][Cc][Zz]-\\d{6}-[A-Za-z0-9]{6}" data-mensaje="El código tiene el formato NCZ-AAMMDD-XXXXXX." autocomplete="off"' })}
-        ${campo({ nombre: 'email', etiqueta: 'Email del pedido', tipo: 'email', atributos: 'maxlength="120" autocomplete="email"' })}
+        ${pedidos.length > 1 ? `<div class="campo">
+          <label for="f-pedido-resena">Pedido</label>
+          <select id="f-pedido-resena" name="pedido">${pedidos.map((c) => `<option>${esc(c)}</option>`).join('')}</select>
+          <small class="campo-error" data-error-de="pedido" role="alert"></small>
+        </div>` : `<input type="hidden" name="pedido" value="${esc(pedidos[0])}">`}
         ${campo({ nombre: 'nombre', etiqueta: 'Nombre que se publica', atributos: 'minlength="2" maxlength="40" autocomplete="given-name" placeholder="Ej.: Laura M."' })}
         <div class="campo">
           <span class="etiqueta" id="etq-estrellas">Puntuación</span>
@@ -303,34 +304,31 @@ async function pintarResenas() {
       <div id="errorResena" role="alert" style="margin-top:14px"></div>
       <button class="btn btn-solid" style="margin-top:16px" id="enviarResena">Publicar reseña</button>
     </form>`;
+  if (caja.hidden) return;
   const f = $('#formResena');
   $('#abrirResena').addEventListener('click', (e) => {
     f.hidden = !f.hidden;
     e.currentTarget.setAttribute('aria-expanded', String(!f.hidden));
-    if (!f.hidden) f.pedido.focus();
+    if (!f.hidden) f.nombre.focus();
   });
   f.addEventListener('submit', async (e) => {
     e.preventDefault();
     $('#errorResena').innerHTML = '';
     if (!validarEnCliente(f)) return;
+    const d = Object.fromEntries(new FormData(f));
     const boton = $('#enviarResena');
     boton.disabled = true;
     try {
-      await api('resenas.php', { method: 'POST', body: { ...Object.fromEntries(new FormData(f)), sesion_id: sesionId() } });
-      f.reset();
-      f.hidden = true;
-      $('#abrirResena').setAttribute('aria-expanded', 'false');
+      await api('resenas.php', { method: 'POST', body: { ...d, email: emailDe(d.pedido), sesion_id: sesionId() } });
       toast('¡Gracias! Tu reseña ya está publicada.');
       pintarResenas();
     } catch (err) {
+      boton.disabled = false;
       mostrarErrores(f, err.campos);
       $('#errorResena').innerHTML = `<div class="alerta error">${esc(err.message)}</div>`;
-    } finally {
-      boton.disabled = false;
     }
   });
 }
-pintarResenas();
 
 // Carrusel con desplazamiento nativo (también funciona con el dedo); los botones mueven una tarjeta.
 function actualizarCarrusel(carrusel) {
@@ -1196,6 +1194,7 @@ async function enrutar() {
   vistaPagina.hidden = true;
   vistaPagina.innerHTML = '';
   vistaInicio.hidden = false;
+  pintarResenas();
   const seccion = SECCIONES_INICIO[hash];
   if (seccion) requestAnimationFrame(() => document.getElementById(seccion).scrollIntoView({ behavior: 'smooth' }));
   else window.scrollTo(0, 0);
