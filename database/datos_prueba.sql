@@ -25,51 +25,51 @@ INSERT INTO modos (id, nombre, descripcion) VALUES
 ('degradado', 'Degradado', 'La intensidad sube y baja de forma suave y continua.');
 
 INSERT INTO productos (id, slug, nombre, categoria_id, descripcion, material, autonomia_h, precio, tiene_tallas, valoracion, num_resenas, activo) VALUES
-(1, 'chaqueta-circuito', 'Chaqueta Circuito', 'chaqueta',
+(1, 'chaqueta-circuito', 'Nervadura', 'chaqueta',
  'Chaqueta técnica de cuello alto con pistas de fibra óptica que recorren el pecho y las mangas como un circuito impreso. Bolsillo diagonal con cremallera y módulo LED extraíble en el pecho: luz continua y discreta para la ciudad de noche.',
  'Nailon ripstop repelente al agua, forro de malla transpirable', 8, 149.00, 1, 4.8, 32, 1),
-(2, 'chaqueta-perimetro', 'Chaqueta Perímetro', 'chaqueta',
+(2, 'chaqueta-perimetro', 'Pespunte', 'chaqueta',
  'Silueta recta y costuras marcadas con hilo luminoso perimetral. Pensada para trayectos en bici y noches largas de ciudad.',
  'Softshell cortavientos con membrana transpirable', 10, 159.00, 1, 4.6, 21, 1),
-(3, 'camiseta-pulso', 'Onda Vibrante', 'camiseta',
+(3, 'camiseta-pulso', 'Pentagrama', 'camiseta',
  'Camiseta de algodón técnico con una línea de fibra óptica central que sigue la costura: de día invisible y de noche presente.',
  'Algodón técnico 95 % y elastano 5 %', 6, 69.00, 1, 4.7, 44, 1),
-(4, 'camiseta-linea', 'Explosión refrescante', 'camiseta',
+(4, 'camiseta-linea', 'Retícula', 'camiseta',
  'Corte oversize con doble línea luminosa lateral. Tejido ligero y transpirable para uso durante todo el año.',
  'Algodón orgánico peinado de 180 g/m²', 6, 69.00, 1, 4.5, 15, 1),
-(5, 'mochila-halo', 'Mochila Halo', 'mochila',
+(5, 'mochila-halo', 'Marco', 'mochila',
  'Mochila urbana de frontal liso con un hilo de fibra óptica que recorre todo su contorno y la dibuja en la oscuridad, visible desde cualquier ángulo en la carretera.',
  'Poliéster 600D reciclado con frontal semirrígido, capacidad de 20 L', 12, 89.00, 0, 4.9, 27, 1),
-(6, 'mochila-trayecto', 'Mochila Trayecto', 'mochila',
+(6, 'mochila-trayecto', 'Cartografía', 'mochila',
  'Mochila para el trayecto diario con funda acolchada para portátil y bolsillos laterales. Según el color, la fibra óptica perfila asa, tirantes y bolsillos con flechas de dirección o dibuja un patrón geométrico en el frontal.',
  'Poliéster técnico resistente al agua, 24 L con funda para portátil de 15"', 14, 119.00, 0, 4.6, 19, 1),
-(7, 'gorra-aura', 'Gorra Aura', 'gorra',
+(7, 'gorra-aura', 'Celosía', 'gorra',
  'Gorra de visera curva con un halo luminoso alrededor de la copa, alimentado por una batería plana en el ajuste trasero.',
  'Sarga de algodón con cierre ajustable', 5, 49.00, 0, 4.4, 12, 1),
-(8, 'gorra-faro', 'Gorra Faro', 'gorra',
+(8, 'gorra-faro', 'Horizonte', 'gorra',
  'Gorra técnica resistente al agua con línea luminosa frontal integrada en la costura de la visera.',
  'Poliéster técnico impermeable', 5, 59.00, 0, 4.7, 23, 1),
--- La antigua Camiseta Línea azul se vende como producto propio: misma prenda, precio y modos que «Explosión refrescante» (la lima).
-(9, 'estetica-azul', 'Estética azul', 'camiseta',
+-- La azul de la antigua Camiseta Línea se vende como producto propio, «Anatomía»: misma prenda, precio y modos que «Retícula».
+(9, 'estetica-azul', 'Anatomía', 'camiseta',
  'Corte oversize con doble línea luminosa lateral. Tejido ligero y transpirable para uso durante todo el año.',
  'Algodón orgánico peinado de 180 g/m²', 6, 69.00, 1, 4.5, 15, 1),
--- La cian de la antigua Camiseta Pulso se vende como producto propio (solo luz fija); Onda Vibrante se queda con la rosa (solo parpadeo).
-(10, 'pulso-cian', 'Camiseta Pulso', 'camiseta',
+-- La cian de la antigua Camiseta Pulso se vende como producto propio (solo luz fija); Pentagrama se queda con la rosa (solo parpadeo).
+(10, 'pulso-cian', 'Meridiano', 'camiseta',
  'Camiseta de algodón técnico con una línea de fibra óptica central que sigue la costura: de día invisible y de noche presente.',
  'Algodón técnico 95 % y elastano 5 %', 6, 69.00, 1, 4.7, 44, 1);
 
 -- Modo de iluminación de cada producto: uno solo, el que mejor encaja con su diseño (depende del controlador que lleva).
 INSERT INTO producto_modos (producto_id, modo_id) VALUES
-(1, 'fijo'),         -- Chaqueta Circuito: luz discreta y continua
-(2, 'degradado'),    -- Chaqueta Perímetro: el contorno sube y baja de intensidad
-(3, 'parpadeo'),     -- Onda Vibrante
-(4, 'fijo'),         -- Explosión refrescante
-(5, 'fijo'),         -- Mochila Halo: el contorno la dibuja en la oscuridad
-(6, 'parpadeo'),     -- Mochila Trayecto: flechas de dirección, como un intermitente
-(7, 'degradado'),    -- Gorra Aura: halo que respira
-(8, 'fijo'),         -- Gorra Faro: ilumina como un faro
-(9, 'fijo'),         -- Estética azul
-(10, 'fijo');       -- Camiseta Pulso (cian)
+(1, 'fijo'),         -- Nervadura: luz discreta y continua
+(2, 'degradado'),    -- Pespunte: el contorno sube y baja de intensidad
+(3, 'parpadeo'),     -- Pentagrama
+(4, 'fijo'),         -- Retícula
+(5, 'fijo'),         -- Marco: el contorno la dibuja en la oscuridad
+(6, 'parpadeo'),     -- Cartografía: flechas de dirección, como un intermitente
+(7, 'degradado'),    -- Celosía: halo que respira
+(8, 'fijo'),         -- Horizonte: ilumina como un faro
+(9, 'fijo'),         -- Anatomía
+(10, 'fijo');       -- Meridiano (cian)
 
 -- Variantes (SKU = producto + color de luz). imagen NULL = se muestra la ilustración provisional.
 INSERT INTO variantes (id, sku, producto_id, color_id, imagen, stock) VALUES
@@ -121,10 +121,10 @@ INSERT INTO pedidos (id, codigo, cliente_id, sesion_id, estado, metodo_envio, cu
  89.00, 0.00, 9.95, 81.78, 17.17, 98.95, 'Plaza Inventada 3', '30820', 'Alcantarilla', 'Murcia', '2026-09-23 22:19:05', '2026-09-23 22:19:05');
 
 INSERT INTO lineas_pedido (id, pedido_id, variante_id, descripcion, modo_id, talla, cantidad, precio_unitario, importe) VALUES
-(1, 1, 6,  'Camiseta Pulso · Rosa',     'parpadeo',  'M',     1, 69.00,  69.00),
-(2, 1, 13, 'Gorra Aura · Violeta',      'degradado', 'Única', 1, 49.00,  49.00),
-(3, 2, 1,  'Chaqueta Circuito · Ámbar', 'fijo',      'L',     1, 149.00, 149.00),
-(4, 3, 9,  'Mochila Halo · Cian',       'fijo',      'Única', 1, 89.00,  89.00);
+(1, 1, 6,  'Pentagrama · Rosa',    'parpadeo',  'M',     1, 69.00,  69.00),
+(2, 1, 13, 'Celosía · Violeta',      'degradado', 'Única', 1, 49.00,  49.00),
+(3, 2, 1,  'Nervadura · Ámbar', 'fijo',      'L',     1, 149.00, 149.00),
+(4, 3, 9,  'Marco · Cian',       'fijo',      'Única', 1, 89.00,  89.00);
 
 INSERT INTO pagos (id, pedido_id, metodo, resultado, importe, referencia, tarjeta_ultimos4, mensaje, creado_en) VALUES
 (1, 1, 'tarjeta_simulada', 'aprobado',  122.95, 'SIM-7Q2M9X4K1P', '4242', 'Pago simulado aprobado', '2026-09-20 21:10:02'),

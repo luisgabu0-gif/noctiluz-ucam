@@ -221,12 +221,12 @@ $l = ReglasNegocio::validarLineas([linea('mochila-trayecto-rojo', 3, 'parpadeo',
 comprobar('Se pueden comprar justo las unidades que hay en stock (3 de 3)', 3, $l[0]['cantidad']);
 
 comprobarError('Un producto agotado (stock 0) no se puede comprar',
-    fn () => ReglasNegocio::validarLineas([linea('chaqueta-perimetro-blanco', 1, 'degradado')]), 'Chaqueta Perímetro · Blanco frío está agotado.', 'lineas.0');
+    fn () => ReglasNegocio::validarLineas([linea('chaqueta-perimetro-blanco', 1, 'degradado')]), 'Pespunte · Blanco frío está agotado.', 'lineas.0');
 comprobarError('No se pueden pedir más unidades que el stock (4 de 3)',
-    fn () => ReglasNegocio::validarLineas([linea('mochila-trayecto-rojo', 4, 'parpadeo', 'Única')]), 'Solo quedan 3 unidades de Mochila Trayecto · Rojo neón.', 'lineas.0');
+    fn () => ReglasNegocio::validarLineas([linea('mochila-trayecto-rojo', 4, 'parpadeo', 'Única')]), 'Solo quedan 3 unidades de Cartografía · Rojo neón.', 'lineas.0');
 comprobarError('El stock se suma entre líneas del mismo SKU (2 + 2 de 3)',
     fn () => ReglasNegocio::validarLineas([linea('mochila-trayecto-rojo', 2, 'parpadeo', 'Única'), linea('mochila-trayecto-rojo', 2, 'parpadeo', 'Única')]),
-    'Solo quedan 3 unidades de Mochila Trayecto · Rojo neón.', 'lineas.1');
+    'Solo quedan 3 unidades de Cartografía · Rojo neón.', 'lineas.1');
 comprobarError('Máximo 9 unidades por línea',
     fn () => ReglasNegocio::validarLineas([linea('camiseta-pulso-cian', 10)]), 'La cantidad debe estar entre 1 y 9.', 'lineas.0');
 comprobarError('Cantidad 0 no permitida',
@@ -234,17 +234,17 @@ comprobarError('Cantidad 0 no permitida',
 comprobarError('Un SKU que no existe se rechaza',
     fn () => ReglasNegocio::validarLineas([linea('camiseta-fantasma-negro', 1)]), 'Este producto ya no está disponible.', 'lineas.0');
 comprobarError('Un modo de iluminación que el producto no admite se rechaza',
-    fn () => ReglasNegocio::validarLineas([linea('camiseta-linea-lima', 1, 'parpadeo')]), 'Explosión refrescante no admite el modo de iluminación elegido.', 'lineas.0');
-comprobarError('La Camiseta Pulso (cian) solo admite luz fija',
-    fn () => ReglasNegocio::validarLineas([linea('camiseta-pulso-cian', 1, 'parpadeo')]), 'Camiseta Pulso no admite el modo de iluminación elegido.', 'lineas.0');
-comprobarError('Onda Vibrante (rosa) solo admite parpadeo',
-    fn () => ReglasNegocio::validarLineas([linea('camiseta-pulso-rosa', 1, 'fijo')]), 'Onda Vibrante no admite el modo de iluminación elegido.', 'lineas.0');
+    fn () => ReglasNegocio::validarLineas([linea('camiseta-linea-lima', 1, 'parpadeo')]), 'Retícula no admite el modo de iluminación elegido.', 'lineas.0');
+comprobarError('Meridiano (cian) solo admite luz fija',
+    fn () => ReglasNegocio::validarLineas([linea('camiseta-pulso-cian', 1, 'parpadeo')]), 'Meridiano no admite el modo de iluminación elegido.', 'lineas.0');
+comprobarError('Pentagrama (rosa) solo admite parpadeo',
+    fn () => ReglasNegocio::validarLineas([linea('camiseta-pulso-rosa', 1, 'fijo')]), 'Pentagrama no admite el modo de iluminación elegido.', 'lineas.0');
 $modosPorProducto = Db::todos('SELECT p.nombre, COUNT(pm.modo_id) AS n FROM productos p LEFT JOIN producto_modos pm ON pm.producto_id = p.id GROUP BY p.id, p.nombre HAVING COUNT(pm.modo_id) <> 1');
 comprobar('Cada producto tiene exactamente un modo de iluminación', [], array_column($modosPorProducto, 'nombre'));
 comprobarError('Una mochila no tiene tallas de ropa',
-    fn () => ReglasNegocio::validarLineas([linea('mochila-halo-cian', 1, 'fijo', 'M')]), 'Talla no válida para Mochila Halo.', 'lineas.0');
+    fn () => ReglasNegocio::validarLineas([linea('mochila-halo-cian', 1, 'fijo', 'M')]), 'Talla no válida para Marco.', 'lineas.0');
 comprobarError('Una camiseta no tiene talla única',
-    fn () => ReglasNegocio::validarLineas([linea('camiseta-pulso-rosa', 1, 'parpadeo', 'Única')]), 'Talla no válida para Onda Vibrante.', 'lineas.0');
+    fn () => ReglasNegocio::validarLineas([linea('camiseta-pulso-rosa', 1, 'parpadeo', 'Única')]), 'Talla no válida para Pentagrama.', 'lineas.0');
 comprobarError('El carrito vacío no se puede comprar',
     fn () => ReglasNegocio::validarLineas([]), 'El carrito está vacío.');
 comprobarError('Más de 20 líneas en el carrito se rechaza',
@@ -264,7 +264,7 @@ comprobar('Al crear el pedido se descuenta el stock (4 → 1)', $antes - 3, stoc
 comprobar('El total guardado es el calculado (3 × 59 € = 177 €, envío gratis)', 177.0, $pedido['total']);
 
 comprobarError('Después, ya no se pueden comprar 2 de las que solo queda 1',
-    fn () => Pedidos::crear(datosCheckout([linea('gorra-faro-violeta', 2, 'fijo', 'Única')])), 'Solo quedan 1 unidades de Gorra Faro · Violeta.', 'lineas.0');
+    fn () => Pedidos::crear(datosCheckout([linea('gorra-faro-violeta', 2, 'fijo', 'Única')])), 'Solo quedan 1 unidades de Horizonte · Violeta.', 'lineas.0');
 
 $fila = Db::uno('SELECT * FROM pedidos WHERE codigo = ?', [$pedido['codigo']]);
 Db::transaccion(fn () => Pedidos::cambiarEstado($fila, 'cancelado', 'Prueba automática', 'sistema'));
