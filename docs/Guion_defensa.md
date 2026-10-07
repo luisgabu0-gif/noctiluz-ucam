@@ -32,13 +32,13 @@ Defensa de **7 minutos** entre los cuatro, siguiendo las 6 diapositivas de `Diap
 >
 > Abajo está el recorrido del cliente. Cada paso genera un evento: ver un producto, añadir al carrito, empezar la compra, crear el pedido, pagar… Los del servidor se guardan **en la misma transacción que el dato**, así que nunca hay un pedido sin su evento ni al revés.
 >
-> La web está publicada en **algo.free.je**, y ahora Roberto os la enseña."
+> La web está publicada en **noctiluz.free.je**, y ahora Roberto os la enseña."
 
 ## 2. Roberto · Diapositiva 3, pasos 1 y 2 (≈0:45)
 
-> "Esta es la tienda. Filtro por **chaquetas**, **luz violeta** y **modo degradado**, y solo salen las prendas que cumplen las tres cosas.
+> "Esta es la tienda. Abro **Filtros** y marco **chaquetas**, **luz violeta** y **modo fijo**: solo sale la prenda que cumple las tres cosas, la Constelación.
 >
-> Entro en una ficha. Aquí se ven el material, la autonomía de la batería, los modos que admite, las tallas y el stock. Al abrirla se ha generado el evento **`product.viewed`**. Elijo modo y talla y la añado al carrito, lo que genera **`cart.item_added`**.
+> Entro en una ficha. Aquí se ven el material, la autonomía de la batería, su modo de luz, las tallas y el stock. Al abrirla se ha generado el evento **`product.viewed`**. Elijo talla y la añado al carrito, lo que genera **`cart.item_added`**.
 >
 > El carrito se guarda en el navegador, así que si cierro la página no se pierde. Javier sigue con la compra."
 

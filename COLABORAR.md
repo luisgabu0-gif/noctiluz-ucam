@@ -50,7 +50,7 @@ Si `git push` te lo rechaza porque alguien ha subido algo antes, haz `git pull` 
 
 ## 4. Publicar los cambios en la web
 
-Subir algo a GitHub **no cambia la web publicada** (https://algo.free.je): el hosting tiene su propia copia de los archivos. Cuando tus cambios estén en GitHub, avisa a Luis y él los publica en InfinityFree.
+Subir algo a GitHub **no cambia la web publicada** (https://noctiluz.free.je): el hosting tiene su propia copia de los archivos. Cuando tus cambios estén en GitHub, avisa a Luis y él los publica en InfinityFree.
 
 ## 5. Reparto
 

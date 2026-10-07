@@ -61,7 +61,7 @@ Principios que no hay que romper:
 
 ## Despliegue
 
-La web está publicada de forma provisional en InfinityFree: **https://algo.free.je** (y `noctiluz.free.je` cuando termine de activarse). **Subir a GitHub no actualiza la web**: Luis copia los archivos de `public_html/` al hosting a mano. No intentes desplegar ni pidas credenciales del hosting.
+La web está publicada en InfinityFree: **https://noctiluz.free.je** (la dirección antigua, `algo.free.je`, sirve otra copia de los mismos archivos con la misma base de datos). **Subir a GitHub no actualiza la web**: Luis copia los archivos de `public_html/` al hosting a mano. No intentes desplegar ni pidas credenciales del hosting.
 
 ## Normas
 

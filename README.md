@@ -4,7 +4,7 @@
 
 **Equipo:** Luis Galindo Buendia · Roberto Ciller Miñana · Javier Zamora Lopez · JunJie Yang Jao
 
-**URL pública:** https://algo.free.je (despliegue provisional en InfinityFree)
+**URL pública:** https://noctiluz.free.je (alojada en InfinityFree; https://algo.free.je es la dirección antigua y sigue funcionando)
 
 ---
 
