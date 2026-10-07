@@ -40,7 +40,7 @@ INSERT INTO productos (id, slug, nombre, categoria_id, descripcion, material, au
 (5, 'mochila-halo', 'Marco', 'mochila',
  'Mochila urbana de frontal liso con un hilo de fibra óptica que recorre todo su contorno y la dibuja en la oscuridad, visible desde cualquier ángulo en la carretera.',
  'Poliéster 600D reciclado con frontal semirrígido, capacidad de 20 L', 12, 89.00, 0, 4.9, 27, 1),
-(6, 'mochila-trayecto', 'Cartografía', 'mochila',
+(6, 'mochila-trayecto', 'Rumbo', 'mochila',
  'Mochila para el trayecto diario con funda acolchada para portátil y bolsillos laterales. Según el color, la fibra óptica perfila asa, tirantes y bolsillos con flechas de dirección o dibuja un patrón geométrico en el frontal.',
  'Poliéster técnico resistente al agua, 24 L con funda para portátil de 15"', 14, 119.00, 0, 4.6, 19, 1),
 (7, 'gorra-aura', 'Celosía', 'gorra',
@@ -56,7 +56,26 @@ INSERT INTO productos (id, slug, nombre, categoria_id, descripcion, material, au
 -- La cian de la antigua Camiseta Pulso se vende como producto propio (solo luz fija); Pentagrama se queda con la rosa (solo parpadeo).
 (10, 'pulso-cian', 'Meridiano', 'camiseta',
  'Camiseta de algodón técnico con una línea de fibra óptica central que sigue la costura: de día invisible y de noche presente.',
- 'Algodón técnico 95 % y elastano 5 %', 6, 69.00, 1, 4.7, 44, 1);
+ 'Algodón técnico 95 % y elastano 5 %', 6, 69.00, 1, 4.7, 44, 1),
+-- Cada color de luz es un artículo con nombre propio: la segunda variante de cada modelo pasa a su propio producto.
+(11, 'nervadura-constelacion', 'Constelación', 'chaqueta',
+ 'Chaqueta técnica de cuello alto con pistas de fibra óptica que recorren el pecho y las mangas como un circuito impreso. Bolsillo diagonal con cremallera y módulo LED extraíble en el pecho: luz continua y discreta para la ciudad de noche.',
+ 'Nailon ripstop repelente al agua, forro de malla transpirable', 8, 149.00, 1, 4.8, 32, 1),
+(12, 'pespunte-ribete', 'Ribete', 'chaqueta',
+ 'Silueta recta y costuras marcadas con hilo luminoso perimetral. Pensada para trayectos en bici y noches largas de ciudad.',
+ 'Softshell cortavientos con membrana transpirable', 10, 159.00, 1, 4.6, 21, 1),
+(13, 'marco-silueta', 'Silueta', 'mochila',
+ 'Mochila urbana de frontal liso con un hilo de fibra óptica que recorre todo su contorno y la dibuja en la oscuridad, visible desde cualquier ángulo en la carretera.',
+ 'Poliéster 600D reciclado con frontal semirrígido, capacidad de 20 L', 12, 89.00, 0, 4.9, 27, 1),
+(14, 'cartografia', 'Cartografía', 'mochila',
+ 'Mochila para el trayecto diario con funda acolchada para portátil y bolsillos laterales. Según el color, la fibra óptica perfila asa, tirantes y bolsillos con flechas de dirección o dibuja un patrón geométrico en el frontal.',
+ 'Poliéster técnico resistente al agua, 24 L con funda para portátil de 15"', 14, 119.00, 0, 4.6, 19, 1),
+(15, 'celosia-trazo', 'Trazo', 'gorra',
+ 'Gorra de visera curva con un halo luminoso alrededor de la copa, alimentado por una batería plana en el ajuste trasero.',
+ 'Sarga de algodón con cierre ajustable', 5, 49.00, 0, 4.4, 12, 1),
+(16, 'horizonte-ocaso', 'Ocaso', 'gorra',
+ 'Gorra técnica resistente al agua con línea luminosa frontal integrada en la costura de la visera.',
+ 'Poliéster técnico impermeable', 5, 59.00, 0, 4.7, 23, 1);
 
 -- Modo de iluminación de cada producto: uno solo, el que mejor encaja con su diseño (depende del controlador que lleva).
 INSERT INTO producto_modos (producto_id, modo_id) VALUES
@@ -65,30 +84,36 @@ INSERT INTO producto_modos (producto_id, modo_id) VALUES
 (3, 'parpadeo'),     -- Pentagrama
 (4, 'fijo'),         -- Retícula
 (5, 'fijo'),         -- Marco: el contorno la dibuja en la oscuridad
-(6, 'parpadeo'),     -- Cartografía: flechas de dirección, como un intermitente
+(6, 'parpadeo'),     -- Rumbo: flechas de dirección, como un intermitente
 (7, 'degradado'),    -- Celosía: halo que respira
 (8, 'fijo'),         -- Horizonte: ilumina como un faro
 (9, 'fijo'),         -- Anatomía
-(10, 'fijo');       -- Meridiano (cian)
+(10, 'fijo'),       -- Meridiano (cian)
+(11, 'fijo'),
+(12, 'degradado'),
+(13, 'fijo'),
+(14, 'parpadeo'),
+(15, 'degradado'),
+(16, 'fijo');
 
 -- Variantes (SKU = producto + color de luz). imagen NULL = se muestra la ilustración provisional.
 INSERT INTO variantes (id, sku, producto_id, color_id, imagen, stock) VALUES
 (1,  'chaqueta-circuito-ambar',   1, 'ambar',   'assets/img/productos/chaqueta-circuito-ambar.jpg', 11),
-(2,  'chaqueta-circuito-violeta', 1, 'violeta', 'assets/img/productos/chaqueta-circuito-violeta.jpg', 8),
+(2,  'chaqueta-circuito-violeta', 11, 'violeta', 'assets/img/productos/chaqueta-circuito-violeta.jpg', 8),
 (3,  'chaqueta-perimetro-lima',   2, 'lima',    'assets/img/productos/chaqueta-perimetro-lima.jpg', 6),
-(4,  'chaqueta-perimetro-blanco', 2, 'blanco',  'assets/img/productos/chaqueta-perimetro-blanco.jpg', 0),
+(4,  'chaqueta-perimetro-blanco', 12, 'blanco',  'assets/img/productos/chaqueta-perimetro-blanco.jpg', 0),
 (5,  'camiseta-pulso-cian',      10, 'cian',   'assets/img/productos/camiseta-pulso-cian.jpg', 25),
 (6,  'camiseta-pulso-rosa',       3, 'rosa',    'assets/img/productos/camiseta-pulso-rosa.jpg', 17),
 (7,  'camiseta-linea-azul',       9, 'azul',   'assets/img/productos/camiseta-linea-azul.jpg', 20),
 (8,  'camiseta-linea-lima',       4, 'lima',    'assets/img/productos/camiseta-linea-lima.jpg', 14),
 (9,  'mochila-halo-cian',         5, 'cian',    'assets/img/productos/mochila-halo-cian.jpg', 9),
-(10, 'mochila-halo-lima',         5, 'lima',    'assets/img/productos/mochila-halo-lima.jpg', 12),
+(10, 'mochila-halo-lima',         13, 'lima',    'assets/img/productos/mochila-halo-lima.jpg', 12),
 (11, 'mochila-trayecto-rosa',     6, 'rosa',    'assets/img/productos/mochila-trayecto-rosa.jpg', 7),
-(12, 'mochila-trayecto-rojo',     6, 'rojo',    'assets/img/productos/mochila-trayecto-rojo.jpg', 3),
+(12, 'mochila-trayecto-rojo',     14, 'rojo',    'assets/img/productos/mochila-trayecto-rojo.jpg', 3),
 (13, 'gorra-aura-violeta',        7, 'violeta', 'assets/img/productos/gorra-aura-violeta.jpg', 18),
-(14, 'gorra-aura-blanco',         7, 'blanco',  'assets/img/productos/gorra-aura-blanco.jpg', 15),
+(14, 'gorra-aura-blanco',         15, 'blanco',  'assets/img/productos/gorra-aura-blanco.jpg', 15),
 (15, 'gorra-faro-cian',           8, 'cian',    'assets/img/productos/gorra-faro-cian.jpg', 10),
-(16, 'gorra-faro-violeta',        8, 'violeta', 'assets/img/productos/gorra-faro-violeta.jpg', 4);
+(16, 'gorra-faro-violeta',        16, 'violeta', 'assets/img/productos/gorra-faro-violeta.jpg', 4);
 
 INSERT INTO cupones (codigo, descripcion, tipo, valor, minimo, activo) VALUES
 ('NOCHE10',     '10 % de descuento en pedidos desde 50 €',         'porcentaje', 10.00, 50.00, 1),

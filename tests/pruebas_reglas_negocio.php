@@ -221,7 +221,7 @@ $l = ReglasNegocio::validarLineas([linea('mochila-trayecto-rojo', 3, 'parpadeo',
 comprobar('Se pueden comprar justo las unidades que hay en stock (3 de 3)', 3, $l[0]['cantidad']);
 
 comprobarError('Un producto agotado (stock 0) no se puede comprar',
-    fn () => ReglasNegocio::validarLineas([linea('chaqueta-perimetro-blanco', 1, 'degradado')]), 'Pespunte · Blanco frío está agotado.', 'lineas.0');
+    fn () => ReglasNegocio::validarLineas([linea('chaqueta-perimetro-blanco', 1, 'degradado')]), 'Ribete · Blanco frío está agotado.', 'lineas.0');
 comprobarError('No se pueden pedir más unidades que el stock (4 de 3)',
     fn () => ReglasNegocio::validarLineas([linea('mochila-trayecto-rojo', 4, 'parpadeo', 'Única')]), 'Solo quedan 3 unidades de Cartografía · Rojo neón.', 'lineas.0');
 comprobarError('El stock se suma entre líneas del mismo SKU (2 + 2 de 3)',
@@ -264,7 +264,7 @@ comprobar('Al crear el pedido se descuenta el stock (4 → 1)', $antes - 3, stoc
 comprobar('El total guardado es el calculado (3 × 59 € = 177 €, envío gratis)', 177.0, $pedido['total']);
 
 comprobarError('Después, ya no se pueden comprar 2 de las que solo queda 1',
-    fn () => Pedidos::crear(datosCheckout([linea('gorra-faro-violeta', 2, 'fijo', 'Única')])), 'Solo quedan 1 unidades de Horizonte · Violeta.', 'lineas.0');
+    fn () => Pedidos::crear(datosCheckout([linea('gorra-faro-violeta', 2, 'fijo', 'Única')])), 'Solo quedan 1 unidades de Ocaso · Violeta.', 'lineas.0');
 
 $fila = Db::uno('SELECT * FROM pedidos WHERE codigo = ?', [$pedido['codigo']]);
 Db::transaccion(fn () => Pedidos::cambiarEstado($fila, 'cancelado', 'Prueba automática', 'sistema'));
