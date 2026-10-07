@@ -405,43 +405,57 @@
   <div class="grid" id="rejilla"><div class="empty">Cargando catálogo…</div></div>
 
   <section class="wrap how" id="como-funciona">
-    <h2>No es estampado.<br>Es luz.</h2>
+    <div class="how-intro">
+      <span class="kicker">Cómo brilla</span>
+      <h2>Tu estilo,<br><span>encendido.</span></h2>
+      <p>Cada prenda lleva la luz tejida dentro. Enciéndela cuando cae el sol y deja que la ciudad te vea llegar.</p>
+    </div>
     <div class="steps">
-      <div class="step">
-        <div class="step-n">01</div>
-        <h3>Fibra óptica</h3>
-        <p>La luz recorre la prenda mediante fibra óptica integrada en el propio tejido, no aplicada sobre él. Un módulo LED extraíble la alimenta por USB-C.</p>
+      <div class="step" style="--c:var(--cian)">
+        <div class="step-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 16c4-9 9 5 18-7"/></svg></div>
+        <h3>Luz que se lleva puesta</h3>
+        <p>La fibra óptica va tejida en la prenda, no pegada encima: se dobla, se mueve contigo y brilla igual. Un módulo LED extraíble la alimenta por USB-C.</p>
       </div>
-      <div class="step">
-        <div class="step-n">02</div>
-        <h3>Modos</h3>
-        <p><strong>Fijo</strong> (luz continua, máxima autonomía), <strong>parpadeo</strong> (muy visible en bici o patinete) o <strong>degradado</strong> (la intensidad sube y baja). Cada prenda tiene un solo modo, el que mejor encaja con su diseño, y lo indica en su ficha.</p>
+      <div class="step" style="--c:var(--violeta)">
+        <div class="step-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 3"/></svg></div>
+        <h3>Elige cómo brillas</h3>
+        <p>Fija para ir a tu aire, parpadeo para que te vean en bici o patinete, o degradado para que la luz respire. Cada diseño trae el modo que mejor le sienta.</p>
+        <div class="step-modos"><span>Fijo</span><span>Parpadeo</span><span>Degradado</span></div>
       </div>
-      <div class="step">
-        <div class="step-n">03</div>
-        <h3>Cuidado</h3>
-        <p>Retira el módulo y lava la prenda a 30 °C del revés. La fibra aguanta el lavado; la batería, no.</p>
+      <div class="step" style="--c:var(--ambar)">
+        <div class="step-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3c3 4 6 7 6 11a6 6 0 0 1-12 0c0-4 3-7 6-11z"/></svg></div>
+        <h3>Brilla hoy, lava mañana</h3>
+        <p>Saca el módulo, lava la prenda del revés a 30 °C y vuelve a encenderte. La fibra aguanta el lavado; la batería, mejor fuera.</p>
       </div>
     </div>
   </section>
 
   <section class="wrap editorial" id="marca">
     <div class="editorial-head">
-      <h2>Hecha para la noche.</h2>
-      <p>NOCTILUZ es una marca ficticia creada para un trabajo de la UCAM, pensada para quienes viven la ciudad después del atardecer.</p>
+      <div>
+        <span class="kicker">Lookbook</span>
+        <h2>Sal cuando otros se apagan.</h2>
+      </div>
+      <p>Azoteas, callejones de neón y calles mojadas: así se ve NOCTILUZ cuando la ciudad baja la luz.</p>
     </div>
     <div class="editorial-grid">
-      <figure class="escene">
+      <figure class="escene escene-grande">
         <img src="assets/img/editorial/chaqueta-azotea.jpg" alt="Mujer en una azotea de noche con una chaqueta negra de fibra óptica verde" loading="lazy">
-        <figcaption class="cap"><b>Azotea, madrugada</b>Chaqueta con fibra óptica en verde</figcaption>
+        <span class="escene-tag" style="--c:var(--lima)">Chaquetas</span>
+        <figcaption class="cap"><b>Azotea, madrugada</b>Que la ciudad te vea desde arriba.</figcaption>
+        <a class="escene-ver" href="#/catalogo" data-categoria="chaqueta">Ver chaquetas →</a>
       </figure>
       <figure class="escene">
-        <img src="assets/img/editorial/mochila-callejon.jpg" alt="Chico de espaldas en un callejón con neones y una mochila con dibujo geométrico luminoso" loading="lazy">
-        <figcaption class="cap"><b>Callejón de neón</b>Mochila con patrón geométrico</figcaption>
+        <img src="assets/img/editorial/mochila-callejon.jpg" alt="Chico de espaldas en un callejón con neones y una mochila con dibujo geométrico luminoso" loading="lazy" style="object-position:50% 80%">
+        <span class="escene-tag" style="--c:var(--blanco)">Mochilas</span>
+        <figcaption class="cap"><b>Callejón de neón</b>Tu ruta, trazada en luz.</figcaption>
+        <a class="escene-ver" href="#/catalogo" data-categoria="mochila">Ver →</a>
       </figure>
       <figure class="escene">
-        <img src="assets/img/editorial/gorra-lluvia.jpg" alt="Mujer bajo la lluvia ajustándose una gorra con la visera iluminada" loading="lazy">
-        <figcaption class="cap"><b>Lluvia en la ciudad</b>Gorra con línea luminosa en la visera</figcaption>
+        <img src="assets/img/editorial/gorra-lluvia.jpg" alt="Mujer bajo la lluvia ajustándose una gorra con la visera iluminada" loading="lazy" style="object-position:50% 25%">
+        <span class="escene-tag" style="--c:var(--cian)">Gorras</span>
+        <figcaption class="cap"><b>Lluvia en la ciudad</b>Ni el agua apaga tu estilo.</figcaption>
+        <a class="escene-ver" href="#/catalogo" data-categoria="gorra">Ver →</a>
       </figure>
     </div>
   </section>
