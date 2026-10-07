@@ -4,6 +4,7 @@
 PRAGMA foreign_keys = ON;
 
 DROP TABLE IF EXISTS eventos;
+DROP TABLE IF EXISTS resenas;
 DROP TABLE IF EXISTS incidencias;
 DROP TABLE IF EXISTS historial_estados;
 DROP TABLE IF EXISTS pagos;
@@ -108,6 +109,13 @@ CREATE TABLE incidencias (
   pedido_id INTEGER NULL REFERENCES pedidos(id),
   nombre TEXT NOT NULL, email TEXT NOT NULL, motivo TEXT NOT NULL, mensaje TEXT NOT NULL,
   estado TEXT NOT NULL, creado_en TEXT NOT NULL
+);
+CREATE TABLE resenas (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  pedido_id INTEGER NULL UNIQUE REFERENCES pedidos(id),
+  nombre TEXT NOT NULL, prenda TEXT NOT NULL,
+  estrellas INTEGER NOT NULL CHECK (estrellas BETWEEN 1 AND 5),
+  texto TEXT NOT NULL, creado_en TEXT NOT NULL
 );
 CREATE TABLE eventos (
   id INTEGER PRIMARY KEY AUTOINCREMENT,

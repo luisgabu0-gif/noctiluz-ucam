@@ -55,14 +55,11 @@
         <span class="sr-only">Buscar en el catálogo</span>
         <input type="search" placeholder="Buscar en el catálogo" data-buscador maxlength="40">
       </label>
-      <a href="#/catalogo">Tienda</a>
-      <a href="#/catalogo/camiseta">Camisetas</a>
-      <a href="#/catalogo/chaqueta">Chaquetas</a>
-      <a href="#/catalogo/mochila">Mochilas</a>
-      <a href="#/catalogo/gorra">Gorras</a>
-      <a href="#/como-funciona">Cómo funciona</a>
-      <a href="#/seguimiento">Mis pedidos</a>
-      <a href="#/soporte">Soporte</a>
+      <a href="#/" data-seccion="inicio">Inicio</a>
+      <a href="#/catalogo" data-seccion="tienda">Tienda</a>
+      <a href="#/como-funciona" data-seccion="como-funciona">Cómo funciona</a>
+      <a href="#/seguimiento" data-seccion="pedidos">Mis pedidos</a>
+      <a href="#/soporte" data-seccion="soporte">Soporte</a>
     </div>
   </header>
 </div>
@@ -389,6 +386,8 @@
       <h2>Por qué brilla distinto</h2>
     </div>
     <div class="carrusel" data-carrusel="destacados">
+      <button type="button" class="carrusel-flecha izq" data-ir="-1" aria-label="Anterior">‹</button>
+      <button type="button" class="carrusel-flecha der" data-ir="1" aria-label="Siguiente">›</button>
       <div class="carrusel-pista" tabindex="0" aria-label="Destacados">
         <article class="dcard"><div class="dcard-circ"><img src="assets/img/productos/chaqueta-circuito-violeta.jpg" alt="" loading="lazy"></div>
           <h3>Luz tejida, no estampada</h3><p>La fibra óptica va dentro del tejido, no pegada encima.</p><p>Se dobla y se mueve contigo sin perder brillo.</p></article>
@@ -399,15 +398,15 @@
         <article class="dcard"><div class="dcard-circ"><img src="assets/img/productos/camiseta-linea-lima.jpg" alt="" loading="lazy"></div>
           <h3>Hecha para la calle</h3><p>Visible de lejos en bici o patinete.</p><p>Envío gratis desde 120 € (simulado: es un prototipo).</p></article>
       </div>
-      <div class="carrusel-nav"><button type="button" data-ir="-1" aria-label="Anterior">‹</button><span data-posicion>1/4</span><button type="button" data-ir="1" aria-label="Siguiente">›</button></div>
+      <div class="carrusel-nav solo-texto"><span data-posicion>1/4</span></div>
     </div>
   </section>
 
   <section class="comunidad" id="marca">
     <div class="wrap sec-cab centrada">
       <span class="kicker">La comunidad</span>
-      <h2>Shop the look</h2>
-      <p>Así la llevan puesta. Toca el producto para verlo.</p>
+      <h2>Así se lleva</h2>
+      <p>Prendas NOCTILUZ en la calle, de noche.</p>
     </div>
     <div class="carrusel" data-carrusel="comunidad">
       <button type="button" class="carrusel-flecha izq" data-ir="-1" aria-label="Anterior">‹</button>
@@ -421,12 +420,8 @@
     <div class="sec-cab fila">
       <div><span class="kicker">Reseñas</span><h2 id="notaMedia">Opiniones</h2></div>
     </div>
-    <div class="resenas-grid">
-      <figure class="rcard"><div class="estrellas" aria-label="5 de 5">★★★★★</div><blockquote>«En el concierto no paraban de preguntarme dónde la había comprado. Brilla muchísimo y no pesa nada.»</blockquote><figcaption><span class="avatar">L</span><span><b>Lucía F.</b>Retícula · Verde lima</span></figcaption></figure>
-      <figure class="rcard"><div class="estrellas" aria-label="5 de 5">★★★★★</div><blockquote>«La uso para ir en bici al trabajo. El parpadeo se ve desde lejísimos.»</blockquote><figcaption><span class="avatar">M</span><span><b>Marcos I.</b>Rumbo · Rosa</span></figcaption></figure>
-      <figure class="rcard"><div class="estrellas" aria-label="4 de 5">★★★★☆</div><blockquote>«Me encanta que la luz vaya en la visera: discreta de día y espectacular de noche.»</blockquote><figcaption><span class="avatar">S</span><span><b>Sara N.</b>Horizonte · Cian</span></figcaption></figure>
-    </div>
-    <p class="nota-ficticia">Reseñas y valoraciones ficticias, creadas para el prototipo.</p>
+    <div class="resenas-grid" id="listaResenas"></div>
+    <div class="resena-nueva" id="resenaNueva" hidden></div>
   </section>
 
   <section class="wrap equipo">

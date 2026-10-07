@@ -14,7 +14,7 @@ Canal digital de venta con flujo transaccional completo:
 
 | Parte | Dónde |
 |---|---|
-| Portada (destacados, «Shop the look», reseñas ficticias y equipo) | `index.html` (`#/`) |
+| Portada (destacados, «Así se lleva», reseñas y equipo) | `index.html` (`#/`) |
 | Tienda agrupada por prenda, con ventana de filtros (prenda, color de luz, modo, precio, stock), orden y buscador | `#/catalogo`, `#/catalogo/<tipo>` |
 | Ficha de producto (material, autonomía, modos que admite, tallas, stock, envío) | `#/producto/<sku>` |
 | Carrito persistente en el navegador | panel lateral |
@@ -50,7 +50,7 @@ entrega_final/
 
 - **Interfaz:** HTML, CSS y JavaScript nativo (módulos ES). Sin frameworks ni dependencias externas salvo las fuentes de Google Fonts.
 - **Lógica de negocio:** PHP 8 sin framework. Precios, stock, cupones e impuestos se calculan **siempre en el servidor**; el navegador solo envía qué quiere comprar.
-- **Persistencia:** MySQL en el hosting (SQLite en local), 15 tablas. Todo cambio relevante (pedido, pago, cambio de estado) se guarda en **una transacción** junto con su evento.
+- **Persistencia:** MySQL en el hosting (SQLite en local), 16 tablas. Todo cambio relevante (pedido, pago, cambio de estado, reseña) se guarda en **una transacción** junto con su evento.
 
 ## 3. Ejecución en local (sin MySQL)
 
@@ -106,6 +106,7 @@ Cualquier otra tarjeta, aunque sea válida, se rechaza: así nadie puede introdu
 - Envío estándar 4,95 € (gratis si el pedido, tras descuento, llega a 120 €); exprés 9,95 € siempre.
 - Solo se puede comprar un modo de iluminación que el producto admita y una talla válida; máximo 9 unidades por línea y nunca más que el stock.
 - El stock se descuenta al crear el pedido (con control de concurrencia) y se devuelve si se cancela.
+- Reseñas: no hay cuentas de cliente, así que el botón «Escribir reseña» solo aparece a quien se ha identificado con un pedido en ese navegador (al comprar o en «Mis pedidos»). El servidor comprueba que el pedido esté pagado y que el email coincida, y admite una reseña por pedido. Con la sesión del back-office iniciada no se puede opinar.
 - Estados: `creado → pagado → en_preparacion → enviado → entregado`, más `incidencia` y `cancelado`. Desde `pagado` el back-office también puede marcar directamente `enviado` o `entregado`, y desde `en_preparacion`, `entregado`. Solo se permiten las transiciones definidas en `ReglasNegocio::TRANSICIONES`; `pagado` solo lo asigna la pasarela simulada.
 
 ## 7. Eventos de negocio
@@ -119,6 +120,7 @@ Cualquier otra tarjeta, aunque sea válida, se rechaza: así nadie puede introdu
 | `payment.simulated` | servidor | Cada intento de pago, aprobado o rechazado |
 | `order.status_changed` | servidor | Cada cambio de estado (pasarela, cliente o back-office) |
 | `support.requested` | servidor | Se registra una incidencia o solicitud de soporte |
+| `review.created` | servidor | Un cliente publica una reseña de su pedido |
 
 Se guardan en la tabla `eventos` (uuid, tipo, origen, fecha, sesión anónima, cliente, pedido y datos en JSON). Consulta y exportación (requiere sesión de back-office):
 
@@ -136,6 +138,7 @@ Se guardan en la tabla `eventos` (uuid, tipo, origen, fecha, sesión anónima, c
 | `POST api/pagos.php` | Pago simulado |
 | `POST api/eventos.php` | Evento del navegador |
 | `GET/POST api/soporte.php` | Motivos / crear incidencia |
+| `GET/POST api/resenas.php` | Últimas reseñas / publicar una reseña |
 | `GET/POST/DELETE api/admin/sesion.php` | Estado / iniciar / cerrar sesión |
 | `GET/POST api/admin/pedidos.php` | Listado, detalle y cambio de estado |
 | `GET api/admin/eventos.php` | Eventos (JSON, CSV) |
