@@ -5,7 +5,7 @@
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
-DROP TABLE IF EXISTS eventos, incidencias, historial_estados, pagos, lineas_pedido, pedidos,
+DROP TABLE IF EXISTS eventos, resenas, incidencias, historial_estados, pagos, lineas_pedido, pedidos,
   clientes, variantes, producto_modos, productos, cupones, modos, colores, categorias, usuarios_admin;
 
 SET FOREIGN_KEY_CHECKS = 1;
@@ -168,6 +168,20 @@ CREATE TABLE incidencias (
   estado    VARCHAR(20)  NOT NULL,              -- abierta | resuelta
   creado_en DATETIME     NOT NULL,
   CONSTRAINT fk_inc_ped FOREIGN KEY (pedido_id) REFERENCES pedidos(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Reseñas de la portada. Solo puede escribirlas quien tiene un pedido pagado (una por pedido).
+-- pedido_id NULL = reseña de ejemplo cargada con los datos de prueba.
+CREATE TABLE resenas (
+  id        INT AUTO_INCREMENT PRIMARY KEY,
+  pedido_id INT          NULL UNIQUE,
+  nombre    VARCHAR(60)  NOT NULL,
+  prenda    VARCHAR(120) NOT NULL,
+  estrellas TINYINT      NOT NULL,
+  texto     TEXT         NOT NULL,
+  creado_en DATETIME     NOT NULL,
+  CONSTRAINT fk_res_ped FOREIGN KEY (pedido_id) REFERENCES pedidos(id),
+  CONSTRAINT ck_res_estrellas CHECK (estrellas BETWEEN 1 AND 5)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE eventos (

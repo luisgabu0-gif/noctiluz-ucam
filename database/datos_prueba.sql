@@ -38,8 +38,8 @@ INSERT INTO productos (id, slug, nombre, categoria_id, descripcion, material, au
  'Corte oversize con doble línea luminosa lateral. Tejido ligero y transpirable para uso durante todo el año.',
  'Algodón orgánico peinado de 180 g/m²', 6, 69.00, 1, 4.5, 15, 1),
 (5, 'mochila-halo', 'Marco', 'mochila',
- 'Mochila urbana de frontal liso con un hilo de fibra óptica que recorre todo su contorno y la dibuja en la oscuridad, visible desde cualquier ángulo en la carretera.',
- 'Poliéster 600D reciclado con frontal semirrígido, capacidad de 20 L', 12, 89.00, 0, 4.9, 27, 1),
+ 'Mochila técnica con fibra óptica en el asa, los tirantes, las cremalleras y los bolsillos laterales, y un circuito luminoso en el frontal. Se ve desde cualquier ángulo en la carretera.',
+ 'Poliéster 600D reciclado con bolsillos laterales y frontal acolchado, capacidad de 20 L', 12, 89.00, 0, 4.9, 27, 1),
 (6, 'mochila-trayecto', 'Rumbo', 'mochila',
  'Mochila para el trayecto diario con funda acolchada para portátil y bolsillos laterales. Según el color, la fibra óptica perfila asa, tirantes y bolsillos con flechas de dirección o dibuja un patrón geométrico en el frontal.',
  'Poliéster técnico resistente al agua, 24 L con funda para portátil de 15"', 14, 119.00, 0, 4.6, 19, 1),
@@ -170,6 +170,13 @@ INSERT INTO incidencias (id, codigo, pedido_id, nombre, email, motivo, mensaje, 
  'El seguimiento indica que el pedido está enviado, pero todavía no me ha llegado. ¿Podéis revisarlo?', 'abierta', '2026-09-23 18:02:40');
 
 -- ---------- Eventos de ejemplo (mismo formato que los que genera la aplicación) ----------
+
+-- ---------- Reseñas de ejemplo (sin pedido asociado) ----------
+
+INSERT INTO resenas (id, pedido_id, nombre, prenda, estrellas, texto, creado_en) VALUES
+(1, NULL, 'Sara N.',   'Horizonte · Cian',   4, 'Me encanta que la luz vaya en la visera: discreta de día y espectacular de noche.', '2026-09-25 20:41:00'),
+(2, NULL, 'Marcos I.', 'Rumbo · Rosa',       5, 'La uso para ir en bici al trabajo. El parpadeo se ve desde lejísimos.', '2026-09-26 08:15:00'),
+(3, NULL, 'Lucía F.',  'Retícula · Verde lima', 5, 'En el concierto no paraban de preguntarme dónde la había comprado. Brilla muchísimo y no pesa nada.', '2026-09-27 23:02:00');
 
 INSERT INTO eventos (id, uuid, tipo, origen, ocurrido_en, sesion_id, cliente_id, pedido_id, datos) VALUES
 (1,  '0b1f6c2a-7d3e-4f51-8a92-1c3d5e7f9a01', 'product.viewed',       'cliente',  '2026-09-20 21:04:10', '5f0c7a2e-1b3d-4c8e-9a61-0d2b7e4f1a01', NULL, NULL, '{"sku":"camiseta-pulso-rosa"}'),

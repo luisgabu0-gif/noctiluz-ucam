@@ -247,15 +247,90 @@ function pintarPortada() {
       <span class="look-prod">${v.imagen ? `<img src="${esc(v.imagen)}" alt="">` : ''}<span><b>${esc(p.nombre)}</b>${eur(p.precio)}</span><span class="look-mas" aria-hidden="true">+</span></span>
     </a>`;
   }).join('');
-  // Nota media ponderada por número de reseñas (todas ficticias, de datos_prueba.sql).
+  // Nota media ponderada por número de reseñas de cada producto (datos de prueba de datos_prueba.sql).
   const ps = estado.catalogo.productos;
   const total = ps.reduce((n, p) => n + p.num_resenas, 0);
   const media = total ? ps.reduce((s, p) => s + p.valoracion * p.num_resenas, 0) / total : 0;
-  $('#notaMedia').innerHTML = `${media.toLocaleString('es-ES', { maximumFractionDigits: 1 })} de 5 <small>· ${total} opiniones (ficticias)</small>`;
+  $('#notaMedia').innerHTML = `${media.toLocaleString('es-ES', { maximumFractionDigits: 1 })} de 5 <small>· ${total} opiniones</small>`;
   const prendas = ps.reduce((n, p) => n + p.variantes.length, 0);
   $('#resumenColeccion').textContent = `${prendas} prendas · ${estado.catalogo.colores.length} colores de luz`;
   document.querySelectorAll('[data-carrusel]').forEach(actualizarCarrusel);
 }
+
+// ---------- Reseñas: las últimas de la base de datos y el formulario para publicar una ----------
+const tarjetaResena = (r) => `<figure class="rcard">
+  <div class="estrellas" aria-label="${r.estrellas} de 5">${'★'.repeat(r.estrellas)}${'☆'.repeat(5 - r.estrellas)}</div>
+  <blockquote>«${esc(r.texto)}»</blockquote>
+  <figcaption><span class="avatar">${esc(r.nombre.charAt(0).toUpperCase())}</span><span><b>${esc(r.nombre)}</b>${esc(r.prenda)}</span></figcaption>
+</figure>`;
+
+async function pintarResenas() {
+  let datos;
+  try {
+    datos = await api('resenas.php');
+  } catch {
+    $('#listaResenas').innerHTML = '';
+    return;
+  }
+  $('#listaResenas').innerHTML = datos.resenas.map(tarjetaResena).join('');
+  // El equipo de administración no puede opinar: si hay sesión del back-office se oculta el formulario.
+  $('#avisoAdminResena').hidden = datos.puede_opinar;
+  const caja = $('#resenaNueva');
+  caja.hidden = !datos.puede_opinar;
+  if (!datos.puede_opinar || caja.childElementCount) return;
+  caja.innerHTML = `
+    <button type="button" class="btn btn-outline btn-sm" id="abrirResena" aria-expanded="false" aria-controls="formResena">Escribe tu reseña</button>
+    <form class="bloque form-resena" id="formResena" novalidate hidden>
+      <h3>Tu reseña</h3>
+      <p class="campo-ayuda">Para opinar necesitas un pedido ya pagado: escribe su código y el email con el que compraste.</p>
+      <div class="form-grid">
+        ${campo({ nombre: 'pedido', etiqueta: 'Código de pedido', atributos: 'maxlength="20" placeholder="NCZ-AAMMDD-XXXXXX" pattern="[Nn][Cc][Zz]-\\d{6}-[A-Za-z0-9]{6}" data-mensaje="El código tiene el formato NCZ-AAMMDD-XXXXXX." autocomplete="off"' })}
+        ${campo({ nombre: 'email', etiqueta: 'Email del pedido', tipo: 'email', atributos: 'maxlength="120" autocomplete="email"' })}
+        ${campo({ nombre: 'nombre', etiqueta: 'Nombre que se publica', atributos: 'minlength="2" maxlength="40" autocomplete="given-name" placeholder="Ej.: Laura M."' })}
+        <div class="campo">
+          <span class="etiqueta" id="etq-estrellas">Puntuación</span>
+          <div class="elegir-estrellas" role="radiogroup" aria-labelledby="etq-estrellas">
+            ${[5, 4, 3, 2, 1].map((n) => `<input type="radio" id="estrella-${n}" name="estrellas" value="${n}" ${n === 5 ? 'checked' : ''}><label for="estrella-${n}" title="${n} de 5">★</label>`).join('')}
+          </div>
+          <small class="campo-error" data-error-de="estrellas" role="alert"></small>
+        </div>
+        <div class="campo completo">
+          <label for="f-texto">Tu opinión</label>
+          <textarea id="f-texto" name="texto" required minlength="10" maxlength="400" data-mensaje="Escribe tu opinión (mínimo 10 caracteres)." placeholder="¿Qué tal brilla? ¿Para qué la usas?"></textarea>
+          <small class="campo-error" data-error-de="texto" role="alert"></small>
+        </div>
+      </div>
+      <div id="errorResena" role="alert" style="margin-top:14px"></div>
+      <button class="btn btn-solid" style="margin-top:16px" id="enviarResena">Publicar reseña</button>
+    </form>`;
+  const f = $('#formResena');
+  $('#abrirResena').addEventListener('click', (e) => {
+    f.hidden = !f.hidden;
+    e.currentTarget.setAttribute('aria-expanded', String(!f.hidden));
+    if (!f.hidden) f.pedido.focus();
+  });
+  f.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    $('#errorResena').innerHTML = '';
+    if (!validarEnCliente(f)) return;
+    const boton = $('#enviarResena');
+    boton.disabled = true;
+    try {
+      await api('resenas.php', { method: 'POST', body: { ...Object.fromEntries(new FormData(f)), sesion_id: sesionId() } });
+      f.reset();
+      f.hidden = true;
+      $('#abrirResena').setAttribute('aria-expanded', 'false');
+      toast('¡Gracias! Tu reseña ya está publicada.');
+      pintarResenas();
+    } catch (err) {
+      mostrarErrores(f, err.campos);
+      $('#errorResena').innerHTML = `<div class="alerta error">${esc(err.message)}</div>`;
+    } finally {
+      boton.disabled = false;
+    }
+  });
+}
+pintarResenas();
 
 // Carrusel con desplazamiento nativo (también funciona con el dedo); los botones mueven una tarjeta.
 function actualizarCarrusel(carrusel) {
@@ -1066,6 +1141,15 @@ const SECCIONES_INICIO = { '#/como-funciona': 'como-funciona', '#/marca': 'marca
 // Cada vista registra sus manejadores con esta señal; al cambiar de vista se anulan todos de golpe.
 let controlVista = new AbortController();
 
+function seccionDe(hash) {
+  if (/^#\/(catalogo|producto)/.test(hash)) return 'tienda';
+  if (/^#\/(seguimiento|pedido)/.test(hash)) return 'pedidos';
+  if (hash.startsWith('#/soporte')) return 'soporte';
+  if (hash === '#/como-funciona') return 'como-funciona';
+  if (hash === '#/' || hash === '#/marca') return 'inicio';
+  return '';
+}
+
 async function enrutar() {
   controlVista.abort();
   controlVista = new AbortController();
@@ -1073,6 +1157,12 @@ async function enrutar() {
   cerrarMenu();
   const hash = location.hash || '#/';
   document.querySelectorAll('.nav-center a').forEach((a) => a.toggleAttribute('aria-current', a.getAttribute('href') === hash));
+  // En el menú del móvil se marca la sección en la que estás (la ficha de producto cuenta como «Tienda»).
+  const seccionMenu = seccionDe(hash);
+  document.querySelectorAll('#menuMovil a[data-seccion]').forEach((a) => {
+    if (a.dataset.seccion === seccionMenu) a.setAttribute('aria-current', 'page');
+    else a.removeAttribute('aria-current');
+  });
   abrirFiltros(false);
   const coleccion = hash.match(/^#\/catalogo(?:\/(\w+))?$/);
   if (coleccion) {
