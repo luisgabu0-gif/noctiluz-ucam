@@ -7,11 +7,12 @@ import { registrar, sesionId } from './eventos.js';
 const $ = (sel, raiz = document) => raiz.querySelector(sel);
 const vistaInicio = $('#vista-inicio');
 const vistaPagina = $('#vista-pagina');
+const vistaColeccion = $('#vista-coleccion');
 const ORDEN_MODOS = ['fijo', 'parpadeo', 'degradado'];
 
 const estado = {
   catalogo: null,
-  filtros: { tipo: 'todas', colores: new Set(), modos: new Set(), texto: '' },
+  filtros: { tipos: new Set(), colores: new Set(), modos: new Set(), texto: '', soloStock: false, precioMax: null, orden: 'destacados' },
 };
 let indiceSku = new Map();
 
@@ -43,15 +44,32 @@ function medio(p, v, { modo = 'fijo', etiqueta = true, variante = 'frontal' } = 
 }
 const miniatura = (p, v, modo) => medio(p, v, { modo, etiqueta: false, variante: v.imagen ? 'foto' : 'frontal' });
 
+// Orden en que se agrupan las prendas en la página de la colección.
+const ORDEN_GRUPOS = ['camiseta', 'gorra', 'chaqueta', 'mochila'];
+const alternar = (conjunto, valor) => (conjunto.has(valor) ? conjunto.delete(valor) : conjunto.add(valor));
+const precios = () => estado.catalogo.productos.map((p) => p.precio);
+
 function pintarFiltros() {
   const { catalogo: c, filtros: f } = estado;
-  $('#filtroTipo').innerHTML = [{ id: 'todas', nombre: 'Todos' }, ...c.categorias]
-    .map((t) => `<button type="button" class="chip" data-tipo="${esc(t.id)}" aria-pressed="${f.tipo === t.id}">${esc(t.nombre)}</button>`).join('');
-  $('#filtroColor').innerHTML = c.colores
-    .map((col) => `<button type="button" class="dot" data-color="${esc(col.id)}" aria-pressed="${f.colores.has(col.id)}"
-      title="${esc(col.nombre)}" aria-label="Luz ${esc(col.nombre)}" style="background:${esc(col.hex)};--gc:${esc(col.hex)}"></button>`).join('');
-  $('#filtroModo').innerHTML = c.modos
-    .map((m) => `<button type="button" class="chip modo-chip" data-modo="${esc(m.id)}" aria-pressed="${f.modos.has(m.id)}" title="${esc(m.descripcion)}"><span class="mdot"></span>${esc(m.nombre)}</button>`).join('');
+  const cuantos = (fn) => c.productos.reduce((n, p) => n + p.variantes.filter((v) => fn(p, v)).length, 0);
+  const total = cuantos(() => true);
+  const tipoActivo = f.tipos.size === 1 ? [...f.tipos][0] : (f.tipos.size ? null : 'todas');
+  $('#pestanas').innerHTML = [{ id: 'todas', nombre: 'Todo', n: total },
+    ...ORDEN_GRUPOS.map((id) => ({ id, nombre: c.categorias.find((t) => t.id === id)?.nombre ?? id, n: cuantos((p) => p.categoria === id) }))]
+    .map((t) => `<a href="#/catalogo${t.id === 'todas' ? '' : '/' + t.id}" ${t.id === tipoActivo ? 'aria-current="page"' : ''}>${esc(t.nombre)}<em>${t.n}</em></a>`).join('');
+  $('#fPrenda').innerHTML = ORDEN_GRUPOS.map((id) => `<label class="pf-check"><input type="checkbox" data-tipo="${id}" ${f.tipos.has(id) ? 'checked' : ''}><i aria-hidden="true"></i>${esc(c.categorias.find((t) => t.id === id)?.nombre ?? id)}<em>${cuantos((p) => p.categoria === id)}</em></label>`).join('');
+  $('#fColor').innerHTML = c.colores
+    .map((col) => `<button type="button" class="pf-color" data-color="${esc(col.id)}" aria-pressed="${f.colores.has(col.id)}"><i style="--k:${esc(col.hex)}"></i>${esc(col.nombre)}<em>${cuantos((p, v) => v.color === col.id)}</em></button>`).join('');
+  $('#fModo').innerHTML = c.modos
+    .map((m) => `<button type="button" class="pf-modo" data-modo="${esc(m.id)}" aria-pressed="${f.modos.has(m.id)}" title="${esc(m.descripcion)}">${esc(m.nombre)}</button>`).join('');
+  const rango = $('#fPrecio');
+  rango.min = Math.floor(Math.min(...precios()));
+  rango.max = Math.ceil(Math.max(...precios()));
+  rango.value = f.precioMax ?? rango.max;
+  $('#precioMin').textContent = eur(Number(rango.min));
+  $('#precioMax').textContent = `hasta ${eur(Number(rango.value))}`;
+  $('#fStock').checked = f.soloStock;
+  $('#orden').value = f.orden;
 }
 
 /** Filtros: dentro de un grupo se suman opciones (O); entre grupos se combinan (Y). */
@@ -60,62 +78,139 @@ function variantesFiltradas() {
   const texto = normalizar(f.texto);
   const salida = [];
   for (const p of estado.catalogo.productos) {
-    if (f.tipo !== 'todas' && p.categoria !== f.tipo) continue;
+    if (f.tipos.size && !f.tipos.has(p.categoria)) continue;
     if (f.modos.size && !p.modos.some((m) => f.modos.has(m))) continue;
+    if (f.precioMax !== null && p.precio > f.precioMax) continue;
     for (const v of p.variantes) {
       if (f.colores.size && !f.colores.has(v.color)) continue;
+      if (f.soloStock && v.stock === 0) continue;
       if (texto && !normalizar(`${p.nombre} ${v.color_nombre} ${p.categoria_nombre} ${p.descripcion}`).includes(texto)) continue;
       salida.push({ p, v });
     }
   }
-  return salida;
+  const orden = { 'precio-asc': (a, b) => a.p.precio - b.p.precio, 'precio-desc': (a, b) => b.p.precio - a.p.precio,
+    nombre: (a, b) => a.p.nombre.localeCompare(b.p.nombre, 'es') }[f.orden];
+  return orden ? salida.sort(orden) : salida;
 }
 
 function tarjeta({ p, v }) {
-  const etiquetaStock = v.stock === 0 ? '<span class="stock-tag agotado">Agotado</span>'
-    : v.stock <= 3 ? '<span class="stock-tag ultimas">Últimas unidades</span>' : '';
-  return `<a class="pcard" href="#/producto/${esc(v.sku)}">
-    <div class="pcard-media" style="--gc:${esc(v.hex)}44">${etiquetaStock}${medio(p, v, { modo: p.modos.at(-1), variante: v.imagen ? 'foto' : 'frontal' })}</div>
-    <div class="pcard-body">
-      <div class="pcard-type">${esc(p.categoria_nombre)}</div>
-      <div class="pcard-name">${esc(p.nombre)}</div>
-      <div class="pcard-color" style="--gc:${esc(v.hex)}"><i></i>Luz ${esc(v.color_nombre.toLowerCase())}</div>
-      <div class="pcard-modes" aria-label="Modos disponibles">${p.modos.map((m) => `<span>${esc(nombreModo(m))}</span>`).join('')}</div>
-      <div class="pcard-foot"><span class="pcard-price">${eur(p.precio)}</span><span class="pcard-cta">Ver producto</span></div>
-    </div>
+  const etiqueta = v.stock === 0 ? '<span class="etiqueta agotado">Agotado</span>'
+    : v.stock <= 3 ? '<span class="etiqueta">Últimas unidades</span>' : '';
+  return `<a class="ptarjeta${v.stock === 0 ? ' sin-stock' : ''}" href="#/producto/${esc(v.sku)}">
+    <div class="ptarjeta-foto" style="--gc:${esc(v.hex)}44">${etiqueta}${medio(p, v, { modo: p.modos.at(-1), variante: v.imagen ? 'foto' : 'frontal' })}<span class="ptarjeta-ver">Ver producto</span></div>
+    <div class="ptarjeta-fila"><span class="ptarjeta-nombre">${esc(p.nombre)}</span><span class="ptarjeta-precio">${eur(p.precio)}</span></div>
+    <div class="ptarjeta-fila sec"><span class="ptarjeta-color" style="--gc:${esc(v.hex)}"><i></i>${esc(p.categoria_nombre)} · luz ${esc(v.color_nombre.toLowerCase())}</span><span>${p.modos.map(nombreModo).join(' · ')}</span></div>
   </a>`;
+}
+
+const NOTAS_GRUPO = {
+  camiseta: 'Básicos que brillan: la luz dibuja líneas, retículas y siluetas.',
+  gorra: 'Luz en la visera, en la copa o en toda la tela.',
+  chaqueta: 'Fibra óptica en las costuras y en dibujos de circuito.',
+  mochila: 'Para el trayecto diario, con la luz en el contorno o en el frontal.',
+};
+
+function filtrosActivos() {
+  const { catalogo: c, filtros: f } = estado;
+  const chip = (texto, datos) => `<button type="button" class="chip-activo" ${datos}>${esc(texto)} <span aria-hidden="true">✕</span><span class="sr-only">Quitar filtro</span></button>`;
+  const chips = [
+    ...[...f.tipos].map((t) => chip(c.categorias.find((x) => x.id === t)?.nombre ?? t, `data-quitar-tipo="${esc(t)}"`)),
+    ...[...f.colores].map((col) => chip(c.colores.find((x) => x.id === col)?.nombre ?? col, `data-quitar-color="${esc(col)}"`)),
+    ...[...f.modos].map((m) => chip(nombreModo(m), `data-quitar-modo="${esc(m)}"`)),
+    ...(f.soloStock ? [chip('Solo en stock', 'data-quitar-stock')] : []),
+    ...(f.precioMax !== null ? [chip(`Hasta ${eur(f.precioMax)}`, 'data-quitar-precio')] : []),
+    ...(f.texto.trim() ? [chip(`«${f.texto.trim()}»`, 'data-quitar-texto')] : []),
+  ];
+  return chips;
 }
 
 function pintarCatalogo() {
   pintarFiltros();
   const items = variantesFiltradas();
+  const chips = filtrosActivos();
+  $('#filtrosActivos').innerHTML = chips.length ? chips.join('') + '<button type="button" class="enlace" data-borrar>Quitar todo</button>' : '';
+  $('#numFiltros').hidden = !chips.length;
+  $('#numFiltros').textContent = chips.length;
+  $('#verResultados').textContent = `Ver ${items.length} producto${items.length === 1 ? '' : 's'}`;
   $('#contadorProductos').textContent = `${items.length} producto${items.length === 1 ? '' : 's'}`;
-  $('#rejilla').innerHTML = items.length
-    ? items.map(tarjeta).join('')
-    : `<div class="empty"><h3>Ningún producto coincide</h3><p>Prueba a quitar algún filtro o a cambiar la búsqueda.</p><button type="button" data-restablecer>Restablecer filtros</button></div>`;
+  const f = estado.filtros;
+  const unico = f.tipos.size === 1 ? estado.catalogo.categorias.find((t) => f.tipos.has(t.id)) : null;
+  $('#tituloColeccion').textContent = unico ? unico.nombre : 'Toda la colección';
+  $('#migaColeccion').textContent = unico ? unico.nombre : 'Tienda';
+  if (!items.length) {
+    $('#rejilla').innerHTML = '<div class="empty"><h3>Ningún producto coincide</h3><p>Prueba a quitar algún filtro o a cambiar la búsqueda.</p><button type="button" class="btn btn-outline btn-sm" data-borrar>Borrar filtros</button></div>';
+    return;
+  }
+  const grupos = [...ORDEN_GRUPOS, ...estado.catalogo.categorias.map((t) => t.id).filter((id) => !ORDEN_GRUPOS.includes(id))];
+  $('#rejilla').innerHTML = grupos.map((id) => {
+    const del = items.filter(({ p }) => p.categoria === id);
+    if (!del.length) return '';
+    const nombre = estado.catalogo.categorias.find((t) => t.id === id)?.nombre ?? id;
+    const enlace = f.tipos.size === 1 ? '' : ` · <a href="#/catalogo/${esc(id)}">Ver solo ${esc(nombre.toLowerCase())}</a>`;
+    return `<section class="col-grupo" aria-label="${esc(nombre)}">
+      <div class="col-grupo-cab"><div><h2>${esc(nombre)}</h2><p>${esc(NOTAS_GRUPO[id] ?? '')}</p></div><span>${del.length} producto${del.length === 1 ? '' : 's'}${enlace}</span></div>
+      <div class="col-rejilla">${del.map(tarjeta).join('')}</div>
+    </section>`;
+  }).join('');
 }
 
 function restablecerFiltros() {
-  Object.assign(estado.filtros, { tipo: 'todas', texto: '' });
+  Object.assign(estado.filtros, { texto: '', soloStock: false, precioMax: null });
+  estado.filtros.tipos.clear();
   estado.filtros.colores.clear();
   estado.filtros.modos.clear();
   document.querySelectorAll('[data-buscador]').forEach((i) => { i.value = ''; });
   pintarCatalogo();
 }
 
-$('#catalogo').addEventListener('click', (e) => {
-  const b = e.target.closest('button');
-  if (!b || !estado.catalogo) return;
+// ---------- Panel de filtros (ventana flotante bajo el botón «Filtros») ----------
+const panelFiltros = $('#panelFiltros');
+function abrirFiltros(abrir) {
+  panelFiltros.hidden = !abrir;
+  $('#botonFiltros').setAttribute('aria-expanded', String(abrir));
+}
+$('#botonFiltros').addEventListener('click', () => abrirFiltros(panelFiltros.hidden));
+$('#verResultados').addEventListener('click', () => abrirFiltros(false));
+// composedPath(): el botón pulsado puede haberse repintado ya (y estar fuera del DOM) cuando llega aquí el clic.
+document.addEventListener('click', (e) => {
+  const ruta = e.composedPath();
+  if (!panelFiltros.hidden && !ruta.includes(panelFiltros) && !ruta.includes($('#botonFiltros'))) abrirFiltros(false);
+});
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !panelFiltros.hidden) abrirFiltros(false); });
+
+$('#vista-coleccion').addEventListener('click', (e) => {
+  if (!estado.catalogo) return;
   const f = estado.filtros;
-  const alternar = (conjunto, valor) => (conjunto.has(valor) ? conjunto.delete(valor) : conjunto.add(valor));
-  if (b.dataset.tipo) f.tipo = b.dataset.tipo;
-  else if (b.dataset.color) alternar(f.colores, b.dataset.color);
+  const b = e.target.closest('button');
+  if (!b) return;
+  if (b.matches('[data-borrar]')) return restablecerFiltros();
+  if (b.dataset.color) alternar(f.colores, b.dataset.color);
   else if (b.dataset.modo) alternar(f.modos, b.dataset.modo);
-  else if (b.id === 'restablecer') return restablecerFiltros();
+  else if (b.dataset.quitarTipo) f.tipos.delete(b.dataset.quitarTipo);
+  else if (b.dataset.quitarColor) f.colores.delete(b.dataset.quitarColor);
+  else if (b.dataset.quitarModo) f.modos.delete(b.dataset.quitarModo);
+  else if (b.hasAttribute('data-quitar-stock')) f.soloStock = false;
+  else if (b.hasAttribute('data-quitar-precio')) f.precioMax = null;
+  else if (b.hasAttribute('data-quitar-texto')) { f.texto = ''; document.querySelectorAll('[data-buscador]').forEach((i) => { i.value = ''; }); }
   else return;
   pintarCatalogo();
 });
-$('#rejilla').addEventListener('click', (e) => { if (e.target.closest('[data-restablecer]')) restablecerFiltros(); });
+$('#vista-coleccion').addEventListener('change', (e) => {
+  if (!estado.catalogo) return;
+  const f = estado.filtros;
+  const t = e.target;
+  if (t.dataset.tipo) alternar(f.tipos, t.dataset.tipo);
+  else if (t.id === 'fStock') f.soloStock = t.checked;
+  else if (t.id === 'orden') f.orden = t.value;
+  else return;
+  pintarCatalogo();
+});
+$('#fPrecio').addEventListener('input', (e) => {
+  if (!estado.catalogo) return;
+  const valor = Number(e.target.value);
+  estado.filtros.precioMax = valor >= Number(e.target.max) ? null : valor;
+  pintarCatalogo();
+});
 
 document.querySelectorAll('[data-buscador]').forEach((input) => {
   input.addEventListener('input', () => {
@@ -123,17 +218,74 @@ document.querySelectorAll('[data-buscador]').forEach((input) => {
     document.querySelectorAll('[data-buscador]').forEach((otro) => { if (otro !== input) otro.value = input.value; });
     if (!estado.catalogo) return;
     pintarCatalogo();
-    if (!vistaInicio.hidden) return;
+    if (!vistaColeccion.hidden) return;
     location.hash = '#/catalogo';
   });
 });
 
-document.querySelectorAll('[data-categoria]').forEach((a) => a.addEventListener('click', () => {
-  if (!estado.catalogo) return;
-  restablecerFiltros();
-  estado.filtros.tipo = a.dataset.categoria;
-  pintarCatalogo();
-}));
+// ====================================================================================
+// Portada: carruseles, «Shop the look» y reseñas
+// ====================================================================================
+
+// Fotos de la comunidad: cada una enlaza con el producto que se ve (nombre y precio salen del catálogo).
+const COMUNIDAD = [
+  ['assets/img/productos/mochila-trayecto-rosa.jpg', 'mochila-trayecto-rosa'],
+  ['assets/img/productos/chaqueta-circuito-violeta.jpg', 'chaqueta-circuito-violeta'],
+  ['assets/img/editorial/chaqueta-azotea.jpg', 'chaqueta-perimetro-lima'],
+  ['assets/img/comunidad/camiseta-reticula.jpg', 'camiseta-linea-lima'],
+  ['assets/img/editorial/mochila-callejon.jpg', 'mochila-trayecto-rojo'],
+  ['assets/img/editorial/gorra-lluvia.jpg', 'gorra-faro-cian'],
+  ['assets/img/comunidad/chaqueta-nervadura.jpg', 'chaqueta-circuito-ambar'],
+  ['assets/img/productos/gorra-aura-violeta.jpg', 'gorra-aura-violeta'],
+];
+
+function pintarPortada() {
+  $('#pistaComunidad').innerHTML = COMUNIDAD.filter(([, sku]) => indiceSku.has(sku)).map(([foto, sku]) => {
+    const { producto: p, variante: v } = indiceSku.get(sku);
+    return `<a class="look" href="#/producto/${esc(sku)}">
+      <img src="${esc(foto)}" alt="${esc(`${p.nombre}, luz ${v.color_nombre.toLowerCase()}`)}" loading="lazy">
+      <span class="look-prod">${v.imagen ? `<img src="${esc(v.imagen)}" alt="">` : ''}<span><b>${esc(p.nombre)}</b>${eur(p.precio)}</span><span class="look-mas" aria-hidden="true">+</span></span>
+    </a>`;
+  }).join('');
+  // Nota media ponderada por número de reseñas (todas ficticias, de datos_prueba.sql).
+  const ps = estado.catalogo.productos;
+  const total = ps.reduce((n, p) => n + p.num_resenas, 0);
+  const media = total ? ps.reduce((s, p) => s + p.valoracion * p.num_resenas, 0) / total : 0;
+  $('#notaMedia').innerHTML = `${media.toLocaleString('es-ES', { maximumFractionDigits: 1 })} de 5 <small>· ${total} opiniones (ficticias)</small>`;
+  const prendas = ps.reduce((n, p) => n + p.variantes.length, 0);
+  $('#resumenColeccion').textContent = `${prendas} prendas · ${estado.catalogo.colores.length} colores de luz`;
+  document.querySelectorAll('[data-carrusel]').forEach(actualizarCarrusel);
+}
+
+// Carrusel con desplazamiento nativo (también funciona con el dedo); los botones mueven una tarjeta.
+function actualizarCarrusel(carrusel) {
+  const pista = $('.carrusel-pista', carrusel);
+  const tarjetas = [...pista.children];
+  if (!tarjetas.length) return;
+  const centro = pista.scrollLeft + pista.clientWidth / 2;
+  let actual = 0;
+  tarjetas.forEach((t, i) => {
+    if (Math.abs(t.offsetLeft + t.offsetWidth / 2 - centro) < Math.abs(tarjetas[actual].offsetLeft + tarjetas[actual].offsetWidth / 2 - centro)) actual = i;
+  });
+  tarjetas.forEach((t, i) => t.classList.toggle('activa', i === actual));
+  const pos = $('[data-posicion]', carrusel);
+  if (pos) pos.textContent = `${actual + 1}/${tarjetas.length}`;
+  carrusel.dataset.actual = actual;
+}
+document.querySelectorAll('[data-carrusel]').forEach((carrusel) => {
+  const pista = $('.carrusel-pista', carrusel);
+  let pendiente = 0;
+  pista.addEventListener('scroll', () => { cancelAnimationFrame(pendiente); pendiente = requestAnimationFrame(() => actualizarCarrusel(carrusel)); });
+  carrusel.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-ir]');
+    if (!b) return;
+    const tarjetas = [...pista.children];
+    const destino = tarjetas[Math.max(0, Math.min(tarjetas.length - 1, Number(carrusel.dataset.actual || 0) + Number(b.dataset.ir)))];
+    if (destino) pista.scrollTo({ left: destino.offsetLeft + destino.offsetWidth / 2 - pista.clientWidth / 2, behavior: 'smooth' });
+  });
+  window.addEventListener('resize', () => actualizarCarrusel(carrusel));
+  actualizarCarrusel(carrusel);
+});
 
 // ====================================================================================
 // Ficha de producto
@@ -910,7 +1062,7 @@ const RUTAS = [
   [/^#\/soporte(?:\?pedido=([\w-]*))?$/, (c) => vistaSoporte((c || '').toUpperCase())],
   [/^#\/legal(?:\/(\w+))?$/, vistaLegal],
 ];
-const SECCIONES_INICIO = { '#/catalogo': 'catalogo', '#/como-funciona': 'como-funciona', '#/marca': 'marca' };
+const SECCIONES_INICIO = { '#/como-funciona': 'como-funciona', '#/marca': 'marca' };
 // Cada vista registra sus manejadores con esta señal; al cambiar de vista se anulan todos de golpe.
 let controlVista = new AbortController();
 
@@ -921,6 +1073,21 @@ async function enrutar() {
   cerrarMenu();
   const hash = location.hash || '#/';
   document.querySelectorAll('.nav-center a').forEach((a) => a.toggleAttribute('aria-current', a.getAttribute('href') === hash));
+  abrirFiltros(false);
+  const coleccion = hash.match(/^#\/catalogo(?:\/(\w+))?$/);
+  if (coleccion) {
+    vistaInicio.hidden = true;
+    vistaPagina.hidden = true;
+    vistaColeccion.hidden = false;
+    document.title = 'Tienda · NOCTILUZ (prototipo académico)';
+    // La pestaña o el enlace de categoría deja solo esa prenda; «Tienda» las muestra todas.
+    estado.filtros.tipos.clear();
+    if (coleccion[1]) estado.filtros.tipos.add(coleccion[1]);
+    if (estado.catalogo) pintarCatalogo();
+    window.scrollTo(0, 0);
+    return;
+  }
+  vistaColeccion.hidden = true;
   for (const [patron, vista] of RUTAS) {
     const m = hash.match(patron);
     if (!m) continue;
@@ -966,7 +1133,7 @@ ajustarCabecera();
 
 // ---------- Arranque ----------
 const listo = cargarCatalogo()
-  .then(() => { pintarCatalogo(); pintarCarrito(); })
+  .then(() => { pintarCatalogo(); pintarPortada(); pintarCarrito(); })
   .catch((e) => {
     $('#rejilla').innerHTML = `<div class="empty"><h3>No se pudo cargar el catálogo</h3><p>${esc(e.message)}</p></div>`;
     throw e;

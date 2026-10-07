@@ -27,10 +27,12 @@
         <a class="logo" href="#/"><span class="logo-dot"></span>NOCTILUZ</a>
       </div>
       <div class="nav-center">
-        <a href="#/catalogo">Catálogo</a>
+        <a href="#/catalogo">Tienda</a>
+        <a href="#/catalogo/camiseta">Camisetas</a>
+        <a href="#/catalogo/chaqueta">Chaquetas</a>
+        <a href="#/catalogo/mochila">Mochilas</a>
+        <a href="#/catalogo/gorra">Gorras</a>
         <a href="#/como-funciona">Cómo funciona</a>
-        <a href="#/seguimiento">Mis pedidos</a>
-        <a href="#/soporte">Soporte</a>
       </div>
       <div class="nav-right">
         <label class="search-box">
@@ -53,7 +55,11 @@
         <span class="sr-only">Buscar en el catálogo</span>
         <input type="search" placeholder="Buscar en el catálogo" data-buscador maxlength="40">
       </label>
-      <a href="#/catalogo">Catálogo</a>
+      <a href="#/catalogo">Tienda</a>
+      <a href="#/catalogo/camiseta">Camisetas</a>
+      <a href="#/catalogo/chaqueta">Chaquetas</a>
+      <a href="#/catalogo/mochila">Mochilas</a>
+      <a href="#/catalogo/gorra">Gorras</a>
       <a href="#/como-funciona">Cómo funciona</a>
       <a href="#/seguimiento">Mis pedidos</a>
       <a href="#/soporte">Soporte</a>
@@ -366,99 +372,140 @@
         <div class="hero-tag">Tecnología LED + fibra óptica</div>
         <h1 class="hero-title">Ilumina<br>la noche.</h1>
         <p class="hero-sub">Streetwear diseñado para destacar cuando cae el sol. Fibra óptica integrada en la tela, no impresa encima de ella.</p>
-        <div class="hero-actions">
-          <a class="btn btn-solid" href="#/catalogo">Ver colección</a>
-          <a class="btn btn-outline" href="#/como-funciona">Cómo funciona</a>
+        <nav class="hero-cats" aria-label="Categorías">
+          <a href="#/catalogo/camiseta" style="--c:var(--rosa)"><i></i>Camisetas</a>
+          <a href="#/catalogo/chaqueta" style="--c:var(--lima)"><i></i>Chaquetas</a>
+          <a href="#/catalogo/mochila" style="--c:var(--blanco)"><i></i>Mochilas</a>
+          <a href="#/catalogo/gorra" style="--c:var(--cian)"><i></i>Gorras</a>
+        </nav>
+        <a class="hero-scroll" href="#/como-funciona"><span aria-hidden="true"></span>Desliza para descubrir la colección</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="destacados" id="como-funciona">
+    <div class="wrap sec-cab">
+      <span class="kicker">Destacados</span>
+      <h2>Por qué brilla distinto</h2>
+    </div>
+    <div class="carrusel" data-carrusel="destacados">
+      <div class="carrusel-pista" tabindex="0" aria-label="Destacados">
+        <article class="dcard"><div class="dcard-circ"><img src="assets/img/productos/chaqueta-circuito-violeta.jpg" alt="" loading="lazy"></div>
+          <h3>Luz tejida, no estampada</h3><p>La fibra óptica va dentro del tejido, no pegada encima.</p><p>Se dobla y se mueve contigo sin perder brillo.</p></article>
+        <article class="dcard"><div class="dcard-circ"><img src="assets/img/productos/gorra-faro-cian.jpg" alt="" loading="lazy"></div>
+          <h3>Tú eliges cómo brillas</h3><p>Fijo para ir a tu aire, parpadeo para que te vean en bici o degradado para que la luz respire.</p><p>Cada diseño trae el modo que mejor le sienta.</p></article>
+        <article class="dcard"><div class="dcard-circ"><img src="assets/img/productos/mochila-halo-cian.jpg" alt="" loading="lazy"></div>
+          <h3>Módulo USB-C extraíble</h3><p>Se carga como el móvil.</p><p>Se quita en un segundo para lavar la prenda a 30 °C del revés.</p></article>
+        <article class="dcard"><div class="dcard-circ"><img src="assets/img/productos/camiseta-linea-lima.jpg" alt="" loading="lazy"></div>
+          <h3>Hecha para la calle</h3><p>Visible de lejos en bici o patinete.</p><p>Envío gratis desde 120 € (simulado: es un prototipo).</p></article>
+      </div>
+      <div class="carrusel-nav"><button type="button" data-ir="-1" aria-label="Anterior">‹</button><span data-posicion>1/4</span><button type="button" data-ir="1" aria-label="Siguiente">›</button></div>
+    </div>
+  </section>
+
+  <section class="comunidad" id="marca">
+    <div class="wrap sec-cab centrada">
+      <span class="kicker">La comunidad</span>
+      <h2>Shop the look</h2>
+      <p>Así la llevan puesta. Toca el producto para verlo.</p>
+    </div>
+    <div class="carrusel" data-carrusel="comunidad">
+      <button type="button" class="carrusel-flecha izq" data-ir="-1" aria-label="Anterior">‹</button>
+      <div class="carrusel-pista" tabindex="0" aria-label="Fotos de la comunidad" id="pistaComunidad"></div>
+      <button type="button" class="carrusel-flecha der" data-ir="1" aria-label="Siguiente">›</button>
+      <div class="carrusel-nav solo-texto"><span data-posicion></span></div>
+    </div>
+  </section>
+
+  <section class="wrap resenas">
+    <div class="sec-cab fila">
+      <div><span class="kicker">Reseñas</span><h2 id="notaMedia">Opiniones</h2></div>
+    </div>
+    <div class="resenas-grid">
+      <figure class="rcard"><div class="estrellas" aria-label="5 de 5">★★★★★</div><blockquote>«En el concierto no paraban de preguntarme dónde la había comprado. Brilla muchísimo y no pesa nada.»</blockquote><figcaption><span class="avatar">L</span><span><b>Lucía F.</b>Retícula · Verde lima</span></figcaption></figure>
+      <figure class="rcard"><div class="estrellas" aria-label="5 de 5">★★★★★</div><blockquote>«La uso para ir en bici al trabajo. El parpadeo se ve desde lejísimos.»</blockquote><figcaption><span class="avatar">M</span><span><b>Marcos I.</b>Rumbo · Rosa</span></figcaption></figure>
+      <figure class="rcard"><div class="estrellas" aria-label="4 de 5">★★★★☆</div><blockquote>«Me encanta que la luz vaya en la visera: discreta de día y espectacular de noche.»</blockquote><figcaption><span class="avatar">S</span><span><b>Sara N.</b>Horizonte · Cian</span></figcaption></figure>
+    </div>
+    <p class="nota-ficticia">Reseñas y valoraciones ficticias, creadas para el prototipo.</p>
+  </section>
+
+  <section class="wrap equipo">
+    <div class="sec-cab fila">
+      <div><span class="kicker">El equipo</span><h2>Quién hay detrás</h2></div>
+      <p>Proyecto de Soluciones Informáticas para la Empresa · UCAM</p>
+    </div>
+    <div class="equipo-grid">
+      <div class="ecard" style="--c:var(--cian)"><span class="iniciales">LG</span><b>Luis Galindo</b><span>Base de datos, despliegue y coordinación</span></div>
+      <div class="ecard" style="--c:var(--rosa)"><span class="iniciales">RC</span><b>Roberto Ciller</b><span>Tienda y carrito</span></div>
+      <div class="ecard" style="--c:var(--lima)"><span class="iniciales">JZ</span><b>Javier Zamora</b><span>Reglas de negocio</span></div>
+      <div class="ecard" style="--c:var(--violeta)"><span class="iniciales">JY</span><b>JunJie Yang</b><span>Eventos y back-office</span></div>
+    </div>
+  </section>
+
+  <section class="cta-coleccion">
+    <span class="kicker" id="resumenColeccion">La colección</span>
+    <h2>Toda la colección,<br><span>encendida.</span></h2>
+    <p>Camisetas, chaquetas, mochilas y gorras con fibra óptica. Filtra por prenda, color de luz o modo y encuentra la tuya.</p>
+    <a class="btn btn-solid" href="#/catalogo">Ver la colección →</a>
+  </section>
+</main>
+
+<main id="vista-coleccion" hidden>
+  <div class="wrap col-cab">
+    <div class="migas"><a href="#/">Inicio</a> / <b id="migaColeccion">Tienda</b></div>
+    <h1 id="tituloColeccion">Toda la colección</h1>
+    <p>Prendas con fibra óptica tejida para después del atardecer. Elige prenda, color de luz y modo.</p>
+    <nav class="col-pestanas" id="pestanas" aria-label="Tipo de prenda"></nav>
+  </div>
+
+  <div class="col-barra" id="catalogo">
+    <div class="wrap col-barra-in">
+      <div class="col-barra-izq">
+        <button type="button" class="boton-filtros" id="botonFiltros" aria-expanded="false" aria-controls="panelFiltros">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg>Filtros <b id="numFiltros" hidden></b>
+        </button>
+        <div class="filtros-activos" id="filtrosActivos"></div>
+      </div>
+      <label class="ordenar">Ordenar:
+        <select id="orden">
+          <option value="destacados">Destacados</option>
+          <option value="precio-asc">Precio: de menor a mayor</option>
+          <option value="precio-desc">Precio: de mayor a menor</option>
+          <option value="nombre">Nombre (A-Z)</option>
+        </select>
+      </label>
+      <div class="panel-filtros" id="panelFiltros" hidden>
+        <div class="pf-col">
+          <h4>Prenda</h4><div id="fPrenda"></div>
+          <h4>Disponibilidad</h4>
+          <label class="pf-interruptor"><input type="checkbox" id="fStock"><i aria-hidden="true"></i>Solo en stock</label>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="wrap">
-    <div class="catalog-head">
-      <h2>La colección</h2>
-      <p>Filtra por tipo de prenda, color de luz y modo de iluminación. Todos los precios incluyen IVA; envío gratis desde 120 €.</p>
-    </div>
-  </section>
-
-  <div class="filterbar" id="catalogo">
-    <div class="filterbar-inner">
-      <div class="fgroup" role="group" aria-labelledby="lbl-tipo">
-        <span class="fgroup-label" id="lbl-tipo">Tipo</span>
-        <div class="chips" id="filtroTipo"></div>
-      </div>
-      <div class="fgroup" role="group" aria-labelledby="lbl-color">
-        <span class="fgroup-label" id="lbl-color">Color de luz</span>
-        <div class="chips" id="filtroColor"></div>
-      </div>
-      <div class="fgroup" role="group" aria-labelledby="lbl-modo">
-        <span class="fgroup-label" id="lbl-modo">Modo</span>
-        <div class="chips" id="filtroModo"></div>
-      </div>
-      <div class="filterbar-meta">
-        <span class="count-text" id="contadorProductos" aria-live="polite"></span>
-        <button class="reset-link" id="restablecer">Restablecer filtros</button>
+        <div class="pf-col"><h4>Color de luz</h4><div class="pf-colores" id="fColor"></div></div>
+        <div class="pf-col">
+          <h4>Modo de luz</h4><div class="pf-modos" id="fModo"></div>
+          <h4>Precio máximo</h4>
+          <input type="range" id="fPrecio" step="1" aria-label="Precio máximo">
+          <div class="pf-precio"><span id="precioMin"></span><span id="precioMax"></span></div>
+        </div>
+        <div class="pf-pie">
+          <button type="button" class="enlace" data-borrar>Borrar filtros</button>
+          <button type="button" class="btn btn-solid btn-sm" id="verResultados">Ver productos</button>
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="grid" id="rejilla"><div class="empty">Cargando catálogo…</div></div>
+  <div class="wrap">
+    <div class="col-resumen"><span id="contadorProductos" aria-live="polite"></span><span>Precios con IVA · envío gratis desde 120 €</span></div>
+    <div id="rejilla"><div class="empty">Cargando catálogo…</div></div>
 
-  <section class="wrap how" id="como-funciona">
-    <div class="how-intro">
-      <span class="kicker">Cómo brilla</span>
-      <h2>Tu estilo,<br><span>encendido.</span></h2>
-      <p>Cada prenda lleva la luz tejida dentro. Enciéndela cuando cae el sol y deja que la ciudad te vea llegar.</p>
+    <div class="col-ayuda">
+      <div><h3>¿Qué modo de luz elijo?</h3><p>Cada prenda trae un modo. Así se ven en la calle:</p>
+        <div class="modos-ayuda"><span><b>Fijo</b>Luz continua, máxima autonomía</span><span><b>Parpadeo</b>Muy visible en bici o patinete</span><span><b>Degradado</b>La luz sube y baja suave</span></div></div>
+      <div><h3>¿Dudas con tu pedido?</h3><p>Consulta el estado con tu código o abre una incidencia en soporte.</p>
+        <a class="btn btn-outline btn-sm" href="#/seguimiento">Seguimiento de pedido</a> <a class="btn btn-outline btn-sm" href="#/soporte">Soporte</a></div>
     </div>
-    <div class="steps">
-      <div class="step" style="--c:var(--cian)">
-        <div class="step-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 16c4-9 9 5 18-7"/></svg></div>
-        <h3>Luz que se lleva puesta</h3>
-        <p>La fibra óptica va tejida en la prenda, no pegada encima: se dobla, se mueve contigo y brilla igual. Un módulo LED extraíble la alimenta por USB-C.</p>
-      </div>
-      <div class="step" style="--c:var(--violeta)">
-        <div class="step-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 3"/></svg></div>
-        <h3>Elige cómo brillas</h3>
-        <p>Fija para ir a tu aire, parpadeo para que te vean en bici o patinete, o degradado para que la luz respire. Cada diseño trae el modo que mejor le sienta.</p>
-        <div class="step-modos"><span>Fijo</span><span>Parpadeo</span><span>Degradado</span></div>
-      </div>
-      <div class="step" style="--c:var(--ambar)">
-        <div class="step-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3c3 4 6 7 6 11a6 6 0 0 1-12 0c0-4 3-7 6-11z"/></svg></div>
-        <h3>Brilla hoy, lava mañana</h3>
-        <p>Saca el módulo, lava la prenda del revés a 30 °C y vuelve a encenderte. La fibra aguanta el lavado; la batería, mejor fuera.</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="wrap editorial" id="marca">
-    <div class="editorial-head">
-      <div>
-        <span class="kicker">Lookbook</span>
-        <h2>Sal cuando otros se apagan.</h2>
-      </div>
-      <p>Azoteas, callejones de neón y calles mojadas: así se ve NOCTILUZ cuando la ciudad baja la luz.</p>
-    </div>
-    <div class="editorial-grid">
-      <figure class="escene escene-grande">
-        <img src="assets/img/editorial/chaqueta-azotea.jpg" alt="Mujer en una azotea de noche con una chaqueta negra de fibra óptica verde" loading="lazy">
-        <span class="escene-tag" style="--c:var(--lima)">Chaquetas</span>
-        <figcaption class="cap"><b>Azotea, madrugada</b>Que la ciudad te vea desde arriba.</figcaption>
-        <a class="escene-ver" href="#/catalogo" data-categoria="chaqueta">Ver chaquetas →</a>
-      </figure>
-      <figure class="escene">
-        <img src="assets/img/editorial/mochila-callejon.jpg" alt="Chico de espaldas en un callejón con neones y una mochila con dibujo geométrico luminoso" loading="lazy" style="object-position:50% 80%">
-        <span class="escene-tag" style="--c:var(--blanco)">Mochilas</span>
-        <figcaption class="cap"><b>Callejón de neón</b>Tu ruta, trazada en luz.</figcaption>
-        <a class="escene-ver" href="#/catalogo" data-categoria="mochila">Ver →</a>
-      </figure>
-      <figure class="escene">
-        <img src="assets/img/editorial/gorra-lluvia.jpg" alt="Mujer bajo la lluvia ajustándose una gorra con la visera iluminada" loading="lazy" style="object-position:50% 25%">
-        <span class="escene-tag" style="--c:var(--cian)">Gorras</span>
-        <figcaption class="cap"><b>Lluvia en la ciudad</b>Ni el agua apaga tu estilo.</figcaption>
-        <a class="escene-ver" href="#/catalogo" data-categoria="gorra">Ver →</a>
-      </figure>
-    </div>
-  </section>
+  </div>
 </main>
 
 <main id="vista-pagina" class="wrap" hidden></main>
@@ -473,10 +520,10 @@
       <div class="footer-cols">
         <div class="footer-col">
           <h4>Tienda</h4>
-          <a href="#/catalogo" data-categoria="camiseta">Camisetas</a>
-          <a href="#/catalogo" data-categoria="chaqueta">Chaquetas</a>
-          <a href="#/catalogo" data-categoria="mochila">Mochilas</a>
-          <a href="#/catalogo" data-categoria="gorra">Gorras</a>
+          <a href="#/catalogo/camiseta">Camisetas</a>
+          <a href="#/catalogo/chaqueta">Chaquetas</a>
+          <a href="#/catalogo/mochila">Mochilas</a>
+          <a href="#/catalogo/gorra">Gorras</a>
         </div>
         <div class="footer-col">
           <h4>Ayuda</h4>

@@ -14,7 +14,8 @@ Canal digital de venta con flujo transaccional completo:
 
 | Parte | Dónde |
 |---|---|
-| Portada, catálogo filtrable por **tipo de prenda**, **color de luz** y **modo de iluminación** (fijo, parpadeo, degradado), buscador | `index.html` (`#/`, `#/catalogo`) |
+| Portada (destacados, «Shop the look», reseñas ficticias y equipo) | `index.html` (`#/`) |
+| Tienda agrupada por prenda, con ventana de filtros (prenda, color de luz, modo, precio, stock), orden y buscador | `#/catalogo`, `#/catalogo/<tipo>` |
 | Ficha de producto (material, autonomía, modos que admite, tallas, stock, envío) | `#/producto/<sku>` |
 | Carrito persistente en el navegador | panel lateral |
 | Checkout con validación, cupones, envío estándar/exprés e IVA desglosado | `#/checkout` |
