@@ -20,7 +20,7 @@ Defensa de **7 minutos** entre los cuatro, siguiendo las 6 diapositivas de `Diap
 
 > "Buenos días. Somos Luis, Roberto, Javier y JunJie, y os presentamos NOCTILUZ, una tienda online de moda luminosa urbana: camisetas, chaquetas, mochilas y gorras con LED y fibra óptica.
 >
-> Lo especial del catálogo es que cada prenda se elige por tipo, por **color de luz** y por **modo de iluminación** —fija, parpadeo o degradado—, y no todos los modelos admiten todos los modos. Tenemos 8 modelos y 16 variantes.
+> Lo especial del catálogo es que cada prenda se elige por tipo, por **color de luz** y por **modo de iluminación** —fija, parpadeo o degradado—, y cada producto tiene asignado un único modo. Tenemos 16 productos, cada uno con su variante.
 >
 > El objetivo no era solo hacer una web bonita, sino un **canal de venta completo**: que se pueda comprar de principio a fin y que **cada paso del cliente deje datos y eventos** que otros sistemas puedan aprovechar, como haremos en la Tarea 2."
 
@@ -66,11 +66,11 @@ Defensa de **7 minutos** entre los cuatro, siguiendo las 6 diapositivas de `Diap
 
 > "Las decisiones más importantes fueron estas. Usamos **PHP y MySQL** porque es lo que ofrece un hosting normal. Hicimos un **desarrollo propio en vez de WooCommerce**, para que el modelo de datos y los eventos quedaran a la vista. La **pasarela es simulada**, para no manejar claves ni tarjetas reales. Y los **eventos se guardan en la base de datos**, en la misma transacción que el negocio.
 >
-> Las limitaciones: el pago no es real, no hay cuentas de cliente ni emails, hay una sola cuenta de administrador de prueba y algunas variantes tienen imagen provisional.
+> Las limitaciones: el pago no es real, no hay cuentas de cliente ni emails, hay una sola cuenta de administrador de prueba y las fotos de producto son de baja resolución.
 >
-> Sobre la **IA**: la primera versión del HTML se generó con IA, y después usamos Claude Code para la arquitectura, el código y los datos de prueba. Revisamos lo que generaba y encontramos errores —un filtro de modos que no funcionaba bien, eventos que se registraban dos veces…— que corregimos y comprobamos probando el flujo completo. *[Vuestra reflexión: qué habéis aprendido usando IA.]*
+> Sobre la **IA**: la primera versión del HTML se generó con IA, y después usamos Claude Code para la arquitectura, el código y los datos de prueba. Revisamos lo que generaba y encontramos errores —un filtro de modos que no funcionaba bien, eventos que se registraban dos veces…— que corregimos y comprobamos probando el flujo completo. Como reflexión crítica, la IA comete errores que exigen validación humana: nos propuso un filtro de modos que no filtraba, tuvo imprecisiones en los importes al desplegar en el hosting y llegó a proponer un alojamiento que no ejecuta PHP. Por eso no nos fiamos de su respuesta: lo comprobamos probando el sistema.
 >
-> *(Diapositiva 6)* En resumen: un **flujo de compra completo y publicado**, con las **reglas de negocio en el servidor** y **cada paso registrado como evento**, listo para la Tarea 2. *[Vuestro aprendizaje principal.]* Muchas gracias. ¿Alguna pregunta?"
+> *(Diapositiva 6)* En resumen: un **flujo de compra completo y publicado**, con las **reglas de negocio en el servidor** y **cada paso registrado como evento**, listo para la Tarea 2. Nuestro aprendizaje principal es que un canal de venta se diseña pensando en quién consumirá los datos después. Muchas gracias. ¿Alguna pregunta?"
 
 ---
 
