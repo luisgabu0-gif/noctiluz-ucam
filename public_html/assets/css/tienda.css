@@ -337,6 +337,7 @@ h1.hero-title{font-size:clamp(2.6rem, 7vw, 5.4rem); line-height:0.96; max-width:
 .pd-gallery-main > svg{width:52%; height:78%;}
 .pd-gallery-main img{width:100%; height:100%; object-fit:cover;}
 .pd-thumbs{display:flex; gap:10px; margin-top:12px;}
+.pd-thumbs[hidden]{display:none;}
 .pd-thumb{width:64px; height:76px; border:1px solid var(--border); flex-shrink:0; display:flex; align-items:center; justify-content:center; background:var(--bg-alt); overflow:hidden;}
 .pd-thumb[aria-pressed="true"]{border-color:var(--cian);}
 .pd-thumb svg{width:70%; height:70%;}

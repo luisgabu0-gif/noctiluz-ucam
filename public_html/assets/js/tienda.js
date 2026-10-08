@@ -424,11 +424,14 @@ async function vistaProducto(sku) {
       </div>
     </div>`;
 
-  const vistas = v.imagen ? [['foto', 'Fotografía'], ['detalle', 'Detalle de la fibra']] : [['frontal', 'Frontal'], ['trasera', 'Trasera'], ['detalle', 'Detalle de la fibra']];
+  // Con foto solo se enseña la foto; las vistas dibujadas quedan para un producto que aún no tenga foto.
+  const vistas = v.imagen ? [['foto', 'Fotografía']] : [['frontal', 'Frontal'], ['trasera', 'Trasera'], ['detalle', 'Detalle de la fibra']];
 
   function pintarGaleria() {
     $('#pdPrincipal').innerHTML = medio(p, v, { modo: sel.modo, variante: sel.vista });
-    $('#pdMiniaturas').innerHTML = vistas.map(([id, etiqueta]) =>
+    // Una sola vista: no hay nada que elegir, así que no se pintan miniaturas.
+    $('#pdMiniaturas').hidden = vistas.length < 2;
+    $('#pdMiniaturas').innerHTML = vistas.length < 2 ? '' : vistas.map(([id, etiqueta]) =>
       `<button type="button" class="pd-thumb" data-vista="${id}" aria-pressed="${sel.vista === id}" title="${etiqueta}" aria-label="${etiqueta}">${
         medio(p, v, { modo: sel.modo, variante: id, etiqueta: false })}</button>`).join('');
   }
