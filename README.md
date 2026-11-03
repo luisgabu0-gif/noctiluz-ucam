@@ -4,7 +4,7 @@
 
 **Equipo:** Luis Galindo Buendia · Roberto Ciller Miñana · Javier Zamora Lopez · JunJie Yang Jao
 
-**URL pública:** https://www.noctiluz.onl/.
+**URL pública:** https://noctiluz.onl (alojamiento Básico de DonDominio). Copia alternativa: https://noctiluz.free.je (InfinityFree, con su propia base de datos)
 
 ---
 
@@ -85,9 +85,9 @@ Comprueba totales, IVA, portes por zona, cupones, stock, la numeración y el env
 
 1. **Dominio y alojamiento** (lo hace una persona del grupo, con sus propios datos): seguir `Guía-DonDominio.pdf` — crear la cuenta de cliente, registrar `noctiluz.<extensión>` aplicando el **código de dominio** de la hoja compartida del Tema 1, esperar 5-10 min y ampliar a **Alojamiento Básico** aplicando el **código de alojamiento**.
 2. **Versión de PHP:** en el panel del alojamiento, elegir PHP 8.1 o superior.
-3. **Base de datos:** en el panel, crear una base de datos MySQL y su usuario (anotar nombre, usuario, contraseña y servidor). Abrir phpMyAdmin e importar, en este orden, `database/esquema_mysql.sql` y `database/datos_prueba.sql`.
+3. **Base de datos:** en el panel, crear una base de datos MySQL y su usuario (anotar nombre, usuario, contraseña y servidor; en DonDominio el servidor es `bbdd.<dominio>`, no `localhost`). Abrir phpMyAdmin e importar, en este orden, `database/esquema_mysql.sql` y `database/datos_prueba.sql`.
 4. **Configuración:** copiar `public_html/app/config.ejemplo.php` como `public_html/app/config.php` y rellenar los datos del paso 3 (`driver` = `mysql`). **Este archivo no se sube nunca a GitHub** (está en `.gitignore`).
-5. **Subir archivos:** con el gestor de archivos del panel o por FTP (p. ej. FileZilla, con las credenciales FTP que da el panel), subir **el contenido** de `public_html/` a la carpeta pública del alojamiento, incluidos los `.htaccess`. No hace falta subir `datos/noctiluz.sqlite`.
+5. **Subir archivos:** con el gestor de archivos del panel o por FTP (p. ej. FileZilla, con las credenciales FTP que da el panel), subir **el contenido** de `public_html/` a la carpeta pública del alojamiento (`public` en DonDominio, borrando su `_defaulthome.html`), incluidos los `.htaccess`. No hace falta subir `datos/noctiluz.sqlite`.
 6. **HTTPS:** activar el certificado SSL gratuito desde el panel y, cuando funcione, descomentar la redirección a HTTPS en `public_html/.htaccess`.
 7. **Comprobar:** abrir la URL, hacer una compra completa, entrar en `/admin.html` y ver el pedido y sus eventos. Comprobar que `https://<dominio>/app/config.php` y `https://<dominio>/app/Db.php` devuelven **403 Prohibido**.
 
@@ -137,7 +137,9 @@ Cualquier otra tarjeta, aunque sea válida, se rechaza: así nadie puede introdu
 - **Factura:** al aprobarse el pago se emite una factura con número correlativo por año (`F2026-000001`) en la misma transacción que el pago, y después se envía por email. Si el correo falla, el pago no se deshace.
 - Solo se puede comprar un modo de iluminación que el producto admita y una talla válida; máximo 9 unidades por línea y nunca más que el stock.
 - El stock se descuenta al crear el pedido (con control de concurrencia) y se devuelve si se cancela.
-- Reseñas: no hay cuentas de cliente, así que el botón «Escribir reseña» solo aparece a quien se ha identificado con un pedido en ese navegador (al comprar o en «Mis pedidos»). El servidor comprueba que el pedido esté pagado y que el email coincida, y admite una reseña por pedido. Con la sesión del back-office iniciada no se puede opinar.
+- Cuentas de cliente: cualquiera puede registrarse en *Mi cuenta* con nombre, email y contraseña (mínimo 8 caracteres, cifrada con bcrypt). La cuenta es la misma ficha de `clientes` que usan los pedidos, así que si te registras con un email con el que ya compraste, ves esos pedidos. En *Mi cuenta* se ven los pedidos y las incidencias con la respuesta del equipo.
+- Reseñas: el botón «Añadir reseña» solo aparece con la sesión de cliente iniciada. El servidor comprueba que el pedido sea de esa cuenta y esté pagado, y admite una reseña por pedido. Con la sesión del back-office iniciada no se puede opinar.
+- Back-office: cada pedido y cada incidencia se puede **modificar** o **eliminar** (✕), y las incidencias se pueden **responder**. De un pedido solo se modifica la dirección de envío, y solo antes de que salga del almacén (los importes nunca se tocan a mano). Al eliminar un pedido que no había salido del almacén, sus unidades vuelven al stock; sus incidencias y reseñas se conservan sin pedido y sus eventos no se borran.
 - Estados: `creado → pagado → en_preparacion → enviado → entregado`, más `incidencia` y `cancelado`. Desde `pagado` el back-office también puede marcar directamente `enviado` o `entregado`, y desde `en_preparacion`, `entregado`. Solo se permiten las transiciones definidas en `ReglasNegocio::TRANSICIONES`; `pagado` solo lo asigna la pasarela de pago (tarjeta de prueba o PayPal sandbox), después de comprobar que el importe cobrado coincide con el total del pedido.
 
 ## 7. Eventos de negocio
@@ -153,6 +155,9 @@ Cualquier otra tarjeta, aunque sea válida, se rechaza: así nadie puede introdu
 | `order.status_changed` | servidor | Cada cambio de estado (pasarela, cliente o back-office) |
 | `support.requested` | servidor | Se registra una incidencia o solicitud de soporte |
 | `review.created` | servidor | Un cliente publica una reseña de su pedido |
+| `customer.registered` | servidor | Un cliente crea su cuenta |
+| `order.updated` / `order.deleted` | servidor | El back-office modifica la dirección / elimina un pedido |
+| `support.updated` / `support.replied` / `support.deleted` | servidor | El back-office modifica, responde o elimina una incidencia |
 
 Se guardan en la tabla `eventos` (uuid, tipo, origen, fecha, sesión anónima, cliente, pedido y datos en JSON). Consulta y exportación (requiere sesión de back-office):
 
@@ -172,11 +177,12 @@ Se guardan en la tabla `eventos` (uuid, tipo, origen, fecha, sesión anónima, c
 | `GET api/factura.php?codigo=&email=` | Factura del pedido en HTML |
 | `POST api/eventos.php` | Evento del navegador |
 | `GET/POST api/soporte.php` | Motivos / crear incidencia |
-| `GET/POST api/resenas.php` | Últimas reseñas / publicar una reseña |
+| `GET/POST/DELETE api/cuenta.php` | Cuenta de cliente: sesión, pedidos e incidencias / registro o inicio de sesión / cerrar sesión |
+| `GET/POST api/resenas.php` | Últimas reseñas / publicar una reseña (con sesión de cliente) |
 | `GET/POST/DELETE api/admin/sesion.php` | Estado / iniciar / cerrar sesión |
-| `GET/POST api/admin/pedidos.php` | Listado, detalle, cambio de estado y reenvío de factura (`accion: "reenviar_factura"`) |
+| `GET/POST/DELETE api/admin/pedidos.php` | Listado, detalle, cambio de estado, reenvío de factura (`accion: "reenviar_factura"`), modificar dirección y eliminar |
 | `GET api/admin/eventos.php` | Eventos (JSON, CSV) |
-| `GET/POST api/admin/incidencias.php` | Incidencias |
+| `GET/POST/DELETE api/admin/incidencias.php` | Incidencias: listar, cambiar estado, modificar, responder y eliminar |
 | `GET api/admin/metricas.php` | Indicadores y embudo |
 
 Los errores de validación devuelven `422` con `{ "error": "...", "campos": { "campo": "mensaje" } }`.
@@ -185,7 +191,7 @@ Los errores de validación devuelven `422` con `{ "error": "...", "campos": { "c
 
 - PayPal funciona solo en **sandbox**: no se cobra dinero real. Tampoco se recibe el aviso asíncrono de PayPal (*webhook*): el pago se confirma cuando el cliente vuelve a la tienda, así que si cierra la ventana justo después de aprobar, el pedido se queda pendiente.
 - La factura es un documento de ejemplo **sin validez fiscal** (emisor ficticio), en HTML y no en PDF.
-- No hay cuentas de cliente: el pedido se consulta con código + email. El carrito vive en el navegador de cada visitante.
+- Las cuentas de cliente no verifican el email: quien se registra con un email ajeno ve los pedidos de ese email. No hay recuperación de contraseña. El carrito vive en el navegador de cada visitante.
 - Una única cuenta de back-office, sin roles ni recuperación de contraseña; su contraseña de prueba es pública en este README.
 - Sin límite de peticiones: el endpoint de eventos podría recibir eventos falsos en grandes cantidades.
 - El único email que se envía es la factura. No hay integración con logística: los estados de envío los cambia el back-office a mano.

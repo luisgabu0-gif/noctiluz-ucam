@@ -90,7 +90,9 @@ CREATE TABLE clientes (
   nombre    VARCHAR(100) NOT NULL,
   email     VARCHAR(120) NOT NULL UNIQUE,
   telefono  VARCHAR(20)  NULL,
-  creado_en DATETIME     NOT NULL
+  creado_en DATETIME     NOT NULL,
+  clave_hash    VARCHAR(255) NULL,              -- NULL = ha comprado sin crear cuenta
+  registrado_en DATETIME     NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE pedidos (
@@ -180,6 +182,8 @@ CREATE TABLE incidencias (
   mensaje   TEXT         NOT NULL,
   estado    VARCHAR(20)  NOT NULL,              -- abierta | resuelta
   creado_en DATETIME     NOT NULL,
+  respuesta     TEXT     NULL,                  -- respuesta del equipo, la ve el cliente en «Mi cuenta»
+  respondida_en DATETIME NULL,
   CONSTRAINT fk_inc_ped FOREIGN KEY (pedido_id) REFERENCES pedidos(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 

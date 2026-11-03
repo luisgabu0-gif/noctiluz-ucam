@@ -190,6 +190,74 @@ final class Pedidos
         ], 'servidor', $pedido['sesion_id'] ?? null, (int) $pedido['cliente_id'], (int) $pedido['id']);
     }
 
+    /** Estados en los que la mercancía todavía no ha salido del almacén. */
+    private const ESTADOS_SIN_SALIR = ['creado', 'pagado', 'en_preparacion'];
+
+    /**
+     * Modificar desde el back-office: solo la dirección de envío. Los importes nunca se tocan a mano
+     * (los calcula el servidor al crear el pedido) y el estado se cambia con su propio formulario.
+     */
+    public static function editarEnvioAdmin(array $entrada, string $actor): array
+    {
+        $codigo = is_string($entrada['codigo'] ?? null) ? $entrada['codigo'] : '';
+        $dir = is_array($entrada['direccion'] ?? null) ? $entrada['direccion'] : [];
+        $val = new Validador();
+        $linea     = $val->texto($dir['linea'] ?? null, 'linea', 5, 160, 'La dirección');
+        $cp        = $val->codigoPostal($dir['cp'] ?? null);
+        $ciudad    = $val->texto($dir['ciudad'] ?? null, 'ciudad', 2, 80, 'La ciudad');
+        $provincia = $val->texto($dir['provincia'] ?? null, 'provincia', 2, 80, 'La provincia');
+        $val->comprobar();
+
+        return Db::transaccion(function () use ($codigo, $linea, $cp, $ciudad, $provincia, $actor) {
+            $p = Db::uno('SELECT * FROM pedidos WHERE codigo = ?', [$codigo]);
+            if ($p === null) {
+                throw new ErrorNegocio('Pedido no encontrado.', [], 404);
+            }
+            if (!in_array($p['estado'], self::ESTADOS_SIN_SALIR, true)) {
+                throw new ErrorNegocio('La dirección solo se puede cambiar antes de que el pedido salga del almacén.');
+            }
+            Db::ejecutar(
+                'UPDATE pedidos SET dir_linea = ?, dir_cp = ?, dir_ciudad = ?, dir_provincia = ?, actualizado_en = ? WHERE id = ?',
+                [$linea, $cp, $ciudad, $provincia, ahora(), $p['id']]
+            );
+            Eventos::registrar('order.updated', ['codigo' => $codigo, 'cambio' => 'direccion', 'actor' => $actor],
+                'servidor', $p['sesion_id'], (int) $p['cliente_id'], (int) $p['id']);
+            return self::detalle($codigo);
+        });
+    }
+
+    /**
+     * Eliminar desde el back-office. Se borran el pedido, sus líneas, pagos e historial; las incidencias
+     * y reseñas se conservan (sin pedido asociado) y los eventos anteriores no se tocan.
+     * Si la mercancía no había salido del almacén, sus unidades vuelven al stock.
+     */
+    public static function eliminarAdmin(string $codigo, string $actor): void
+    {
+        Db::transaccion(function () use ($codigo, $actor) {
+            $p = Db::uno('SELECT * FROM pedidos WHERE codigo = ?', [$codigo]);
+            if ($p === null) {
+                throw new ErrorNegocio('Pedido no encontrado.', [], 404);
+            }
+            $id = (int) $p['id'];
+            $devolverStock = in_array($p['estado'], self::ESTADOS_SIN_SALIR, true);
+            if ($devolverStock) {
+                foreach (Db::todos('SELECT variante_id, cantidad FROM lineas_pedido WHERE pedido_id = ?', [$id]) as $l) {
+                    Db::ejecutar('UPDATE variantes SET stock = stock + ? WHERE id = ?', [$l['cantidad'], $l['variante_id']]);
+                }
+            }
+            Db::ejecutar('UPDATE incidencias SET pedido_id = NULL WHERE pedido_id = ?', [$id]);
+            Db::ejecutar('UPDATE resenas SET pedido_id = NULL WHERE pedido_id = ?', [$id]);
+            foreach (['pagos', 'historial_estados', 'lineas_pedido'] as $tabla) {
+                Db::ejecutar("DELETE FROM $tabla WHERE pedido_id = ?", [$id]);
+            }
+            Db::ejecutar('DELETE FROM pedidos WHERE id = ?', [$id]);
+            Eventos::registrar('order.deleted', [
+                'codigo' => $codigo, 'estado' => $p['estado'], 'total' => (float) $p['total'],
+                'stock_devuelto' => $devolverStock, 'actor' => $actor,
+            ], 'servidor', $p['sesion_id'], (int) $p['cliente_id'], $id);
+        });
+    }
+
     /** Cambio de estado manual desde el back-office. */
     public static function cambiarEstadoAdmin(array $entrada, string $actor): array
     {

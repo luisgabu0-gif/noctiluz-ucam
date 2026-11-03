@@ -3,7 +3,7 @@
 .adm-cab .wrap{display:flex; align-items:center; justify-content:space-between; gap:16px; padding-top:16px; padding-bottom:16px; flex-wrap:wrap;}
 .logo{display:flex; align-items:center; gap:9px; font-family:'Sora'; font-weight:700; font-size:1rem; letter-spacing:0.02em;}
 .logo small{font-family:'Inter'; font-weight:500; color:var(--ink-faint); font-size:.78rem; letter-spacing:0;}
-.logo-dot{width:7px; height:7px; border-radius:50%; background:var(--cian); box-shadow:0 0 8px var(--cian);}
+.logo-marca{width:26px; height:23px; flex-shrink:0;}
 .adm-usuario{display:flex; align-items:center; gap:14px; font-size:.84rem; color:var(--ink-dim); flex-wrap:wrap;}
 
 .login{max-width:420px; margin:80px auto; padding:0 16px;}
@@ -54,3 +54,12 @@ table.tabla{width:100%; border-collapse:collapse; font-size:.84rem;}
 .fila-estado:hover, .fila-estado:focus-visible{background:var(--surface);}
 .pista{font-size:.78rem; color:var(--ink-faint); margin-top:8px;}
 .pista code{font-family:ui-monospace,Consolas,monospace; color:var(--ink-dim);}
+
+/* Botones de eliminar (✕) y formularios de modificar/responder dentro de las tablas */
+.btn-x{width:30px; height:30px; border-radius:50%; border:1px solid var(--ink-faint); color:var(--ink-dim); font-size:.85rem; line-height:1; cursor:pointer;}
+.btn-x:hover, .btn-x:focus-visible{border-color:var(--error); color:var(--error);}
+.tabla tr.fila-edicion td{background:var(--surface);}
+.form-inline{display:grid; gap:12px; max-width:640px;}
+.form-inline .botones{display:flex; gap:8px;}
+.form-inline textarea{min-height:90px;}
+.respuesta{color:var(--ink); white-space:pre-wrap; margin-bottom:4px;}

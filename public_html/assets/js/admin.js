@@ -147,13 +147,15 @@ async function pedidos(codigoAbierto = null) {
       <span class="derecha pista" style="margin-top:0">${r.pedidos.length} pedido${r.pedidos.length === 1 ? '' : 's'}</span>
     </div>
     <div class="tabla-wrap"><table class="tabla">
-      <thead><tr><th>Código</th><th>Fecha</th><th>Cliente</th><th>Ud.</th><th>Total</th><th>Estado</th></tr></thead>
+      <thead><tr><th>Código</th><th>Fecha</th><th>Cliente</th><th>Ud.</th><th>Total</th><th>Estado</th><th>Modificar</th><th>Eliminar</th></tr></thead>
       <tbody>${r.pedidos.length ? r.pedidos.map((p) => `
         <tr class="clicable" data-codigo="${esc(p.codigo)}" tabindex="0" aria-selected="${p.codigo === codigoAbierto}">
           <td><code>${esc(p.codigo)}</code></td><td>${fecha(p.creado_en)}</td>
           <td>${esc(p.cliente_nombre)}<br><small>${esc(p.cliente_email)}</small></td>
           <td class="num">${p.unidades}</td><td class="num">${eur(p.total)}</td><td>${etiquetaEstado(p.estado)}</td>
-        </tr>`).join('') : '<tr><td colspan="6" class="vacio">No hay pedidos con esos filtros.</td></tr>'}
+          <td><button type="button" class="enlace" data-modificar="${esc(p.codigo)}">Modificar</button></td>
+          <td><button type="button" class="btn-x" data-eliminar="${esc(p.codigo)}" title="Eliminar pedido" aria-label="Eliminar el pedido ${esc(p.codigo)}">✕</button></td>
+        </tr>`).join('') : '<tr><td colspan="8" class="vacio">No hay pedidos con esos filtros.</td></tr>'}
       </tbody></table></div>
     <div id="detallePedido"></div>`;
 
@@ -168,13 +170,29 @@ async function pedidos(codigoAbierto = null) {
       contenido.querySelectorAll('tr[data-codigo]').forEach((x) => x.setAttribute('aria-selected', String(x === tr)));
       detallePedido(tr.dataset.codigo);
     };
-    tr.addEventListener('click', abrir);
-    tr.addEventListener('keydown', (e) => { if (e.key === 'Enter') abrir(); });
+    tr.addEventListener('click', (e) => { if (!e.target.closest('button')) abrir(); });
+    tr.addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.target === tr) abrir(); });
   });
+  contenido.querySelectorAll('[data-modificar]').forEach((b) => b.addEventListener('click', () => {
+    contenido.querySelectorAll('tr[data-codigo]').forEach((x) => x.setAttribute('aria-selected', String(x.dataset.codigo === b.dataset.modificar)));
+    detallePedido(b.dataset.modificar, true);
+  }));
+  contenido.querySelectorAll('[data-eliminar]').forEach((b) => b.addEventListener('click', async () => {
+    const codigo = b.dataset.eliminar;
+    if (!confirm(`¿Eliminar el pedido ${codigo}? Se borran sus líneas, pagos e historial. No se puede deshacer.`)) return;
+    try {
+      await llamar('admin/pedidos.php', { method: 'DELETE', params: { codigo } });
+      toast(`Pedido ${codigo} eliminado`);
+      pedidos();
+    } catch (err) { toast(err.message, 'error'); }
+  }));
   if (codigoAbierto) detallePedido(codigoAbierto);
 }
 
-async function detallePedido(codigo) {
+/** Estados en los que la dirección todavía se puede cambiar (igual que en Pedidos::editarEnvioAdmin). */
+const EDITABLE_ENVIO = ['creado', 'pagado', 'en_preparacion'];
+
+async function detallePedido(codigo, editar = false) {
   const caja = $('#detallePedido');
   caja.innerHTML = '<div class="vacio">Cargando pedido…</div>';
   const p = await llamar('admin/pedidos.php', { params: { codigo } });
@@ -228,9 +246,39 @@ async function detallePedido(codigo) {
           <p class="pista">Solo se ofrecen las transiciones válidas desde «${esc(estados[p.estado])}». «Pagado» solo lo asigna la pasarela de pago (tarjeta de prueba o PayPal sandbox).</p>`
             : '<p class="pista">Estado final: este pedido ya no admite cambios.</p>'}
         </div>
+        <div class="panel" id="panelModificar"><h2>Modificar dirección de envío</h2>
+          ${EDITABLE_ENVIO.includes(p.estado) ? `<form class="form-inline" id="formEnvio" novalidate>
+            <div class="campo"><label for="e-linea">Dirección</label><input id="e-linea" name="linea" required minlength="5" maxlength="160" value="${esc(p.dir_linea)}"><small class="campo-error" data-error-de="linea"></small></div>
+            <div class="campo"><label for="e-cp">Código postal</label><input id="e-cp" name="cp" required maxlength="5" pattern="(0[1-9]|[1-4]\\d|5[0-2])\\d{3}" data-mensaje="Código postal español de 5 cifras." value="${esc(p.dir_cp)}"><small class="campo-error" data-error-de="cp"></small></div>
+            <div class="campo"><label for="e-ciudad">Ciudad</label><input id="e-ciudad" name="ciudad" required minlength="2" maxlength="80" value="${esc(p.dir_ciudad)}"><small class="campo-error" data-error-de="ciudad"></small></div>
+            <div class="campo"><label for="e-provincia">Provincia</label><input id="e-provincia" name="provincia" required minlength="2" maxlength="80" value="${esc(p.dir_provincia)}"><small class="campo-error" data-error-de="provincia"></small></div>
+            <button class="btn btn-solid btn-sm">Guardar cambios</button>
+          </form>
+          <p class="pista">Los importes no se modifican a mano: los calcula el servidor al crear el pedido.</p>`
+            : '<p class="pista">El pedido ya ha salido del almacén (o está cancelado): la dirección ya no se puede cambiar.</p>'}
+        </div>
       </div>
     </div>`;
-  caja.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  if (editar) {
+    $('#panelModificar').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    $('#e-linea')?.focus({ preventScroll: true });
+  } else {
+    caja.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  $('#formEnvio')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const f = e.target;
+    if (!validarEnCliente(f)) return;
+    try {
+      await llamar('admin/pedidos.php', { method: 'POST', body: { accion: 'editar', codigo, direccion: Object.fromEntries(new FormData(f)) } });
+      toast('Dirección actualizada');
+      pedidos(codigo);
+    } catch (err) {
+      mostrarErrores(f, err.campos);
+      toast(err.message, 'error');
+    }
+  });
 
   $('#reenviarFactura')?.addEventListener('click', async () => {
     try {
@@ -301,11 +349,12 @@ function actualizarContadorIncidencias(n) {
 }
 
 async function incidencias() {
-  const { incidencias: lista } = await llamar('admin/incidencias.php');
+  const { incidencias: lista, motivos } = await llamar('admin/incidencias.php');
   actualizarContadorIncidencias(lista.filter((i) => i.estado === 'abierta').length);
+  const porId = new Map(lista.map((i) => [i.id, i]));
   contenido.innerHTML = `<div class="tabla-wrap"><table class="tabla">
-    <thead><tr><th>Código</th><th>Fecha</th><th>Cliente</th><th>Motivo</th><th>Mensaje</th><th>Pedido</th><th>Estado</th></tr></thead>
-    <tbody>${lista.length ? lista.map((i) => `<tr>
+    <thead><tr><th>Código</th><th>Fecha</th><th>Cliente</th><th>Motivo</th><th>Mensaje</th><th>Pedido</th><th>Estado</th><th>Respuesta</th><th>Modificar</th><th>Eliminar</th></tr></thead>
+    <tbody>${lista.length ? lista.map((i) => `<tr data-fila="${i.id}">
       <td><code>${esc(i.codigo)}</code></td><td style="white-space:nowrap">${fecha(i.creado_en)}</td>
       <td>${esc(i.nombre)}<br><small>${esc(i.email)}</small></td>
       <td>${esc(i.motivo_nombre)}</td><td style="min-width:240px">${esc(i.mensaje)}</td>
@@ -313,7 +362,72 @@ async function incidencias() {
       <td><span class="estado estado-${esc(i.estado)}">${esc(i.estado)}</span><br>
         <button class="enlace" style="margin-top:6px; font-size:.78rem" data-id="${i.id}" data-nuevo="${i.estado === 'abierta' ? 'resuelta' : 'abierta'}">
           ${i.estado === 'abierta' ? 'Marcar resuelta' : 'Reabrir'}</button></td>
-    </tr>`).join('') : '<tr><td colspan="7" class="vacio">No hay incidencias.</td></tr>'}</tbody></table></div>`;
+      <td style="min-width:200px">${i.respuesta ? `<div class="respuesta">${esc(i.respuesta)}</div><small>${fecha(i.respondida_en)}</small><br>` : ''}
+        <button class="enlace" style="font-size:.78rem" data-responder="${i.id}">${i.respuesta ? 'Editar respuesta' : 'Responder'}</button></td>
+      <td><button class="enlace" data-editar="${i.id}">Modificar</button></td>
+      <td><button type="button" class="btn-x" data-borrar="${i.id}" title="Eliminar incidencia" aria-label="Eliminar la incidencia ${esc(i.codigo)}">✕</button></td>
+    </tr>`).join('') : '<tr><td colspan="10" class="vacio">No hay incidencias.</td></tr>'}</tbody></table></div>`;
+
+  /** Abre un formulario en una fila justo debajo de la incidencia (solo uno a la vez). */
+  function abrirFormulario(id, html, alGuardar) {
+    contenido.querySelector('.fila-edicion')?.remove();
+    const fila = contenido.querySelector(`tr[data-fila="${id}"]`);
+    fila.insertAdjacentHTML('afterend', `<tr class="fila-edicion"><td colspan="10"><form class="form-inline" novalidate>${html}
+      <div class="botones"><button class="btn btn-solid btn-sm">Guardar</button><button type="button" class="btn btn-outline btn-sm" data-cancelar>Cancelar</button></div>
+    </form></td></tr>`);
+    const f = fila.nextElementSibling.querySelector('form');
+    f.querySelector('[data-cancelar]').addEventListener('click', () => f.closest('tr').remove());
+    f.querySelector('textarea, select, input')?.focus();
+    f.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!validarEnCliente(f)) return;
+      try {
+        await alGuardar(Object.fromEntries(new FormData(f)));
+        incidencias();
+      } catch (err) {
+        mostrarErrores(f, err.campos);
+        toast(err.message, 'error');
+      }
+    });
+  }
+
+  contenido.querySelectorAll('[data-responder]').forEach((b) => b.addEventListener('click', () => {
+    const i = porId.get(Number(b.dataset.responder));
+    abrirFormulario(i.id, `
+      <div class="campo"><label for="i-respuesta">Respuesta para ${esc(i.nombre)} (la verá en «Mi cuenta»)</label>
+        <textarea id="i-respuesta" name="respuesta" required minlength="2" maxlength="1000">${esc(i.respuesta ?? '')}</textarea>
+        <small class="campo-error" data-error-de="respuesta"></small></div>`,
+    async (d) => {
+      await llamar('admin/incidencias.php', { method: 'POST', body: { accion: 'responder', id: i.id, ...d } });
+      toast('Respuesta guardada');
+    });
+  }));
+
+  contenido.querySelectorAll('[data-editar]').forEach((b) => b.addEventListener('click', () => {
+    const i = porId.get(Number(b.dataset.editar));
+    abrirFormulario(i.id, `
+      <div class="campo"><label for="i-motivo">Motivo</label><select id="i-motivo" name="motivo" required>
+        ${Object.entries(motivos).map(([id, n]) => `<option value="${esc(id)}" ${id === i.motivo ? 'selected' : ''}>${esc(n)}</option>`).join('')}</select></div>
+      <div class="campo"><label for="i-mensaje">Mensaje</label>
+        <textarea id="i-mensaje" name="mensaje" required minlength="10" maxlength="1000">${esc(i.mensaje)}</textarea>
+        <small class="campo-error" data-error-de="mensaje"></small></div>
+      <div class="campo"><label for="i-estado">Estado</label><select id="i-estado" name="estado">
+        ${['abierta', 'resuelta'].map((e) => `<option ${e === i.estado ? 'selected' : ''}>${e}</option>`).join('')}</select></div>`,
+    async (d) => {
+      await llamar('admin/incidencias.php', { method: 'POST', body: { accion: 'editar', id: i.id, ...d } });
+      toast('Incidencia modificada');
+    });
+  }));
+
+  contenido.querySelectorAll('[data-borrar]').forEach((b) => b.addEventListener('click', async () => {
+    const i = porId.get(Number(b.dataset.borrar));
+    if (!confirm(`¿Eliminar la incidencia ${i.codigo}? No se puede deshacer.`)) return;
+    try {
+      await llamar('admin/incidencias.php', { method: 'DELETE', params: { id: i.id } });
+      toast(`Incidencia ${i.codigo} eliminada`);
+      incidencias();
+    } catch (e) { toast(e.message, 'error'); }
+  }));
 
   contenido.querySelectorAll('[data-id]').forEach((b) => b.addEventListener('click', async () => {
     try {

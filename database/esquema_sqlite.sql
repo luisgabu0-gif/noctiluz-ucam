@@ -64,7 +64,8 @@ CREATE TABLE usuarios_admin (
 
 CREATE TABLE clientes (
   id INTEGER PRIMARY KEY AUTOINCREMENT, nombre TEXT NOT NULL, email TEXT NOT NULL UNIQUE,
-  telefono TEXT NULL, creado_en TEXT NOT NULL
+  telefono TEXT NULL, creado_en TEXT NOT NULL,
+  clave_hash TEXT NULL, registrado_en TEXT NULL
 );
 CREATE TABLE pedidos (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -115,7 +116,8 @@ CREATE TABLE incidencias (
   codigo TEXT NOT NULL UNIQUE,
   pedido_id INTEGER NULL REFERENCES pedidos(id),
   nombre TEXT NOT NULL, email TEXT NOT NULL, motivo TEXT NOT NULL, mensaje TEXT NOT NULL,
-  estado TEXT NOT NULL, creado_en TEXT NOT NULL
+  estado TEXT NOT NULL, creado_en TEXT NOT NULL,
+  respuesta TEXT NULL, respondida_en TEXT NULL
 );
 CREATE TABLE resenas (
   id INTEGER PRIMARY KEY AUTOINCREMENT,

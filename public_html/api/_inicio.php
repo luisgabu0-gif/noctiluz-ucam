@@ -5,7 +5,7 @@ declare(strict_types=1);
 // y convierte cualquier excepción en una respuesta JSON coherente.
 
 $raiz = dirname(__DIR__) . '/app';
-foreach (['Db', 'Validador', 'ReglasNegocio', 'Catalogo', 'Eventos', 'Clientes', 'Pedidos', 'Pagos', 'PagoPaypal', 'Facturas', 'Incidencias', 'Resenas', 'Admin'] as $clase) {
+foreach (['Db', 'Validador', 'ReglasNegocio', 'Catalogo', 'Eventos', 'Clientes', 'Pedidos', 'Pagos', 'PagoPaypal', 'Facturas', 'Incidencias', 'Resenas', 'Cuentas', 'Admin'] as $clase) {
     require_once "$raiz/$clase.php";
 }
 

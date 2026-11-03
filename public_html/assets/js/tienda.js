@@ -273,21 +273,29 @@ async function pintarResenas() {
     return;
   }
   $('#listaResenas').innerHTML = datos.resenas.map(tarjetaResena).join('');
-  // No hay cuentas de cliente: "estar registrado" es haberse identificado con un pedido en este navegador
-  // (al comprar o en «Mis pedidos»). Sin pedido, o con la sesión del back-office, no aparece el botón.
-  const pedidos = Object.keys(accesos());
+  // Para opinar hay que haber iniciado sesión (el equipo del back-office no puede).
   const caja = $('#resenaNueva');
-  caja.hidden = !datos.puede_opinar || !pedidos.length;
-  caja.innerHTML = caja.hidden ? '' : `
-    <button type="button" class="btn btn-outline btn-sm" id="abrirResena" aria-expanded="false" aria-controls="formResena">Escribir reseña</button>
-    <form class="bloque form-resena" id="formResena" novalidate hidden>
+  caja.hidden = !datos.puede_opinar;
+  if (caja.hidden) { caja.innerHTML = ''; return; }
+  if (!datos.cliente) {
+    caja.innerHTML = '<p class="pista"><a class="enlace" href="#/cuenta">Inicia sesión o crea una cuenta</a> para añadir una reseña.</p>';
+    return;
+  }
+  const pedidos = datos.pedidos;
+  // Nombre que se publica por defecto: nombre de pila e inicial del apellido («Lucía F.»).
+  const partes = datos.cliente.nombre.split(' ');
+  const nombrePublico = (partes[0] + (partes[1] ? ` ${partes[1].charAt(0)}.` : '')).slice(0, 40);
+  caja.innerHTML = `
+    <button type="button" class="btn btn-outline btn-sm" id="abrirResena" aria-expanded="false" aria-controls="formResena">Añadir reseña</button>
+    ${!pedidos.length ? `<p class="pista" id="formResena" hidden>Para opinar necesitas un pedido pagado que todavía no hayas valorado.
+      <a class="enlace" href="#/catalogo">Ver la colección</a></p>` : `<form class="bloque form-resena" id="formResena" novalidate hidden>
       <div class="form-grid">
         ${pedidos.length > 1 ? `<div class="campo">
           <label for="f-pedido-resena">Pedido</label>
           <select id="f-pedido-resena" name="pedido">${pedidos.map((c) => `<option>${esc(c)}</option>`).join('')}</select>
           <small class="campo-error" data-error-de="pedido" role="alert"></small>
         </div>` : `<input type="hidden" name="pedido" value="${esc(pedidos[0])}">`}
-        ${campo({ nombre: 'nombre', etiqueta: 'Nombre que se publica', atributos: 'minlength="2" maxlength="40" autocomplete="given-name" placeholder="Ej.: Laura M."' })}
+        ${campo({ nombre: 'nombre', etiqueta: 'Nombre que se publica', valor: nombrePublico, atributos: 'minlength="2" maxlength="40" autocomplete="given-name" placeholder="Ej.: Laura M."' })}
         <div class="campo">
           <span class="etiqueta" id="etq-estrellas">Puntuación</span>
           <div class="elegir-estrellas" role="radiogroup" aria-labelledby="etq-estrellas">
@@ -303,14 +311,14 @@ async function pintarResenas() {
       </div>
       <div id="errorResena" role="alert" style="margin-top:14px"></div>
       <button class="btn btn-solid" style="margin-top:16px" id="enviarResena">Publicar reseña</button>
-    </form>`;
-  if (caja.hidden) return;
+    </form>`}`;
   const f = $('#formResena');
   $('#abrirResena').addEventListener('click', (e) => {
     f.hidden = !f.hidden;
     e.currentTarget.setAttribute('aria-expanded', String(!f.hidden));
-    if (!f.hidden) f.nombre.focus();
+    if (!f.hidden && f.nombre) f.nombre.focus();
   });
+  if (!pedidos.length) return;
   f.addEventListener('submit', async (e) => {
     e.preventDefault();
     $('#errorResena').innerHTML = '';
@@ -319,7 +327,7 @@ async function pintarResenas() {
     const boton = $('#enviarResena');
     boton.disabled = true;
     try {
-      await api('resenas.php', { method: 'POST', body: { ...d, email: emailDe(d.pedido), sesion_id: sesionId() } });
+      await api('resenas.php', { method: 'POST', body: { ...d, sesion_id: sesionId() } });
       toast('¡Gracias! Tu reseña ya está publicada.');
       pintarResenas();
     } catch (err) {
@@ -799,6 +807,12 @@ async function vistaCheckout() {
   $('#aplicarCupon').addEventListener('click', () => { cuponAplicado = $('#cupon').value.trim().toUpperCase(); recalcular(); });
   $('#cupon').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); $('#aplicarCupon').click(); } });
   $('#resumen').addEventListener('click', (e) => { if (e.target.closest('[data-abrir-carrito]')) abrirCarrito(); });
+  // Con la sesión iniciada se rellenan el nombre y el email de la cuenta: así el pedido queda en «Mi cuenta».
+  api('cuenta.php').then((r) => {
+    if (!r.cliente) return;
+    form.nombre.value ||= r.cliente.nombre;
+    form.email.value ||= r.cliente.email;
+  }).catch(() => {});
   $('#rellenarPrueba').addEventListener('click', () => {
     const c = CLIENTES_PRUEBA[Math.floor(Math.random() * CLIENTES_PRUEBA.length)];
     for (const [k, v] of Object.entries(c)) form.elements[k].value = v;
@@ -1069,6 +1083,95 @@ function vistaSeguimiento() {
 }
 
 // ====================================================================================
+// Mi cuenta: inicio de sesión, registro, pedidos e incidencias con la respuesta del equipo
+// ====================================================================================
+
+async function vistaCuenta() {
+  document.title = 'Mi cuenta — NOCTILUZ';
+  const r = await api('cuenta.php');
+  if (!r.cliente) { pintarAccesoCuenta(); return; }
+  // Así los enlaces a sus pedidos se abren sin volver a pedir el email.
+  r.pedidos.forEach((p) => guardarAcceso(p.codigo, r.cliente.email));
+
+  vistaPagina.innerHTML = `
+    <div class="pedido-cab">
+      <h1 class="pagina-titulo">Hola, ${esc(r.cliente.nombre)}</h1>
+      <button type="button" class="btn btn-outline btn-sm" id="cerrarSesion">Cerrar sesión</button>
+    </div>
+    <p class="pagina-sub">${esc(r.cliente.email)}</p>
+    <div class="dos-col">
+      <div class="bloque"><h2>Mis pedidos</h2>
+        ${r.pedidos.length ? r.pedidos.map((p) => `<div class="sumrow">
+            <span><a class="enlace codigo" href="#/pedido/${esc(p.codigo)}">${esc(p.codigo)}</a><br><small class="campo-ayuda">${fecha(p.creado_en)} · ${eur(p.total)}</small></span>
+            <span class="estado estado-${esc(p.estado)}">${esc(p.estado_nombre)}</span></div>`).join('')
+          : '<p class="pista">Todavía no has hecho ningún pedido con este email. <a class="enlace" href="#/catalogo">Ver la colección</a></p>'}
+      </div>
+      <div class="bloque"><h2>Mis incidencias</h2>
+        ${r.incidencias.length ? r.incidencias.map((i) => `<div class="incidencia-cliente">
+            <div class="sumrow"><span><strong class="codigo">${esc(i.codigo)}</strong> · ${esc(i.motivo_nombre)}</span><span class="estado estado-${esc(i.estado)}">${esc(i.estado)}</span></div>
+            <p class="campo-ayuda">${fecha(i.creado_en)}${i.pedido_codigo ? ` · pedido ${esc(i.pedido_codigo)}` : ''}</p>
+            <p>${esc(i.mensaje)}</p>
+            ${i.respuesta ? `<div class="respuesta-equipo"><strong>Respuesta del equipo</strong> · <small>${fecha(i.respondida_en)}</small><p>${esc(i.respuesta)}</p></div>`
+              : '<p class="pista">Pendiente de respuesta.</p>'}
+          </div>`).join('')
+          : '<p class="pista">No has abierto ninguna incidencia. <a class="enlace" href="#/soporte">Ir a soporte</a></p>'}
+      </div>
+    </div>`;
+  $('#cerrarSesion').addEventListener('click', async () => {
+    await api('cuenta.php', { method: 'DELETE' }).catch(() => {});
+    toast('Has cerrado sesión');
+    enrutar();
+  });
+}
+
+function pintarAccesoCuenta() {
+  vistaPagina.innerHTML = `
+    <h1 class="pagina-titulo">Mi cuenta</h1>
+    <p class="pagina-sub">Inicia sesión o crea una cuenta para ver tus pedidos, las respuestas a tus incidencias y añadir reseñas.</p>
+    <div class="dos-col">
+      <form class="bloque" id="formLogin" novalidate>
+        <h2>Iniciar sesión</h2>
+        <div class="form-grid">
+          ${campo({ nombre: 'email', id: 'l-email', etiqueta: 'Email', tipo: 'email', completo: true, atributos: 'maxlength="120" autocomplete="email"' })}
+          ${campo({ nombre: 'clave', id: 'l-clave', etiqueta: 'Contraseña', tipo: 'password', completo: true, atributos: 'maxlength="100" autocomplete="current-password"' })}
+        </div>
+        <div class="error-form" role="alert" style="margin-top:14px"></div>
+        <button class="btn btn-solid btn-full" style="margin-top:16px">Entrar</button>
+      </form>
+      <form class="bloque" id="formRegistro" novalidate>
+        <h2>Crear cuenta</h2>
+        <div class="form-grid">
+          ${campo({ nombre: 'nombre', id: 'r-nombre', etiqueta: 'Nombre y apellidos', completo: true, atributos: 'minlength="3" maxlength="100" autocomplete="name"' })}
+          ${campo({ nombre: 'email', id: 'r-email', etiqueta: 'Email', tipo: 'email', completo: true, atributos: 'maxlength="120" autocomplete="email"', ayuda: 'Usa un email de prueba. Si ya compraste con él, verás esos pedidos.' })}
+          ${campo({ nombre: 'clave', id: 'r-clave', etiqueta: 'Contraseña', tipo: 'password', completo: true, atributos: 'minlength="8" maxlength="100" autocomplete="new-password" data-mensaje="La contraseña debe tener al menos 8 caracteres."', ayuda: 'Mínimo 8 caracteres. No uses una contraseña real.' })}
+        </div>
+        <div class="error-form" role="alert" style="margin-top:14px"></div>
+        <button class="btn btn-solid btn-full" style="margin-top:16px">Crear cuenta</button>
+      </form>
+    </div>`;
+
+  const enviar = (form, accion) => form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const hueco = form.querySelector('.error-form');
+    hueco.innerHTML = '';
+    if (!validarEnCliente(form)) return;
+    const boton = form.querySelector('button');
+    boton.disabled = true;
+    try {
+      await api('cuenta.php', { method: 'POST', body: { accion, ...Object.fromEntries(new FormData(form)), sesion_id: sesionId() } });
+      toast(accion === 'registro' ? '¡Cuenta creada!' : 'Sesión iniciada');
+      enrutar();
+    } catch (err) {
+      boton.disabled = false;
+      mostrarErrores(form, err.campos);
+      hueco.innerHTML = `<div class="alerta error">${esc(err.message)}</div>`;
+    }
+  });
+  enviar($('#formLogin'), 'login');
+  enviar($('#formRegistro'), 'registro');
+}
+
+// ====================================================================================
 // Soporte e incidencias
 // ====================================================================================
 
@@ -1199,6 +1302,7 @@ const RUTAS = [
   [/^#\/pago\/([\w-]+)$/, (c) => vistaPago(c.toUpperCase())],
   [/^#\/pedido\/([\w-]+)$/, (c) => vistaPedido(c.toUpperCase())],
   [/^#\/seguimiento$/, vistaSeguimiento],
+  [/^#\/cuenta$/, vistaCuenta],
   [/^#\/soporte(?:\?pedido=([\w-]*))?$/, (c) => vistaSoporte((c || '').toUpperCase())],
   [/^#\/legal(?:\/(\w+))?$/, vistaLegal],
 ];
@@ -1210,6 +1314,7 @@ function seccionDe(hash) {
   if (/^#\/(catalogo|producto)/.test(hash)) return 'tienda';
   if (/^#\/(seguimiento|pedido)/.test(hash)) return 'pedidos';
   if (hash.startsWith('#/soporte')) return 'soporte';
+  if (hash === '#/cuenta') return 'cuenta';
   if (hash === '#/como-funciona') return 'como-funciona';
   if (hash === '#/' || hash === '#/marca') return 'inicio';
   return '';

@@ -59,8 +59,7 @@ export function validarEnCliente(form) {
   return true;
 }
 
-export function campo({ nombre, etiqueta, tipo = 'text', requerido = true, atributos = '', valor = '', ayuda = '', completo = false }) {
-  const id = 'f-' + nombre;
+export function campo({ nombre, etiqueta, tipo = 'text', requerido = true, atributos = '', valor = '', ayuda = '', completo = false, id = 'f-' + nombre }) {
   return `<div class="campo${completo ? ' completo' : ''}">
     <label for="${id}">${esc(etiqueta)}${requerido ? '' : ' <span class="opcional">(opcional)</span>'}</label>
     <input id="${id}" name="${nombre}" type="${tipo}" value="${esc(valor)}" ${requerido ? 'required' : ''} ${atributos}>

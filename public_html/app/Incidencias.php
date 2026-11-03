@@ -48,7 +48,7 @@ final class Incidencias
     public static function listar(): array
     {
         $filas = Db::todos(
-            'SELECT i.id, i.codigo, i.nombre, i.email, i.motivo, i.mensaje, i.estado, i.creado_en, p.codigo AS pedido_codigo
+            'SELECT i.id, i.codigo, i.nombre, i.email, i.motivo, i.mensaje, i.estado, i.creado_en, i.respuesta, i.respondida_en, p.codigo AS pedido_codigo
                FROM incidencias i LEFT JOIN pedidos p ON p.id = i.pedido_id
               ORDER BY i.estado = \'abierta\' DESC, i.creado_en DESC'
         );
@@ -57,6 +57,80 @@ final class Incidencias
             $f['motivo_nombre'] = self::MOTIVOS[$f['motivo']] ?? $f['motivo'];
         }
         return $filas;
+    }
+
+    /** Incidencias abiertas por ese email, con la respuesta del equipo (para «Mi cuenta»). */
+    public static function deCliente(string $email): array
+    {
+        $filas = Db::todos(
+            'SELECT i.codigo, i.motivo, i.mensaje, i.estado, i.creado_en, i.respuesta, i.respondida_en, p.codigo AS pedido_codigo
+               FROM incidencias i LEFT JOIN pedidos p ON p.id = i.pedido_id
+              WHERE i.email = ? ORDER BY i.creado_en DESC, i.id DESC',
+            [$email]
+        );
+        foreach ($filas as &$f) {
+            $f['motivo_nombre'] = self::MOTIVOS[$f['motivo']] ?? $f['motivo'];
+        }
+        return $filas;
+    }
+
+    /** Modificar desde el back-office: motivo, mensaje y estado. */
+    public static function editar(array $entrada, string $actor): void
+    {
+        $val = new Validador();
+        $motivo  = $val->opcion($entrada['motivo'] ?? null, array_keys(self::MOTIVOS), 'motivo', 'Elige un motivo.');
+        $mensaje = $val->texto($entrada['mensaje'] ?? null, 'mensaje', 10, 1000, 'El mensaje');
+        $estado  = $val->opcion($entrada['estado'] ?? null, ['abierta', 'resuelta'], 'estado', 'Elige un estado.');
+        $val->comprobar();
+        Db::transaccion(function () use ($entrada, $motivo, $mensaje, $estado, $actor) {
+            $i = self::buscar($entrada['id'] ?? null);
+            Db::ejecutar('UPDATE incidencias SET motivo = ?, mensaje = ?, estado = ? WHERE id = ?', [$motivo, $mensaje, $estado, $i['id']]);
+            Eventos::registrar('support.updated', ['codigo' => $i['codigo'], 'estado' => $estado, 'actor' => $actor],
+                'servidor', null, self::entero($i['cliente_id']), self::entero($i['pedido_id']));
+        });
+    }
+
+    /** Respuesta del equipo: se guarda en la incidencia y el cliente la ve en «Mi cuenta». */
+    public static function responder(array $entrada, string $actor): void
+    {
+        $val = new Validador();
+        $respuesta = $val->texto($entrada['respuesta'] ?? null, 'respuesta', 2, 1000, 'La respuesta');
+        $val->comprobar();
+        Db::transaccion(function () use ($entrada, $respuesta, $actor) {
+            $i = self::buscar($entrada['id'] ?? null);
+            Db::ejecutar('UPDATE incidencias SET respuesta = ?, respondida_en = ? WHERE id = ?', [$respuesta, ahora(), $i['id']]);
+            Eventos::registrar('support.replied', ['codigo' => $i['codigo'], 'actor' => $actor],
+                'servidor', null, self::entero($i['cliente_id']), self::entero($i['pedido_id']));
+        });
+    }
+
+    public static function eliminar($id, string $actor): void
+    {
+        Db::transaccion(function () use ($id, $actor) {
+            $i = self::buscar($id);
+            Db::ejecutar('DELETE FROM incidencias WHERE id = ?', [$i['id']]);
+            // El evento queda como constancia aunque la incidencia ya no exista.
+            Eventos::registrar('support.deleted', ['codigo' => $i['codigo'], 'actor' => $actor],
+                'servidor', null, self::entero($i['cliente_id']), self::entero($i['pedido_id']));
+        });
+    }
+
+    private static function buscar($id): array
+    {
+        $id = filter_var($id, FILTER_VALIDATE_INT);
+        $i = $id === false ? null : Db::uno(
+            'SELECT i.id, i.codigo, i.pedido_id, p.cliente_id FROM incidencias i LEFT JOIN pedidos p ON p.id = i.pedido_id WHERE i.id = ?',
+            [$id]
+        );
+        if ($i === null) {
+            throw new ErrorNegocio('Incidencia no encontrada.', [], 404);
+        }
+        return $i;
+    }
+
+    private static function entero($valor): ?int
+    {
+        return $valor === null ? null : (int) $valor;
     }
 
     public static function cambiarEstado(array $entrada): void

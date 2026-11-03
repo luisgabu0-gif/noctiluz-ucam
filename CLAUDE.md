@@ -61,7 +61,7 @@ Principios que no hay que romper:
 
 ## Despliegue
 
-La web está publicada en InfinityFree: **https://noctiluz.free.je** (la dirección antigua, `algo.free.je`, sirve otra copia de los mismos archivos con la misma base de datos). **Subir a GitHub no actualiza la web**: Luis copia los archivos de `public_html/` al hosting a mano. No intentes desplegar ni pidas credenciales del hosting.
+La web está publicada en el alojamiento Básico de DonDominio: **https://noctiluz.onl**. Hay una copia alternativa en InfinityFree, **https://noctiluz.free.je** (y la antigua `algo.free.je`), con su propia base de datos: los pedidos de una no aparecen en la otra. **Subir a GitHub no actualiza la web**: Luis copia los archivos de `public_html/` al hosting a mano. No intentes desplegar ni pidas credenciales del hosting.
 
 ## Normas
 

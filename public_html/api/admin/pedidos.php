@@ -4,11 +4,17 @@ require dirname(__DIR__) . '/_inicio.php';
 
 // GET ?estado=&q=      → listado de pedidos
 // GET ?codigo=...      → detalle con líneas, pagos e historial
-// POST {codigo, estado, motivo} → cambio de estado (respeta la máquina de estados)
-// POST {accion: "reenviar_factura", codigo} → vuelve a enviar por correo la factura de un pedido pagado
-permitir('GET', 'POST');
+// POST {codigo, estado, motivo}                    → cambio de estado (respeta la máquina de estados)
+// POST {accion: "editar", codigo, direccion: {...}} → modificar la dirección de envío (evento order.updated)
+// POST {accion: "reenviar_factura", codigo}         → vuelve a enviar por correo la factura de un pedido pagado
+// DELETE ?codigo=...                                → eliminar el pedido (evento order.deleted)
+permitir('GET', 'POST', 'DELETE');
 $admin = Admin::exigir();
 
+if (metodo() === 'DELETE') {
+    Pedidos::eliminarAdmin(parametro('codigo') ?? '', $admin['email']);
+    responder(['ok' => true]);
+}
 if (metodo() === 'POST') {
     $e = cuerpoJson();
     if (($e['accion'] ?? '') === 'reenviar_factura') {
@@ -16,7 +22,9 @@ if (metodo() === 'POST') {
         Facturas::enviar($codigo);
         responder(Pedidos::detalle($codigo));
     }
-    responder(Pedidos::cambiarEstadoAdmin($e, $admin['email']));
+    responder(($e['accion'] ?? '') === 'editar'
+        ? Pedidos::editarEnvioAdmin($e, $admin['email'])
+        : Pedidos::cambiarEstadoAdmin($e, $admin['email']));
 }
 $codigo = parametro('codigo');
 if ($codigo !== null) {

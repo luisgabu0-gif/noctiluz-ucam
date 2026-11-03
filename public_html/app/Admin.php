@@ -6,13 +6,7 @@ final class Admin
 {
     public static function iniciarSesionPhp(): void
     {
-        if (session_status() === PHP_SESSION_ACTIVE) {
-            return;
-        }
-        $https = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
-        session_name('NOCTILUZ_ADMIN');
-        session_set_cookie_params(['lifetime' => 0, 'path' => '/', 'httponly' => true, 'secure' => $https, 'samesite' => 'Strict']);
-        session_start();
+        abrirSesion('NOCTILUZ_ADMIN'); // definida en Cuentas.php, compartida con la sesión de cliente
     }
 
     public static function login(array $entrada): array

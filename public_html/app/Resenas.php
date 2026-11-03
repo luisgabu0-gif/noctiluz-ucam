@@ -2,8 +2,8 @@
 declare(strict_types=1);
 
 /**
- * Reseñas de la portada. No hay cuentas de cliente, así que "estar registrado" es tener un pedido:
- * para opinar hay que dar el código del pedido y su email, y el pedido tiene que estar pagado.
+ * Reseñas de la portada. Para opinar hay que haber iniciado sesión con una cuenta de cliente
+ * y elegir uno de sus pedidos ya pagados (una reseña por pedido).
  * El equipo de administración no puede opinar.
  */
 final class Resenas
@@ -26,13 +26,28 @@ final class Resenas
         return isset($_COOKIE['NOCTILUZ_ADMIN']) && Admin::actual() !== null;
     }
 
+    /** Pedidos pagados de un cliente que todavía no tienen reseña: los que puede valorar. */
+    public static function pedidosParaOpinar(int $clienteId): array
+    {
+        $marcas = implode(', ', array_fill(0, count(self::ESTADOS_CON_COMPRA), '?'));
+        $filas = Db::todos(
+            "SELECT p.codigo FROM pedidos p LEFT JOIN resenas r ON r.pedido_id = p.id
+              WHERE p.cliente_id = ? AND r.id IS NULL AND p.estado IN ($marcas) ORDER BY p.creado_en DESC, p.id DESC",
+            [$clienteId, ...self::ESTADOS_CON_COMPRA]
+        );
+        return array_column($filas, 'codigo');
+    }
+
     public static function crear(array $entrada): array
     {
         if (self::esAdmin()) {
             throw new ErrorNegocio('El equipo de administración no puede publicar reseñas.', [], 403);
         }
+        $cliente = Cuentas::actual();
+        if ($cliente === null) {
+            throw new ErrorNegocio('Inicia sesión en tu cuenta para añadir una reseña.', [], 401);
+        }
         $val = new Validador();
-        $email  = $val->email($entrada['email'] ?? null);
         $nombre = $val->texto($entrada['nombre'] ?? null, 'nombre', 2, 40, 'El nombre');
         $texto  = $val->texto($entrada['texto'] ?? null, 'texto', 10, 400, 'La opinión');
         $estrellas = filter_var($entrada['estrellas'] ?? null, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 5]]);
@@ -45,10 +60,10 @@ final class Resenas
         }
         $val->comprobar();
 
-        $pedido = Db::uno('SELECT p.id, p.codigo, p.estado, p.cliente_id, c.email FROM pedidos p JOIN clientes c ON c.id = p.cliente_id WHERE p.codigo = ?', [$codigo]);
-        // Igual que en soporte: si el email no coincide se responde lo mismo que si no existe.
-        if ($pedido === null || mb_strtolower($pedido['email']) !== $email) {
-            throw new ErrorNegocio('Revisa los datos marcados.', ['pedido' => 'No hay ningún pedido con ese código para este email.']);
+        // Solo vale un pedido de la propia cuenta: así nadie puede opinar con pedidos ajenos.
+        $pedido = Db::uno('SELECT id, codigo, estado, cliente_id FROM pedidos WHERE codigo = ? AND cliente_id = ?', [$codigo, $cliente['id']]);
+        if ($pedido === null) {
+            throw new ErrorNegocio('Revisa los datos marcados.', ['pedido' => 'No tienes ningún pedido con ese código.']);
         }
         if (!in_array($pedido['estado'], self::ESTADOS_CON_COMPRA, true)) {
             throw new ErrorNegocio('Revisa los datos marcados.', ['pedido' => 'Solo se puede opinar de un pedido ya pagado.']);

@@ -11,7 +11,11 @@ final class Eventos
     public const TIPOS_CLIENTE = ['product.viewed', 'cart.item_added', 'cart.item_removed', 'checkout.started'];
 
     /** Eventos que solo genera el servidor, dentro de la misma transacción que el cambio de datos. */
-    public const TIPOS_SERVIDOR = ['order.created', 'payment.simulated', 'order.status_changed', 'support.requested', 'review.created', 'invoice.sent'];
+    public const TIPOS_SERVIDOR = [
+        'order.created', 'payment.simulated', 'order.status_changed', 'order.updated', 'order.deleted',
+        'support.requested', 'support.updated', 'support.replied', 'support.deleted',
+        'review.created', 'customer.registered', 'invoice.sent',
+    ];
 
     public static function registrar(string $tipo, array $datos, string $origen, ?string $sesionId = null, ?int $clienteId = null, ?int $pedidoId = null): string
     {
