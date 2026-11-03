@@ -202,8 +202,19 @@ async function detallePedido(codigo) {
             <div><span>Creado</span><span>${fecha(p.creado_en)}</span></div>
             <div><span>Sesión</span><code>${esc(p.sesion_id ?? '—')}</code></div>
           </div>
-          <h2 style="margin-top:20px">Pagos simulados</h2>
-          <div class="lista-simple">${p.pagos.length ? p.pagos.map((g) => `<div><span>${fecha(g.creado_en)} · •••• ${esc(g.tarjeta_ultimos4)}<br><small><code>${esc(g.referencia)}</code> · ${esc(g.mensaje)}</small></span><span class="estado estado-${esc(g.resultado)}">${esc(g.resultado)}</span></div>`).join('') : '<p class="pista">Sin intentos de pago.</p>'}</div>
+          <h2 style="margin-top:20px">Pagos</h2>
+          <div class="lista-simple">${p.pagos.length ? p.pagos.map((g) => `<div><span>${fecha(g.creado_en)} · ${g.metodo === 'paypal_sandbox' ? 'PayPal (sandbox)' : `•••• ${esc(g.tarjeta_ultimos4)}`}<br><small><code>${esc(g.referencia)}</code> · ${esc(g.mensaje)}</small></span><span class="estado estado-${esc(g.resultado)}">${esc(g.resultado)}</span></div>`).join('') : '<p class="pista">Sin intentos de pago.</p>'}</div>
+          <h2 style="margin-top:20px">Factura</h2>
+          ${p.factura ? `<div class="lista-simple">
+              <div><span><code>${esc(p.factura.numero)}</code> · ${fecha(p.factura.emitida_en)}<br><small>${p.factura.estado_envio === 'enviada'
+                ? `Enviada por email el ${fecha(p.factura.enviada_en)}` : `No enviada${p.factura.error_envio ? `: ${esc(p.factura.error_envio)}` : ''}`}</small></span>
+                <span class="estado ${p.factura.estado_envio === 'enviada' ? 'estado-aprobado' : 'estado-rechazado'}">${esc(p.factura.estado_envio)}</span></div>
+            </div>
+            <div style="display:flex; gap:8px; margin-top:10px; flex-wrap:wrap">
+              <a class="btn btn-outline btn-sm" target="_blank" rel="noopener" href="api/factura.php?codigo=${encodeURIComponent(p.codigo)}">Ver factura</a>
+              <button type="button" class="btn btn-outline btn-sm" id="reenviarFactura">Reenviar por email</button>
+            </div>`
+            : '<p class="pista">Se emite automáticamente cuando el pedido se paga.</p>'}
         </div>
         <div class="panel"><h2>Historial de estados</h2>
           <div class="lista-simple">${p.historial.map((h) => `<div><span>${h.estado_anterior ? `${esc(estados[h.estado_anterior] ?? h.estado_anterior)} → ` : ''}<strong>${esc(estados[h.estado_nuevo] ?? h.estado_nuevo)}</strong><br><small>${esc(h.motivo ?? '')} · ${esc(h.actor)}</small></span><span>${fecha(h.creado_en)}</span></div>`).join('')}</div>
@@ -214,12 +225,22 @@ async function detallePedido(codigo) {
             <div class="campo"><label for="f-motivo">Motivo <span class="opcional">(opcional)</span></label><input id="f-motivo" name="motivo" maxlength="200" placeholder="p. ej. entregado a la mensajería"></div>
             <button class="btn btn-solid btn-sm" style="height:44px">Aplicar</button>
           </form>
-          <p class="pista">Solo se ofrecen las transiciones válidas desde «${esc(estados[p.estado])}». «Pagado» solo lo asigna la pasarela simulada.</p>`
+          <p class="pista">Solo se ofrecen las transiciones válidas desde «${esc(estados[p.estado])}». «Pagado» solo lo asigna la pasarela de pago (tarjeta de prueba o PayPal sandbox).</p>`
             : '<p class="pista">Estado final: este pedido ya no admite cambios.</p>'}
         </div>
       </div>
     </div>`;
   caja.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  $('#reenviarFactura')?.addEventListener('click', async () => {
+    try {
+      const r = await llamar('admin/pedidos.php', { method: 'POST', body: { accion: 'reenviar_factura', codigo } });
+      toast(r.factura?.estado_envio === 'enviada' ? 'Factura enviada' : `No se pudo enviar: ${r.factura?.error_envio ?? 'error desconocido'}`, r.factura?.estado_envio === 'enviada' ? undefined : 'error');
+      detallePedido(codigo);
+    } catch (err) {
+      toast(err.message, 'error');
+    }
+  });
 
   $('#formEstado')?.addEventListener('submit', async (e) => {
     e.preventDefault();

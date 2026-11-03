@@ -27,7 +27,7 @@ final class Pedidos
 
         return Db::transaccion(function () use ($entrada, $nombre, $email, $telefono, $linea, $cp, $ciudad, $provincia, $envio, $cupon, $sesion) {
             $lineas = ReglasNegocio::validarLineas($entrada['lineas'] ?? null);
-            $t = ReglasNegocio::calcular($lineas, $cupon, $envio, true);
+            $t = ReglasNegocio::calcular($lineas, $cupon, $envio, true, $cp);
 
             $clienteId = Clientes::obtenerOCrear($nombre, $email, $telefono);
             $codigo = self::nuevoCodigo();
@@ -97,7 +97,9 @@ final class Pedidos
         }
         $id = (int) $p['id'];
         $p['estado_nombre'] = ReglasNegocio::ESTADOS[$p['estado']] ?? $p['estado'];
-        $p['metodo_envio_nombre'] = ReglasNegocio::METODOS_ENVIO[$p['metodo_envio']] ?? $p['metodo_envio'];
+        $zona = ReglasNegocio::ZONAS_ENVIO[ReglasNegocio::zonaEnvio($p['dir_cp'])];
+        $p['metodo_envio_nombre'] = (ReglasNegocio::METODOS_ENVIO[$p['metodo_envio']] ?? $p['metodo_envio'])
+            . " · {$zona['nombre']} (" . ($zona[$p['metodo_envio']]['plazo'] ?? '') . ')';
         foreach (['subtotal', 'descuento', 'envio', 'base_imponible', 'iva', 'total'] as $k) {
             $p[$k] = (float) $p[$k];
         }
@@ -115,6 +117,7 @@ final class Pedidos
             'SELECT estado_anterior, estado_nuevo, motivo, actor, creado_en FROM historial_estados WHERE pedido_id = ? ORDER BY id',
             [$id]
         );
+        $p['factura'] = Db::uno('SELECT numero, emitida_en, estado_envio, enviada_en, error_envio FROM facturas WHERE pedido_id = ?', [$id]);
         $p['transiciones'] = array_values(array_diff(ReglasNegocio::TRANSICIONES[$p['estado']] ?? [], ReglasNegocio::ESTADOS_SOLO_SISTEMA));
         return $p;
     }
@@ -127,6 +130,9 @@ final class Pedidos
             return null;
         }
         unset($p['id'], $p['cliente_id'], $p['sesion_id'], $p['transiciones'], $p['cliente_telefono']);
+        if ($p['factura'] !== null) {
+            unset($p['factura']['error_envio']);
+        }
         foreach ($p['historial'] as &$h) {
             unset($h['actor']);
         }

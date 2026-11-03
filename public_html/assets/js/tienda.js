@@ -417,7 +417,7 @@ async function vistaProducto(sku) {
           <div><dt>Autonomía</dt><dd>Hasta ${p.autonomia_h} h en modo fijo</dd></div>
           <div><dt>Carga</dt><dd>USB-C en unas 2 h · módulo LED extraíble</dd></div>
           <div><dt>Lavado</dt><dd>A 30 °C, del revés y sin el módulo</dd></div>
-          <div><dt>Envío</dt><dd>Estándar ${eur(estado.catalogo.reglas.envio_estandar)} (gratis desde ${eur(estado.catalogo.reglas.umbral_envio_gratis)}) · Exprés ${eur(estado.catalogo.reglas.envio_expres)}</dd></div>
+          <div><dt>Envío a la Península</dt><dd>Estándar ${eur(estado.catalogo.reglas.envio_estandar)} (gratis desde ${eur(estado.catalogo.reglas.umbral_envio_gratis)}) · Exprés ${eur(estado.catalogo.reglas.envio_expres)} · Baleares con otra tarifa</dd></div>
           <div><dt>Devoluciones</dt><dd>30 días (política simulada)</dd></div>
           <div><dt>Referencia</dt><dd class="codigo">${esc(v.sku)}</dd></div>
         </dl>
@@ -715,14 +715,16 @@ async function vistaCheckout() {
         </div>
         <div class="bloque">
           <h2>Método de envío</h2>
+          <p class="pista" id="zonaEnvio" style="margin:-4px 0 12px">Precios para la Península. Se ajustan al escribir el código postal.</p>
           <div style="display:grid; gap:10px">
             <label class="opcion-radio"><input type="radio" name="envio" value="estandar" checked>
-              <span>Estándar · 48-72 h<br><small class="campo-ayuda">Gratis desde ${eur(estado.catalogo.reglas.umbral_envio_gratis)}</small></span>
-              <span class="precio">${eur(estado.catalogo.reglas.envio_estandar)}</span></label>
+              <span>Estándar · <span data-plazo="estandar">48-72 h</span><br><small class="campo-ayuda">Gratis desde <span data-gratis>${eur(estado.catalogo.reglas.umbral_envio_gratis)}</span></small></span>
+              <span class="precio" data-precio="estandar">${eur(estado.catalogo.reglas.envio_estandar)}</span></label>
             <label class="opcion-radio"><input type="radio" name="envio" value="expres">
-              <span>Exprés · 24 h</span><span class="precio">${eur(estado.catalogo.reglas.envio_expres)}</span></label>
+              <span>Exprés · <span data-plazo="expres">24 h</span><br><small class="campo-ayuda">Nunca es gratis</small></span><span class="precio" data-precio="expres">${eur(estado.catalogo.reglas.envio_expres)}</span></label>
           </div>
           <small class="campo-error" data-error-de="envio"></small>
+          <p class="pista">No enviamos a ${esc(new Intl.ListFormat('es').format(estado.catalogo.reglas.sin_envio))}. Tienes la política completa en «Envíos y devoluciones», al pie de la página.</p>
         </div>
         <div class="bloque">
           <label class="check"><input type="checkbox" name="acepta_condiciones" required data-mensaje="Debes aceptar las condiciones del prototipo para continuar.">
@@ -751,10 +753,22 @@ async function vistaCheckout() {
   const boton = $('#confirmar');
   let cuponAplicado = '';
 
+  // Los portes dependen de la zona del código postal: los precios de las opciones salen del servidor.
+  function pintarTarifas(t) {
+    for (const m of ['estandar', 'expres']) {
+      form.querySelector(`[data-precio="${m}"]`).textContent = eur(t.tarifas[m].precio);
+      form.querySelector(`[data-plazo="${m}"]`).textContent = t.tarifas[m].plazo;
+    }
+    form.querySelector('[data-gratis]').textContent = eur(t.tarifas.gratis_desde);
+    $('#zonaEnvio').textContent = /^\d{5}$/.test(form.cp.value) ? `Envío a ${t.zona.nombre}.` : 'Precios para la Península. Se ajustan al escribir el código postal.';
+  }
+
   async function recalcular() {
     $('#errorCupon').textContent = '';
     try {
-      const r = await api('presupuesto.php', { method: 'POST', body: { lineas: carrito.obtener(), cupon: cuponAplicado, envio: form.envio.value } });
+      const cp = /^\d{5}$/.test(form.cp.value) ? form.cp.value : '';
+      const r = await api('presupuesto.php', { method: 'POST', body: { lineas: carrito.obtener(), cupon: cuponAplicado, envio: form.envio.value, cp } });
+      pintarTarifas(r.totales);
       if (r.totales.cupon_error) {
         $('#errorCupon').textContent = r.totales.cupon_error;
         cuponAplicado = '';
@@ -764,19 +778,31 @@ async function vistaCheckout() {
       $('#resumen').innerHTML = htmlResumen(r.lineas, r.totales);
       boton.disabled = false;
     } catch (e) {
-      $('#resumen').innerHTML = `<div class="alerta error">${esc(e.message)}<ul>${listaErroresLineas(e.campos)}</ul>
-        <button type="button" class="enlace" data-abrir-carrito style="margin-top:8px">Revisar el carrito</button></div>`;
+      // Un código postal sin envío no es un problema del carrito: se avisa junto al método de envío.
+      if (e.campos?.cp) {
+        $('#zonaEnvio').textContent = e.campos.cp;
+        $('#resumen').innerHTML = `<div class="alerta error">${esc(e.message)}</div>`;
+      } else {
+        $('#resumen').innerHTML = `<div class="alerta error">${esc(e.message)}<ul>${listaErroresLineas(e.campos)}</ul>
+          <button type="button" class="enlace" data-abrir-carrito style="margin-top:8px">Revisar el carrito</button></div>`;
+      }
       boton.disabled = true;
     }
   }
 
   form.addEventListener('change', (e) => { if (e.target.name === 'envio') recalcular(); });
+  let cpAnterior = '';
+  form.cp.addEventListener('input', () => {
+    const cp = /^\d{5}$/.test(form.cp.value) ? form.cp.value : '';
+    if (cp !== cpAnterior) { cpAnterior = cp; recalcular(); }
+  });
   $('#aplicarCupon').addEventListener('click', () => { cuponAplicado = $('#cupon').value.trim().toUpperCase(); recalcular(); });
   $('#cupon').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); $('#aplicarCupon').click(); } });
   $('#resumen').addEventListener('click', (e) => { if (e.target.closest('[data-abrir-carrito]')) abrirCarrito(); });
   $('#rellenarPrueba').addEventListener('click', () => {
     const c = CLIENTES_PRUEBA[Math.floor(Math.random() * CLIENTES_PRUEBA.length)];
     for (const [k, v] of Object.entries(c)) form.elements[k].value = v;
+    form.cp.dispatchEvent(new Event('input'));
   });
 
   form.addEventListener('submit', async (e) => {
@@ -848,11 +874,18 @@ async function vistaPago(codigo) {
           ${campo({ nombre: 'caducidad', etiqueta: 'Caducidad', atributos: 'inputmode="numeric" maxlength="5" autocomplete="off" placeholder="MM/AA" pattern="(0[1-9]|1[0-2])/\\d{2}" data-mensaje="Usa el formato MM/AA."' })}
           ${campo({ nombre: 'cvc', etiqueta: 'CVC', atributos: 'inputmode="numeric" maxlength="3" autocomplete="off" placeholder="123" pattern="\\d{3}" data-mensaje="El CVC son 3 cifras."' })}
         </div>
-        <div id="resultadoPago" role="alert" style="margin-top:16px"></div>
+        <div id="resultadoPago" role="alert" style="margin-top:16px">${p.pagos.at(-1)?.resultado === 'rechazado'
+          ? `<div class="alerta error"><strong>Último intento rechazado:</strong> ${esc(p.pagos.at(-1).mensaje)}. Puedes volver a intentarlo.</div>` : ''}</div>
         <button class="btn btn-solid btn-full" style="margin-top:18px" id="pagar">Pagar ${eur(p.total)} (simulado)</button>
         <button type="button" class="btn btn-peligro btn-full" style="margin-top:10px" id="cancelarPedido">Cancelar pedido</button>
       </form>
       <aside class="pegajoso">
+        ${estado.catalogo.reglas.paypal ? `<div class="bloque">
+          <div class="pasarela-cabecera"><h2 style="margin:0">PayPal</h2><span>Sandbox</span></div>
+          <p class="pista" style="margin-bottom:14px">Pasarela real en su entorno de pruebas: inicia sesión con una <strong>cuenta personal de prueba</strong> de PayPal sandbox. No se mueve dinero real.</p>
+          <button type="button" class="btn btn-outline btn-full" id="pagarPaypal">Pagar ${eur(p.total)} con PayPal (sandbox)</button>
+          <div id="resultadoPaypal" role="alert" style="margin-top:10px"></div>
+        </div>` : ''}
         <div class="bloque">
           <h2>Tarjetas de prueba</h2>
           <table class="tabla-pruebas"><tbody>${TARJETAS_PRUEBA.map(([n, d, r]) => `
@@ -912,7 +945,25 @@ async function vistaPago(codigo) {
   });
 
   $('#cancelarPedido').addEventListener('click', () => cancelarPedido(codigo, email));
+
+  // PayPal: el servidor crea la orden por el total del pedido y devuelve la página de PayPal donde aprobarla.
+  $('#pagarPaypal')?.addEventListener('click', async (e) => {
+    const boton = e.currentTarget;
+    boton.disabled = true;
+    boton.textContent = 'Conectando con PayPal…';
+    try {
+      const r = await api('paypal.php', { method: 'POST', body: { accion: 'crear', codigo, email } });
+      location.href = r.url;
+    } catch (err) {
+      $('#resultadoPaypal').innerHTML = `<div class="alerta error">${esc(err.message)}</div>`;
+      boton.disabled = false;
+      boton.textContent = `Pagar ${eur(p.total)} con PayPal (sandbox)`;
+    }
+  });
 }
+
+/** Texto de un intento de pago: tarjeta de prueba (últimas cifras) o PayPal. */
+const metodoPago = (g) => (g.metodo === 'paypal_sandbox' ? 'PayPal (sandbox)' : `•••• ${esc(g.tarjeta_ultimos4)}`);
 
 async function cancelarPedido(codigo, email) {
   if (!confirm(`¿Seguro que quieres cancelar el pedido ${codigo}? Las unidades volverán al stock.`)) return;
@@ -942,7 +993,7 @@ async function vistaPedido(codigo) {
     ${p.estado === 'pagado' ? `<div class="bloque exito" style="margin-bottom:28px">
       <div class="icono" aria-hidden="true">✓</div>
       <h2 style="font-size:1.3rem; margin-bottom:8px">¡Pedido confirmado!</h2>
-      <p style="color:var(--ink-dim)">Pago simulado aprobado. Recuerda que es un prototipo: no recibirás ningún paquete.</p>
+      <p style="color:var(--ink-dim)">Pago aprobado${p.factura?.estado_envio === 'enviada' ? ` y factura ${esc(p.factura.numero)} enviada a ${esc(p.cliente_email)}` : ''}. Recuerda que es un prototipo: no recibirás ningún paquete.</p>
     </div>` : ''}
     <div class="pedido-cab">
       <h1 class="pagina-titulo">Pedido <span class="codigo">${esc(p.codigo)}</span></h1>
@@ -961,10 +1012,16 @@ async function vistaPedido(codigo) {
           <p style="color:var(--ink-dim); font-size:.9rem">${esc(p.dir_linea)}<br>${esc(p.dir_cp)} ${esc(p.dir_ciudad)} (${esc(p.dir_provincia)})<br>${esc(p.metodo_envio_nombre)}</p>
         </div>
         <div class="bloque"><h2>Pagos</h2>
-          ${p.pagos.length ? p.pagos.map((g) => `<div class="sumrow"><span>${fecha(g.creado_en)} · •••• ${esc(g.tarjeta_ultimos4)}</span><span class="estado estado-${esc(g.resultado)}">${esc(g.resultado)}</span></div>`).join('')
+          ${p.pagos.length ? p.pagos.map((g) => `<div class="sumrow"><span>${fecha(g.creado_en)} · ${metodoPago(g)}</span><span class="estado estado-${esc(g.resultado)}">${esc(g.resultado)}</span></div>`).join('')
             : '<p class="pista">Todavía no hay ningún intento de pago.</p>'}
           ${ultimoPago?.resultado === 'rechazado' && p.estado === 'creado' ? `<p class="pista">Último intento: ${esc(ultimoPago.mensaje)}</p>` : ''}
         </div>
+        ${p.factura ? `<div class="bloque"><h2>Factura</h2>
+          <div class="sumrow"><span><span class="codigo">${esc(p.factura.numero)}</span> · ${fecha(p.factura.emitida_en)}</span>
+            <span class="estado ${p.factura.estado_envio === 'enviada' ? 'estado-aprobado' : 'estado-rechazado'}">${p.factura.estado_envio === 'enviada' ? 'enviada por email' : 'pendiente de envío'}</span></div>
+          <a class="btn btn-outline btn-sm" style="margin-top:10px" target="_blank" rel="noopener"
+            href="api/factura.php?codigo=${encodeURIComponent(p.codigo)}&email=${encodeURIComponent(p.cliente_email)}">Ver factura</a>
+        </div>` : ''}
         <div class="acciones">
           ${p.estado === 'creado' ? `<a class="btn btn-solid" href="#/pago/${esc(p.codigo)}">Pagar ahora</a><button type="button" class="btn btn-peligro" id="cancelar">Cancelar</button>` : ''}
           <a class="btn btn-outline" href="#/soporte?pedido=${esc(p.codigo)}">¿Algún problema?</a>
@@ -1082,7 +1139,8 @@ async function vistaSoporte(pedidoPrevio = '') {
 // Aviso de prototipo, envíos y privacidad
 // ====================================================================================
 
-function vistaLegal(seccion) {
+async function vistaLegal(seccion) {
+  await listo;
   document.title = 'Aviso de prototipo — NOCTILUZ';
   vistaPagina.innerHTML = `
     <div class="legal">
@@ -1100,9 +1158,18 @@ function vistaLegal(seccion) {
         <h2>Condiciones comerciales simuladas</h2>
         <ul>
           <li>Precios con IVA (21 %) incluido; en cada pedido se desglosan base imponible e IVA.</li>
-          <li>Envío estándar (48-72 h): 4,95 €, gratis si el pedido supera 120 € tras descuentos.</li>
-          <li>Envío exprés (24 h): 9,95 €, nunca gratuito.</li>
-          <li>Cupones de prueba: NOCHE10 (10 % desde 50 €), BIENVENIDA5 (5 € desde 30 €) y ENVIOGRATIS.</li>
+          <li>Los portes dependen de la zona del código postal de entrega:</li>
+        </ul>
+        <div class="tabla-wrap"><table class="tabla-pruebas">
+          <thead><tr><th>Zona</th><th>Estándar</th><th>Gratis desde</th><th>Exprés</th></tr></thead>
+          <tbody>${estado.catalogo.reglas.zonas_envio.map((z) => `<tr><td>${esc(z.nombre)}</td>
+            <td>${eur(z.estandar.precio)} · ${esc(z.estandar.plazo)}</td><td>${eur(z.gratis_desde)}</td>
+            <td>${eur(z.expres.precio)} · ${esc(z.expres.plazo)}</td></tr>`).join('')}</tbody>
+        </table></div>
+        <ul>
+          <li>El envío gratis se calcula tras aplicar los descuentos y solo cuenta para el envío estándar; el exprés nunca es gratuito.</li>
+          <li>No enviamos a ${esc(new Intl.ListFormat('es').format(estado.catalogo.reglas.sin_envio))}: allí no se aplica el IVA, sino el IGIC o el IPSI, y nuestros precios llevan el IVA incluido.</li>
+          <li>Cupones de prueba: NOCHE10 (10 % desde 50 €), BIENVENIDA5 (5 € desde 30 €) y ENVIOGRATIS (envío estándar gratis en cualquier zona).</li>
           <li>Máximo 9 unidades por línea y nunca más que el stock disponible.</li>
           <li>Devoluciones: 30 días desde la entrega (política simulada; se solicitan desde Soporte).</li>
         </ul>

@@ -39,7 +39,7 @@ final class Pagos
         }
         $val->comprobar();
 
-        return Db::transaccion(function () use ($codigo, $email, $numero) {
+        $r = Db::transaccion(function () use ($codigo, $email, $numero) {
             $p = Db::uno('SELECT p.*, c.email FROM pedidos p JOIN clientes c ON c.id = p.cliente_id WHERE p.codigo = ?', [$codigo]);
             if ($p === null || mb_strtolower($p['email']) !== $email) {
                 throw new ErrorNegocio('No encontramos ese pedido.', [], 404);
@@ -66,10 +66,17 @@ final class Pagos
 
             if ($resultado === 'aprobado') {
                 Pedidos::cambiarEstado($p, 'pagado', 'Pago simulado aprobado', 'pasarela-simulada');
+                Facturas::emitir((int) $p['id'], $p['email']);
             }
 
             return ['resultado' => $resultado, 'mensaje' => $mensaje, 'referencia' => $referencia, 'codigo' => $codigo];
         });
+
+        // Con el pago ya guardado, se envía la factura: si el correo falla, el pago sigue siendo válido.
+        if ($r['resultado'] === 'aprobado') {
+            $r['factura_envio'] = Facturas::enviar($codigo);
+        }
+        return $r;
     }
 
     private static function luhn(string $numero): bool

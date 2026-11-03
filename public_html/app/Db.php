@@ -111,3 +111,27 @@ function centimos($importe): int
 {
     return (int) round(((float) $importe) * 100);
 }
+
+/** Lee un valor de app/config.php con una ruta tipo 'paypal.client_id'; si no existe, devuelve $defecto. */
+function config(string $ruta, $defecto = null)
+{
+    $valor = $GLOBALS['config'] ?? [];
+    foreach (explode('.', $ruta) as $clave) {
+        if (!is_array($valor) || !array_key_exists($clave, $valor)) {
+            return $defecto;
+        }
+        $valor = $valor[$clave];
+    }
+    return $valor;
+}
+
+/** URL pública de la tienda sin barra final: la de config.php o, si falta, la de la petición actual. */
+function urlTienda(): string
+{
+    $url = (string) config('tienda.url_publica', '');
+    if ($url === '') {
+        $https = ($_SERVER['HTTPS'] ?? '') !== '' && ($_SERVER['HTTPS'] ?? '') !== 'off';
+        $url = ($https ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost');
+    }
+    return rtrim($url, '/');
+}

@@ -8,14 +8,48 @@ declare(strict_types=1);
 final class ReglasNegocio
 {
     public const IVA_PORCENTAJE      = 21;       // Precios de catálogo con IVA incluido
-    public const ENVIO_ESTANDAR      = 495;      // 4,95 € (48-72 h)
-    public const ENVIO_EXPRES        = 995;      // 9,95 € (24 h), nunca gratuito
-    public const UMBRAL_ENVIO_GRATIS = 12000;    // Estándar gratis desde 120 € (tras descuento)
+    public const ENVIO_ESTANDAR      = 495;      // Tarifas de la Península (zona por defecto): ver ZONAS_ENVIO
+    public const ENVIO_EXPRES        = 995;
+    public const UMBRAL_ENVIO_GRATIS = 12000;
     public const MAX_UNIDADES_LINEA  = 9;
     public const MAX_LINEAS          = 20;
     public const TALLAS              = ['XS', 'S', 'M', 'L', 'XL'];
     public const TALLA_UNICA         = 'Única';
-    public const METODOS_ENVIO       = ['estandar' => 'Estándar (48-72 h)', 'expres' => 'Exprés (24 h)'];
+    public const METODOS_ENVIO       = ['estandar' => 'Estándar', 'expres' => 'Exprés'];
+
+    /**
+     * Política de portes por zona (importes en céntimos, IVA incluido). El estándar es gratis desde
+     * 'gratis_desde' (tras descuento) o con el cupón de envío; el exprés nunca es gratis.
+     */
+    public const ZONAS_ENVIO = [
+        'peninsula' => [
+            'nombre' => 'Península', 'gratis_desde' => 12000,
+            'estandar' => ['precio' => 495, 'plazo' => '48-72 h'],
+            'expres'   => ['precio' => 995, 'plazo' => '24 h'],
+        ],
+        'baleares' => [
+            'nombre' => 'Islas Baleares', 'gratis_desde' => 18000,
+            'estandar' => ['precio' => 895, 'plazo' => '3-5 días laborables'],
+            'expres'   => ['precio' => 1695, 'plazo' => '48 h'],
+        ],
+    ];
+
+    /**
+     * Canarias (35, 38), Ceuta (51) y Melilla (52) quedan fuera del territorio del IVA (allí rigen el IGIC
+     * y el IPSI), así que la tienda, que trabaja con precios con IVA incluido, no envía a esas zonas.
+     */
+    public const PREFIJOS_SIN_ENVIO = ['35' => 'Canarias', '38' => 'Canarias', '51' => 'Ceuta', '52' => 'Melilla'];
+
+    /** Zona de envío de un código postal; un código vacío (vista previa sin dirección) cuenta como Península. */
+    public static function zonaEnvio(string $cp): string
+    {
+        $prefijo = substr(trim($cp), 0, 2);
+        if (isset(self::PREFIJOS_SIN_ENVIO[$prefijo])) {
+            $msg = 'De momento no enviamos a ' . self::PREFIJOS_SIN_ENVIO[$prefijo] . ': allí no se aplica el IVA, sino otro impuesto.';
+            throw new ErrorNegocio($msg, ['cp' => $msg]);
+        }
+        return $prefijo === '07' ? 'baleares' : 'peninsula';
+    }
 
     public const ESTADOS = [
         'creado'         => 'Creado (pendiente de pago)',
@@ -135,12 +169,15 @@ final class ReglasNegocio
     /**
      * Calcula el desglose completo. Si $estricto es false (vista previa del checkout),
      * un cupón no válido no bloquea: se ignora y se devuelve el motivo en 'cupon_error'.
+     * Los portes dependen de la zona del código postal ($cp vacío = Península).
      */
-    public static function calcular(array $lineas, string $cuponCodigo, string $metodoEnvio, bool $estricto): array
+    public static function calcular(array $lineas, string $cuponCodigo, string $metodoEnvio, bool $estricto, string $cp = ''): array
     {
         if (!array_key_exists($metodoEnvio, self::METODOS_ENVIO)) {
             throw new ErrorNegocio('Método de envío no válido.', ['envio' => 'Elige un método de envío.']);
         }
+        $zonaId = self::zonaEnvio($cp);
+        $zona = self::ZONAS_ENVIO[$zonaId];
 
         $subtotal = array_sum(array_column($lineas, 'importe'));
 
@@ -165,11 +202,11 @@ final class ReglasNegocio
         }
 
         if ($metodoEnvio === 'expres') {
-            $envio = self::ENVIO_EXPRES;
-        } elseif (($cupon !== null && $cupon['tipo'] === 'envio') || ($subtotal - $descuento) >= self::UMBRAL_ENVIO_GRATIS) {
+            $envio = $zona['expres']['precio'];
+        } elseif (($cupon !== null && $cupon['tipo'] === 'envio') || ($subtotal - $descuento) >= $zona['gratis_desde']) {
             $envio = 0;
         } else {
-            $envio = self::ENVIO_ESTANDAR;
+            $envio = $zona['estandar']['precio'];
         }
 
         $total = $subtotal - $descuento + $envio;
@@ -185,8 +222,21 @@ final class ReglasNegocio
             'cupon'          => $cupon !== null ? ['codigo' => $cupon['codigo'], 'descripcion' => $cupon['descripcion']] : null,
             'cupon_error'    => $cuponError,
             'metodo_envio'   => $metodoEnvio,
+            'zona'           => ['id' => $zonaId, 'nombre' => $zona['nombre'], 'plazo' => $zona[$metodoEnvio]['plazo']],
+            'tarifas'        => self::tarifasZona($zonaId),
             'falta_envio_gratis' => $metodoEnvio === 'estandar' && $envio > 0
-                ? self::UMBRAL_ENVIO_GRATIS - ($subtotal - $descuento) : 0,
+                ? $zona['gratis_desde'] - ($subtotal - $descuento) : 0,
+        ];
+    }
+
+    /** Tarifas de una zona en euros, para mostrarlas en el checkout y en la página de envíos. */
+    public static function tarifasZona(string $zonaId): array
+    {
+        $z = self::ZONAS_ENVIO[$zonaId];
+        return [
+            'gratis_desde' => euros($z['gratis_desde']),
+            'estandar'     => ['precio' => euros($z['estandar']['precio']), 'plazo' => $z['estandar']['plazo']],
+            'expres'       => ['precio' => euros($z['expres']['precio']), 'plazo' => $z['expres']['plazo']],
         ];
     }
 

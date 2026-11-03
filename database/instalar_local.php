@@ -23,9 +23,13 @@ $pdo->exec(file_get_contents(__DIR__ . '/datos_prueba.sql'));
 $config = "$raiz/public_html/app/config.php";
 if (!is_file($config)) {
     $contenido = file_get_contents("$raiz/public_html/app/config.ejemplo.php");
-    $contenido = str_replace(["'driver'      => 'mysql'", "'entorno' => 'produccion'"], ["'driver'      => 'sqlite'", "'entorno' => 'desarrollo'"], $contenido);
+    $contenido = str_replace(
+        ["'driver'      => 'mysql'", "'entorno' => 'produccion'", "'url_publica' => 'https://noctiluz.onl'", "'modo'         => 'mail'"],
+        ["'driver'      => 'sqlite'", "'entorno' => 'desarrollo'", "'url_publica' => 'http://localhost:8000'", "'modo'         => 'archivo'"],
+        $contenido
+    );
     file_put_contents($config, $contenido);
-    echo "Creado public_html/app/config.php (SQLite, modo desarrollo).\n";
+    echo "Creado public_html/app/config.php (SQLite, modo desarrollo, facturas guardadas en datos/correos/).\n";
 }
 
 $n = $pdo->query('SELECT (SELECT COUNT(*) FROM productos) p, (SELECT COUNT(*) FROM variantes) v, (SELECT COUNT(*) FROM pedidos) o, (SELECT COUNT(*) FROM eventos) e')->fetch(PDO::FETCH_ASSOC);

@@ -5,7 +5,7 @@
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
-DROP TABLE IF EXISTS eventos, resenas, incidencias, historial_estados, pagos, lineas_pedido, pedidos,
+DROP TABLE IF EXISTS eventos, resenas, incidencias, historial_estados, facturas, pagos, lineas_pedido, pedidos,
   clientes, variantes, producto_modos, productos, cupones, modos, colores, categorias, usuarios_admin;
 
 SET FOREIGN_KEY_CHECKS = 1;
@@ -136,14 +136,27 @@ CREATE TABLE lineas_pedido (
 CREATE TABLE pagos (
   id               INT AUTO_INCREMENT PRIMARY KEY,
   pedido_id        INT           NOT NULL,
-  metodo           VARCHAR(30)   NOT NULL,
+  metodo           VARCHAR(30)   NOT NULL,     -- tarjeta_simulada | paypal_sandbox
   resultado        VARCHAR(20)   NOT NULL,     -- aprobado | rechazado
   importe          DECIMAL(10,2) NOT NULL,
   referencia       VARCHAR(40)   NOT NULL UNIQUE,
-  tarjeta_ultimos4 CHAR(4)       NOT NULL,
+  tarjeta_ultimos4 CHAR(4)       NULL,         -- NULL si no se pagó con tarjeta (PayPal)
   mensaje          VARCHAR(160)  NOT NULL,
   creado_en        DATETIME      NOT NULL,
   CONSTRAINT fk_pag_ped FOREIGN KEY (pedido_id) REFERENCES pedidos(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Una factura por pedido pagado, con numeración correlativa por año (F2026-000001) y estado del envío por correo.
+CREATE TABLE facturas (
+  id            INT AUTO_INCREMENT PRIMARY KEY,
+  pedido_id     INT          NOT NULL UNIQUE,
+  numero        VARCHAR(20)  NOT NULL UNIQUE,
+  emitida_en    DATETIME     NOT NULL,
+  email_destino VARCHAR(120) NOT NULL,
+  estado_envio  VARCHAR(20)  NOT NULL DEFAULT 'pendiente',   -- pendiente | enviada | error
+  enviada_en    DATETIME     NULL,
+  error_envio   VARCHAR(200) NULL,
+  CONSTRAINT fk_fac_ped FOREIGN KEY (pedido_id) REFERENCES pedidos(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE historial_estados (

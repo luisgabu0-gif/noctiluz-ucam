@@ -7,6 +7,7 @@ DROP TABLE IF EXISTS eventos;
 DROP TABLE IF EXISTS resenas;
 DROP TABLE IF EXISTS incidencias;
 DROP TABLE IF EXISTS historial_estados;
+DROP TABLE IF EXISTS facturas;
 DROP TABLE IF EXISTS pagos;
 DROP TABLE IF EXISTS lineas_pedido;
 DROP TABLE IF EXISTS pedidos;
@@ -96,7 +97,13 @@ CREATE TABLE pagos (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   pedido_id INTEGER NOT NULL REFERENCES pedidos(id),
   metodo TEXT NOT NULL, resultado TEXT NOT NULL, importe NUMERIC NOT NULL,
-  referencia TEXT NOT NULL UNIQUE, tarjeta_ultimos4 TEXT NOT NULL, mensaje TEXT NOT NULL, creado_en TEXT NOT NULL
+  referencia TEXT NOT NULL UNIQUE, tarjeta_ultimos4 TEXT NULL, mensaje TEXT NOT NULL, creado_en TEXT NOT NULL
+);
+CREATE TABLE facturas (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  pedido_id INTEGER NOT NULL UNIQUE REFERENCES pedidos(id),
+  numero TEXT NOT NULL UNIQUE, emitida_en TEXT NOT NULL, email_destino TEXT NOT NULL,
+  estado_envio TEXT NOT NULL DEFAULT 'pendiente', enviada_en TEXT NULL, error_envio TEXT NULL
 );
 CREATE TABLE historial_estados (
   id INTEGER PRIMARY KEY AUTOINCREMENT,

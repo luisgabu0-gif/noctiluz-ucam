@@ -17,7 +17,7 @@ foreach (['pdo_sqlite', 'mbstring'] as $ext) {
 }
 
 $raiz = dirname(__DIR__);
-foreach (['Db', 'Validador', 'ReglasNegocio', 'Catalogo', 'Eventos', 'Clientes', 'Pedidos'] as $clase) {
+foreach (['Db', 'Validador', 'ReglasNegocio', 'Catalogo', 'Eventos', 'Clientes', 'Pedidos', 'Pagos', 'PagoPaypal', 'Facturas'] as $clase) {
     require_once "$raiz/public_html/app/$clase.php";
 }
 date_default_timezone_set('Europe/Madrid');
@@ -167,6 +167,31 @@ comprobar('ENVIOGRATIS no hace gratis el exprés', 995, $t['envio']);
 comprobarError('Un método de envío desconocido se rechaza',
     fn () => ReglasNegocio::calcular(lineas(4900), '', 'urgente', true), 'Elige un método de envío.', 'envio');
 
+seccion('Portes por zona: Península, Baleares y zonas sin envío');
+
+$t = ReglasNegocio::calcular(lineas(4900), '', 'estandar', true, '30107');
+comprobar('CP de Murcia (30107): zona Península, estándar 4,95 €', ['peninsula', 495], [$t['zona']['id'], $t['envio']]);
+
+$t = ReglasNegocio::calcular(lineas(4900), '', 'estandar', true, '07001');
+comprobar('CP de Palma (07001): zona Baleares, estándar 8,95 €', ['baleares', 895], [$t['zona']['id'], $t['envio']]);
+
+$t = ReglasNegocio::calcular(lineas(4900), '', 'expres', true, '07001');
+comprobar('Baleares: exprés 16,95 €', 1695, $t['envio']);
+
+$t = ReglasNegocio::calcular(lineas(15000), '', 'estandar', true, '07001');
+comprobar('Baleares con 150 €: aún no es gratis (umbral 180 €) y faltan 30 €', [895, 3000], [$t['envio'], $t['falta_envio_gratis']]);
+
+$t = ReglasNegocio::calcular(lineas(18000), '', 'estandar', true, '07001');
+comprobar('Baleares con 180 €: estándar gratis', 0, $t['envio']);
+
+$t = ReglasNegocio::calcular(lineas(4900), 'ENVIOGRATIS', 'estandar', true, '07001');
+comprobar('ENVIOGRATIS también vale en Baleares', 0, $t['envio']);
+
+comprobarError('Canarias (35001) no tiene envío',
+    fn () => ReglasNegocio::calcular(lineas(4900), '', 'estandar', true, '35001'), 'De momento no enviamos a Canarias: allí no se aplica el IVA, sino otro impuesto.', 'cp');
+comprobarError('Melilla (52001) no tiene envío',
+    fn () => ReglasNegocio::calcular(lineas(4900), '', 'estandar', true, '52001'), 'De momento no enviamos a Melilla: allí no se aplica el IVA, sino otro impuesto.', 'cp');
+
 // ---------------------------------------------------------------- 3. Cupones
 
 seccion('Cupones');
@@ -269,6 +294,57 @@ comprobarError('Después, ya no se pueden comprar 2 de las que solo queda 1',
 $fila = Db::uno('SELECT * FROM pedidos WHERE codigo = ?', [$pedido['codigo']]);
 Db::transaccion(fn () => Pedidos::cambiarEstado($fila, 'cancelado', 'Prueba automática', 'sistema'));
 comprobar('Al cancelar el pedido se devuelve el stock (1 → 4)', $antes, stock('gorra-faro-violeta'));
+
+// ---------------------------------------------------------------- 5. Pago, factura y envío por correo
+
+seccion('Pago aprobado: factura correlativa y envío por correo');
+
+// Los correos de las pruebas se guardan como .eml (modo 'archivo'), sin enviar nada.
+$GLOBALS['config'] = ['correo' => ['modo' => 'archivo', 'remitente' => 'facturas@ejemplo.test']];
+
+$pagar = fn (string $codigo, string $tarjeta) => Pagos::simular([
+    'codigo' => $codigo, 'email' => 'pruebas@ejemplo.test', 'titular' => 'Cliente de Pruebas',
+    'numero' => $tarjeta, 'caducidad' => '12/30', 'cvc' => '123',
+]);
+$facturaDe = fn (string $codigo) => Db::uno('SELECT f.* FROM facturas f JOIN pedidos p ON p.id = f.pedido_id WHERE p.codigo = ?', [$codigo]);
+
+$p1 = Pedidos::crear(datosCheckout([linea('camiseta-pulso-cian', 1)]));
+$pagar($p1['codigo'], '4000000000000002');
+comprobar('Un pago rechazado no emite factura', null, $facturaDe($p1['codigo']));
+
+$r = $pagar($p1['codigo'], '4242424242424242');
+$f1 = $facturaDe($p1['codigo']);
+comprobar('Un pago aprobado emite la factura F' . date('Y') . '-000001', 'F' . date('Y') . '-000001', $f1['numero'] ?? null);
+comprobar('La factura va al email del cliente', 'pruebas@ejemplo.test', $f1['email_destino'] ?? null);
+
+// En modo 'archivo' el correo se guarda en public_html/datos/correos; se comprueba y se borra.
+$eml = dirname(__DIR__) . "/public_html/datos/correos/{$f1['numero']}.eml";
+comprobar('El envío queda como «enviada» y el correo existe', ['enviada', 'enviada', true], [$r['factura_envio'], $f1['estado_envio'], is_file($eml)]);
+$cabeceras = is_file($eml) ? iconv_mime_decode_headers(strstr(file_get_contents($eml), "\r\n\r\n", true), 0, 'UTF-8') : [];
+comprobar('El correo lleva el número de factura en el asunto', true, str_contains((string) ($cabeceras['Subject'] ?? ''), $f1['numero']));
+if (is_file($eml)) {
+    unlink($eml);
+}
+
+$ev = Db::uno("SELECT datos FROM eventos WHERE tipo = 'invoice.sent' ORDER BY id DESC LIMIT 1");
+comprobar('Se registra el evento invoice.sent con el resultado', 'enviada', json_decode($ev['datos'] ?? '{}', true)['resultado'] ?? null);
+
+$p2 = Pedidos::crear(datosCheckout([linea('camiseta-pulso-cian', 1)]));
+$GLOBALS['config']['correo']['modo'] = 'desactivado';
+$r = $pagar($p2['codigo'], '5555555555554444');
+$f2 = $facturaDe($p2['codigo']);
+comprobar('La siguiente factura es la 000002 (numeración correlativa)', 'F' . date('Y') . '-000002', $f2['numero'] ?? null);
+comprobar('Si el correo falla, el pago sigue aprobado y la factura queda «error»', ['aprobado', 'error'], [$r['resultado'], $f2['estado_envio']]);
+comprobar('El pedido queda pagado aunque el correo falle', 'pagado', Db::uno('SELECT estado FROM pedidos WHERE codigo = ?', [$p2['codigo']])['estado']);
+
+comprobar('Emitir otra vez no crea una factura nueva', $f2['numero'], Facturas::emitir((int) $f2['pedido_id'], 'pruebas@ejemplo.test'));
+comprobar('La factura HTML desglosa base e IVA', true, str_contains((string) Facturas::documento($p2['codigo'], 'pruebas@ejemplo.test'), 'Base imponible'));
+comprobar('Con otro email no se ve la factura', null, Facturas::documento($p2['codigo'], 'otro@ejemplo.test'));
+
+seccion('PayPal sin configurar');
+comprobar('Sin credenciales sandbox, PayPal está desactivado', false, PagoPaypal::activo());
+comprobarError('Intentar pagar con PayPal sin configurarlo da un error claro',
+    fn () => PagoPaypal::crear(['codigo' => $p1['codigo'], 'email' => 'pruebas@ejemplo.test']), 'El pago con PayPal no está configurado en esta tienda.');
 
 // ---------------------------------------------------------------- Resumen
 

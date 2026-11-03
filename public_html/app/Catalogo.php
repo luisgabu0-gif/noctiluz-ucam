@@ -68,6 +68,12 @@ final class Catalogo
                 'envio_expres'        => euros(ReglasNegocio::ENVIO_EXPRES),
                 'umbral_envio_gratis' => euros(ReglasNegocio::UMBRAL_ENVIO_GRATIS),
                 'max_unidades_linea'  => ReglasNegocio::MAX_UNIDADES_LINEA,
+                'zonas_envio'         => array_map(
+                    fn ($id) => ['id' => $id, 'nombre' => ReglasNegocio::ZONAS_ENVIO[$id]['nombre']] + ReglasNegocio::tarifasZona($id),
+                    array_keys(ReglasNegocio::ZONAS_ENVIO)
+                ),
+                'sin_envio'           => array_values(array_unique(ReglasNegocio::PREFIJOS_SIN_ENVIO)),
+                'paypal'              => PagoPaypal::activo(),
             ],
         ];
     }

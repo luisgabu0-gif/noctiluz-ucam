@@ -5,7 +5,7 @@ declare(strict_types=1);
 // y convierte cualquier excepción en una respuesta JSON coherente.
 
 $raiz = dirname(__DIR__) . '/app';
-foreach (['Db', 'Validador', 'ReglasNegocio', 'Catalogo', 'Eventos', 'Clientes', 'Pedidos', 'Pagos', 'Incidencias', 'Resenas', 'Admin'] as $clase) {
+foreach (['Db', 'Validador', 'ReglasNegocio', 'Catalogo', 'Eventos', 'Clientes', 'Pedidos', 'Pagos', 'PagoPaypal', 'Facturas', 'Incidencias', 'Resenas', 'Admin'] as $clase) {
     require_once "$raiz/$clase.php";
 }
 
@@ -31,6 +31,7 @@ if (!is_file("$raiz/config.php")) {
     responder(['error' => 'Falta app/config.php (copia app/config.ejemplo.php y rellénalo).'], 500);
 }
 $config = require "$raiz/config.php";
+$GLOBALS['config'] = $config;
 $GLOBALS['entorno'] = $config['entorno'] ?? 'produccion';
 Db::configurar($config['db']);
 
