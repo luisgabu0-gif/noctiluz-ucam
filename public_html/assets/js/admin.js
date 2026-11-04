@@ -231,7 +231,8 @@ async function detallePedido(codigo, editar = false) {
             <div style="display:flex; gap:8px; margin-top:10px; flex-wrap:wrap">
               <a class="btn btn-outline btn-sm" target="_blank" rel="noopener" href="api/factura.php?codigo=${encodeURIComponent(p.codigo)}">Ver factura</a>
               <button type="button" class="btn btn-outline btn-sm" id="reenviarFactura">Reenviar por email</button>
-            </div>`
+            </div>
+            <div id="avisoReenvio" role="status" style="margin-top:10px"></div>`
             : '<p class="pista">Se emite automáticamente cuando el pedido se paga.</p>'}
         </div>
         <div class="panel"><h2>Historial de estados</h2>
@@ -280,14 +281,12 @@ async function detallePedido(codigo, editar = false) {
     }
   });
 
-  $('#reenviarFactura')?.addEventListener('click', async () => {
-    try {
-      const r = await llamar('admin/pedidos.php', { method: 'POST', body: { accion: 'reenviar_factura', codigo } });
-      toast(r.factura?.estado_envio === 'enviada' ? 'Factura enviada' : `No se pudo enviar: ${r.factura?.error_envio ?? 'error desconocido'}`, r.factura?.estado_envio === 'enviada' ? undefined : 'error');
-      detallePedido(codigo);
-    } catch (err) {
-      toast(err.message, 'error');
-    }
+  // Prototipo académico: los clientes son de prueba (@ejemplo.test) y no se pueden usar datos reales,
+  // así que el reenvío no manda ningún correo; la factura se consulta con «Ver factura».
+  $('#reenviarFactura')?.addEventListener('click', () => {
+    $('#avisoReenvio').innerHTML = `<div class="alerta"><strong>Prototipo académico.</strong> No se envía ningún email:
+      los clientes son de prueba y el trabajo de clase no puede usar datos personales reales.
+      Puedes consultar la factura con «Ver factura».</div>`;
   });
 
   $('#formEstado')?.addEventListener('submit', async (e) => {
