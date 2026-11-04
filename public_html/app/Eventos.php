@@ -25,6 +25,7 @@ final class Eventos
              VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
             [$uuid, $tipo, $origen, ahora(), $sesionId, $clienteId, $pedidoId, json_encode($datos, JSON_UNESCAPED_UNICODE)]
         );
+        Integracion::encolar($uuid, $tipo, $datos, ahora(), $sesionId, $pedidoId);
         return $uuid;
     }
 

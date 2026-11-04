@@ -2,7 +2,7 @@
 
 Define **qué datos se intercambian, con qué formato, qué responde cada parte y qué pasa si algo falla**. Sigue las cuatro partes de un contrato completo del **Tema 2** (diapositivas 46-50): **propósito**, **estructura**, **respuestas** y **operación** (versiones, *timeouts*, reintentos, duplicados y seguimiento).
 
-> **Estado de implementación.** La tienda ya genera y guarda todos los eventos de este documento (tabla `eventos`), y los ofrece con `GET api/admin/eventos.php?desde_id=N`. Están **pendientes**: el envío por webhook (apartado 5) y el endpoint de vuelta (apartado 6). Cuando se programen, deben seguir este contrato, y los flujos de n8n deben esperar **exactamente** estos nombres de campo. [COMPLETAR: marcar como hecho cuando estén en el repositorio.]
+> **Estado de implementación.** Implementado. La tienda guarda cada evento en la tabla `eventos` y, en la misma transacción, en la cola `integracion_salida` (`public_html/app/Integracion.php`). El envío por webhook es el del apartado 5 y el endpoint de vuelta es el del apartado 6. Los flujos están en `n8n/` del repositorio `noctiluz-integracion`. **n8n traduce este mensaje al formato de entrada del back-office** (`event_id`, `event`, `occurred_at`, `source`, `data`): es la transformación que pide el enunciado, y hace que un cambio en un sistema no obligue a cambiar el otro.
 
 ## 1. Propósito
 
@@ -96,8 +96,8 @@ Lo que debe devolver n8n (y, después, el back-office) y qué hace la tienda con
 | **200** | Ya se había recibido (duplicado idempotente) | `{"ok": true, "duplicado": true, …}` | Marca como **enviado**. No es un error |
 | **202** | Aceptado, se procesará después | `{"ok": true, "pendiente": true}` | Marca como **enviado** |
 | **400** | JSON mal formado | `{"error": "…"}` | **No reintenta.** Lo marca como **fallido** para revisarlo |
-| **401** | Token incorrecto o ausente | `{"error": "…"}` | **No reintenta.** Fallido y aviso: es un problema de configuración |
-| **409** | Conflicto: el mismo `id` llegó con datos distintos, o el cambio de estado no está permitido | `{"error": "…"}` | **No reintenta.** Fallido para revisarlo |
+| **401** o **403** | Token incorrecto o ausente (n8n lo comprueba en el propio webhook, antes de ejecutar el flujo) | `{"error": "…"}` | **No reintenta.** Fallido y aviso: es un problema de configuración |
+| **409** | Solo en el sentido inverso (apartado 6): el cambio de estado no está permitido | `{"error": "…"}` | No aplica a los envíos de la tienda |
 | **422** | Faltan campos o no cumplen las reglas | `{"error": "…", "campos": {"lineas": "Debe haber al menos una línea."}}` | **No reintenta**: hay que corregir los datos. Fallido |
 | **5xx**, *timeout* o sin conexión | Fallo transitorio (p. ej. n8n dormido en Render) | — | **Reintenta** con espera creciente (apartado 4.2) |
 
@@ -121,7 +121,7 @@ Authorization: Bearer <INTEGRACION_TOKEN>
 Idempotency-Key: <id del evento>
 ```
 
-- El token se guarda en el `config.php` de la tienda y en las credenciales de n8n, **nunca en el repositorio**. Hay un ejemplo sin secretos en `public_html/app/config.ejemplo.php` [COMPLETAR cuando exista el bloque `integracion`].
+- El token se guarda en el `config.php` de la tienda y en las credenciales de n8n, **nunca en el repositorio**. Hay un ejemplo sin secretos en `public_html/app/config.ejemplo.php`, bloque `integracion`.
 - **Timeout:** 10 segundos por intento.
 - **Reintentos:** hasta **8 intentos** con espera creciente, para cubrir el apagado de Render (alrededor de 1 min en volver): 1, 2, 4, 8, 16, 30, 60 y 60 minutos.
 - Después del último intento, el envío queda como **fallido**, visible en el cuadro de mando como «evento de integración fallido», y se puede **reenviar a mano**.
@@ -132,8 +132,8 @@ Idempotency-Key: <id del evento>
 Sigue el Tema 2 (diapositiva 49): **reintentar no debe duplicar efectos**.
 
 - La **clave de idempotencia es el `id` del evento**, que se envía también en la cabecera `Idempotency-Key`.
-- El receptor guarda los `id` ya procesados. Si recibe uno repetido **con el mismo contenido**, responde `200 {"duplicado": true}` y **no crea nada nuevo**.
-- Si recibe un `id` repetido **con contenido distinto**, responde **`409`**: no son la misma petición y no se tratan igual.
+- El back-office guarda los `id` ya procesados (tabla `eventos_recibidos`). Si recibe uno repetido, responde `200 {"duplicado": true}` y **no crea nada nuevo**.
+- **Limitación conocida:** no se compara el contenido. Un `id` repetido se trata siempre como duplicado; como el `id` es un UUID generado por la tienda, no es esperable que dos mensajes distintos lo compartan.
 - Además, el back-office no permite **dos pedidos con el mismo `codigo`** (restricción única en su base de datos).
 
 ### 4.4. Seguimiento y trazabilidad
@@ -195,9 +195,9 @@ Antes de tocar el back-office, el flujo comprueba, en este orden:
 2. Que el cuerpo es JSON y tiene `version`, `id`, `tipo`, `ocurrido_en` y `datos`. Si no → **400** o **422**.
 3. Que la `version` es soportada (`1`). Si no → **422**.
 4. Que el `tipo` es uno de los cuatro del apartado 2.2. Si no → **422**.
-5. Que el `id` no se ha procesado ya. Si se ha procesado → **200 duplicado** o **409**.
-6. Según el tipo, los campos obligatorios de `pedido` o `incidencia`: al menos una línea, cantidades de 1 a 9, código con el formato correcto, email válido y **totales que cuadran**. Si no → **422**, indicando qué campos fallan.
-7. Solo entonces: normalizar (email en minúsculas, importes a número, fechas a ISO) y llamar al back-office. **Rama correcta** → 201. **Rama de error** → registrar el fallo y devolver el código correspondiente.
+5. Según el tipo, los campos obligatorios de `pedido` o `incidencia`: al menos una línea, cantidades de 1 a 9, código con el formato correcto, email válido y **totales que cuadran**. Si no → **422**, indicando qué campos fallan.
+6. Solo entonces: normalizar (email en minúsculas, recorte de espacios) y traducir al formato del back-office. `payment.simulated` solo se registra en el historial de ejecuciones, porque el cambio a `pagado` llega en su propio `order.status_changed`.
+7. Llamar al back-office, que comprueba si el `id` ya se procesó. **Rama correcta** → 201, o 200 si era un duplicado. **Rama de error** → se registra el fallo en `ejecuciones`, se avisa al equipo por Telegram y se devuelve el código correspondiente. Si el back-office no responde, o un cambio de estado llega antes que su pedido, se devuelve **503** para que la tienda reintente.
 
 ## 8. Payloads de prueba
 

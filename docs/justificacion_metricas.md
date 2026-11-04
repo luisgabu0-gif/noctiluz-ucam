@@ -2,7 +2,7 @@
 
 Apartado 7 del enunciado: un cuadro de mando con **al menos cinco métricas** y **una representación gráfica** como mínimo, calculadas con **datos generados por el propio sistema** (nunca con cifras inventadas), y con la elección de cada métrica **justificada** en manuales, documentación técnica o literatura.
 
-> **[COMPLETAR]** Comprobar contra el cuadro de mando real del back-office qué métricas están ya calculadas. Las que no lo estén se quitan de aquí o se implementan. Declarar una métrica que el sistema no calcula sería una cifra inventada.
+> **Estado.** Las nueve métricas están calculadas en el cuadro de mando del back-office (`backoffice/app/Metricas.php`). M7 y la parte de la cola de M8 se piden a la tienda en cada visita, porque esos datos viven allí. En M6, la primera respuesta se mide hasta la primera propuesta del agente **aprobada por una persona**.
 
 ## 1. Criterio de selección
 

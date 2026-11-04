@@ -3,6 +3,7 @@
 
 PRAGMA foreign_keys = ON;
 
+DROP TABLE IF EXISTS integracion_salida;
 DROP TABLE IF EXISTS eventos;
 DROP TABLE IF EXISTS resenas;
 DROP TABLE IF EXISTS incidencias;
@@ -140,3 +141,18 @@ CREATE TABLE eventos (
 CREATE INDEX idx_ev_tipo ON eventos(tipo);
 CREATE INDEX idx_ev_fecha ON eventos(ocurrido_en);
 CREATE INDEX idx_ev_sesion ON eventos(sesion_id);
+
+CREATE TABLE integracion_salida (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  evento_uuid TEXT NOT NULL UNIQUE,
+  tipo TEXT NOT NULL,
+  cuerpo TEXT NOT NULL,
+  estado TEXT NOT NULL DEFAULT 'pendiente',
+  intentos INTEGER NOT NULL DEFAULT 0,
+  siguiente_intento TEXT NOT NULL,
+  ultimo_codigo INTEGER NULL,
+  ultimo_error TEXT NULL,
+  creado_en TEXT NOT NULL,
+  enviado_en TEXT NULL
+);
+CREATE INDEX idx_is_pendientes ON integracion_salida(estado, siguiente_intento);

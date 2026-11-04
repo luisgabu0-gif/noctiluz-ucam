@@ -105,6 +105,16 @@ Comprueba totales, IVA, portes por zona, cupones, stock, la numeración y el env
 
 **Facturas por correo:** con `correo.modo = 'mail'` se usa el correo del hosting. `correo.remitente` debe ser una dirección del propio dominio (p. ej. `facturas@noctiluz.onl`, creada en el panel de DonDominio). Como los clientes de prueba usan emails `@ejemplo.test`, que no existen, poned en `correo.copia_oculta` una bandeja del equipo: así veréis cada factura enviada sin usar emails de clientes reales. Si el envío falla, el pedido sigue pagado, la factura queda como «error» en el back-office y se puede reenviar con el botón *Reenviar por email*.
 
+### 4.2. Integración con n8n (Tarea 2)
+
+La tienda envía sus eventos a n8n y recibe de vuelta los cambios hechos en el back-office. El detalle está en `docs/contrato_integracion.md`, y los flujos y el back-office en el repositorio `noctiluz-integracion`.
+
+1. Ejecuta `database/actualizar_integracion.sql` en phpMyAdmin, **antes** de activar la integración.
+2. Añade a `app/config.php` el bloque `integracion` de `app/config.ejemplo.php`, con `activo` en `true`. `token` debe coincidir con la credencial `NOCTILUZ Tienda` de n8n.
+3. Para mostrar el botón «Vincular Telegram» en el pedido, rellena `bot_telegram` y `secreto_telegram`.
+
+Con `activo` en `false` la tienda funciona como antes y no guarda nada en la cola.
+
 ## 5. Usuarios y datos de prueba
 
 | Qué | Valor |

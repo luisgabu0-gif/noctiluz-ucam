@@ -40,4 +40,15 @@ return [
         // Copia oculta de cada factura a una bandeja del equipo, para comprobar el envío sin usar emails reales de clientes.
         'copia_oculta' => '',
     ],
+
+    // Integración con n8n (Tarea 2). Antes de activarla hay que ejecutar database/actualizar_integracion.sql.
+    // El token es el mismo que la credencial del webhook de n8n; invéntalo largo y no lo subas nunca al repositorio.
+    'integracion' => [
+        'activo'           => false,
+        'url'              => 'https://noctiluz-n8n.onrender.com/webhook/noctiluz-eventos',
+        'token'            => 'TOKEN_DE_INTEGRACION_DE_20_CARACTERES_O_MAS',
+        // Enlace «Vincular Telegram» del pedido: nombre del bot (sin @) y el mismo TELEGRAM_VINCULO_SECRETO del back-office.
+        'bot_telegram'     => '',
+        'secreto_telegram' => '',
+    ],
 ];

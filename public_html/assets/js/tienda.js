@@ -1045,6 +1045,10 @@ async function vistaPedido(codigo) {
           <a class="btn btn-outline btn-sm" style="margin-top:10px" target="_blank" rel="noopener"
             href="api/factura.php?codigo=${encodeURIComponent(p.codigo)}&email=${encodeURIComponent(p.cliente_email)}">Ver factura</a>
         </div>` : ''}
+        ${p.telegram_url ? `<div class="bloque"><h2>Avisos por Telegram</h2>
+          <p class="pista">Vincula este pedido con Telegram y te responderemos por ahí si abres una incidencia.</p>
+          <a class="btn btn-outline btn-sm" style="margin-top:10px" target="_blank" rel="noopener" href="${esc(p.telegram_url)}">Vincular Telegram</a>
+        </div>` : ''}
         <div class="acciones">
           ${p.estado === 'creado' ? `<a class="btn btn-solid" href="#/pago/${esc(p.codigo)}">Pagar ahora</a><button type="button" class="btn btn-peligro" id="cancelar">Cancelar</button>` : ''}
           <a class="btn btn-outline" href="#/soporte?pedido=${esc(p.codigo)}">¿Algún problema?</a>

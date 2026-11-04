@@ -5,7 +5,7 @@
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
-DROP TABLE IF EXISTS eventos, resenas, incidencias, historial_estados, facturas, pagos, lineas_pedido, pedidos,
+DROP TABLE IF EXISTS integracion_salida, eventos, resenas, incidencias, historial_estados, facturas, pagos, lineas_pedido, pedidos,
   clientes, variantes, producto_modos, productos, cupones, modos, colores, categorias, usuarios_admin;
 
 SET FOREIGN_KEY_CHECKS = 1;
@@ -214,4 +214,19 @@ CREATE TABLE eventos (
   INDEX idx_ev_tipo (tipo),
   INDEX idx_ev_fecha (ocurrido_en),
   INDEX idx_ev_sesion (sesion_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE integracion_salida (
+  id                INT AUTO_INCREMENT PRIMARY KEY,
+  evento_uuid       CHAR(36)     NOT NULL UNIQUE,
+  tipo              VARCHAR(40)  NOT NULL,
+  cuerpo            MEDIUMTEXT   NOT NULL,             -- JSON que se envía a n8n
+  estado            VARCHAR(12)  NOT NULL DEFAULT 'pendiente',  -- pendiente | enviado | fallido
+  intentos          INT          NOT NULL DEFAULT 0,
+  siguiente_intento DATETIME     NOT NULL,
+  ultimo_codigo     INT          NULL,
+  ultimo_error      VARCHAR(300) NULL,
+  creado_en         DATETIME     NOT NULL,
+  enviado_en        DATETIME     NULL,
+  INDEX idx_is_pendientes (estado, siguiente_intento)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

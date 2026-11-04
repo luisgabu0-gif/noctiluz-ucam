@@ -5,7 +5,7 @@ declare(strict_types=1);
 // y convierte cualquier excepción en una respuesta JSON coherente.
 
 $raiz = dirname(__DIR__) . '/app';
-foreach (['Db', 'Validador', 'ReglasNegocio', 'Catalogo', 'Eventos', 'Clientes', 'Pedidos', 'Pagos', 'PagoPaypal', 'Facturas', 'Incidencias', 'Resenas', 'Cuentas', 'Admin'] as $clase) {
+foreach (['Db', 'Validador', 'ReglasNegocio', 'Catalogo', 'Eventos', 'Clientes', 'Pedidos', 'Pagos', 'PagoPaypal', 'Facturas', 'Incidencias', 'Resenas', 'Cuentas', 'Admin', 'Integracion'] as $clase) {
     require_once "$raiz/$clase.php";
 }
 
@@ -34,11 +34,15 @@ $config = require "$raiz/config.php";
 $GLOBALS['config'] = $config;
 $GLOBALS['entorno'] = $config['entorno'] ?? 'produccion';
 Db::configurar($config['db']);
+register_shutdown_function([Integracion::class, 'alTerminar']);
 
 function responder($datos, int $codigo = 200): void
 {
     http_response_code($codigo);
-    echo json_encode($datos, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    $json = json_encode($datos, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    // Con la longitud, el navegador no espera al envío a n8n que se hace al terminar la petición.
+    header('Content-Length: ' . strlen($json));
+    echo $json;
     exit;
 }
 

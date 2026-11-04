@@ -137,6 +137,7 @@ final class Pedidos
             return null;
         }
         unset($p['id'], $p['cliente_id'], $p['sesion_id'], $p['transiciones'], $p['cliente_telefono']);
+        $p['telegram_url'] = Integracion::enlaceTelegram($p['codigo']);
         if ($p['factura'] !== null) {
             unset($p['factura']['error_envio']);
         }
