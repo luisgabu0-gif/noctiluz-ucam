@@ -807,15 +807,24 @@ async function vistaCheckout() {
   $('#aplicarCupon').addEventListener('click', () => { cuponAplicado = $('#cupon').value.trim().toUpperCase(); recalcular(); });
   $('#cupon').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); $('#aplicarCupon').click(); } });
   $('#resumen').addEventListener('click', (e) => { if (e.target.closest('[data-abrir-carrito]')) abrirCarrito(); });
-  // Con la sesión iniciada se rellenan el nombre y el email de la cuenta: así el pedido queda en «Mi cuenta».
+  // Con la sesión iniciada, el nombre y el email son los de la cuenta y el email no se puede cambiar:
+  // el servidor asigna el pedido a la cuenta, así que aparece en «Mi cuenta».
+  let cuenta = null;
   api('cuenta.php').then((r) => {
     if (!r.cliente) return;
-    form.nombre.value ||= r.cliente.nombre;
-    form.email.value ||= r.cliente.email;
+    cuenta = r.cliente;
+    form.nombre.value ||= cuenta.nombre;
+    form.email.value = cuenta.email;
+    form.email.readOnly = true;
+    form.email.closest('.campo')?.querySelector('.campo-ayuda')?.replaceChildren('Compras con tu cuenta: el pedido aparecerá en «Mi cuenta».');
   }).catch(() => {});
   $('#rellenarPrueba').addEventListener('click', () => {
     const c = CLIENTES_PRUEBA[Math.floor(Math.random() * CLIENTES_PRUEBA.length)];
-    for (const [k, v] of Object.entries(c)) form.elements[k].value = v;
+    for (const [k, v] of Object.entries(c)) {
+      // Con cuenta, se rellenan la dirección y el teléfono de prueba, pero se mantienen su nombre y su email.
+      if (cuenta && (k === 'nombre' || k === 'email')) continue;
+      form.elements[k].value = v;
+    }
     form.cp.dispatchEvent(new Event('input'));
   });
 

@@ -17,7 +17,7 @@ foreach (['pdo_sqlite', 'mbstring'] as $ext) {
 }
 
 $raiz = dirname(__DIR__);
-foreach (['Db', 'Validador', 'ReglasNegocio', 'Catalogo', 'Eventos', 'Clientes', 'Pedidos', 'Pagos', 'PagoPaypal', 'Facturas'] as $clase) {
+foreach (['Db', 'Validador', 'ReglasNegocio', 'Catalogo', 'Eventos', 'Clientes', 'Pedidos', 'Pagos', 'PagoPaypal', 'Facturas', 'Cuentas', 'Incidencias'] as $clase) {
     require_once "$raiz/public_html/app/$clase.php";
 }
 date_default_timezone_set('Europe/Madrid');

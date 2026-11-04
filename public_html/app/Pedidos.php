@@ -22,6 +22,13 @@ final class Pedidos
         $val->verdadero($entrada['acepta_condiciones'] ?? null, 'acepta_condiciones', 'Debes aceptar las condiciones del prototipo.');
         $val->comprobar();
 
+        // Con la sesión de cliente iniciada, el pedido es siempre de esa cuenta (el email del formulario
+        // se ignora): así aparece en «Mi cuenta» aunque se haya cambiado el email al rellenar el checkout.
+        $cuenta = Cuentas::actual();
+        if ($cuenta !== null) {
+            $email = mb_strtolower($cuenta['email']);
+        }
+
         $cupon = is_string($entrada['cupon'] ?? null) ? $entrada['cupon'] : '';
         $sesion = Eventos::sesionValida($entrada['sesion_id'] ?? null);
 
