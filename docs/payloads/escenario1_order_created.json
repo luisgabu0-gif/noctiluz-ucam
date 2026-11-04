@@ -1,0 +1,51 @@
+{
+  "version": 1,
+  "id": "6f1c2d3e-4a5b-4c7d-8e9f-0a1b2c3d4e5f",
+  "tipo": "order.created",
+  "ocurrido_en": "2026-11-04T18:30:12+01:00",
+  "origen": "servidor",
+  "sesion_id": "3b9e7c21-58d4-4f0a-9c2e-7a1d6b4e8f90",
+  "datos": {
+    "codigo": "NCZ-261104-K7M2QP",
+    "total": 73.95,
+    "lineas": 1,
+    "metodo_envio": "estandar",
+    "cupon": null
+  },
+  "pedido": {
+    "codigo": "NCZ-261104-K7M2QP",
+    "estado": "creado",
+    "creado_en": "2026-11-04T18:30:12+01:00",
+    "cliente": {
+      "nombre": "Marcos Ibáñez (prueba)",
+      "email": "marcos.ibanez@ejemplo.test",
+      "telefono": "600000102"
+    },
+    "lineas": [
+      {
+        "sku": "camiseta-pulso-cian",
+        "descripcion": "Meridiano · Cian",
+        "modo": "fijo",
+        "talla": "M",
+        "cantidad": 1,
+        "precio_unitario": 69.00,
+        "importe": 69.00
+      }
+    ],
+    "totales": {
+      "subtotal": 69.00,
+      "descuento": 0.00,
+      "envio": 4.95,
+      "base_imponible": 61.12,
+      "iva": 12.83,
+      "total": 73.95
+    },
+    "envio": {
+      "metodo": "estandar",
+      "zona": "peninsula",
+      "cp": "30107",
+      "ciudad": "Guadalupe",
+      "provincia": "Murcia"
+    }
+  }
+}

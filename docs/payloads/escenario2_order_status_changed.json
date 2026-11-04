@@ -1,0 +1,51 @@
+{
+  "version": 1,
+  "id": "a2d4f6b8-1c3e-4a5b-9d7f-2e4c6a8b0d12",
+  "tipo": "order.status_changed",
+  "ocurrido_en": "2026-11-04T19:05:40+01:00",
+  "origen": "servidor",
+  "sesion_id": null,
+  "datos": {
+    "codigo": "NCZ-261104-K7M2QP",
+    "de": "pagado",
+    "a": "en_preparacion",
+    "actor": "admin@noctiluz.test",
+    "motivo": "Pedido pasado a almacén"
+  },
+  "pedido": {
+    "codigo": "NCZ-261104-K7M2QP",
+    "estado": "en_preparacion",
+    "creado_en": "2026-11-04T18:30:12+01:00",
+    "cliente": {
+      "nombre": "Marcos Ibáñez (prueba)",
+      "email": "marcos.ibanez@ejemplo.test",
+      "telefono": "600000102"
+    },
+    "lineas": [
+      {
+        "sku": "camiseta-pulso-cian",
+        "descripcion": "Meridiano · Cian",
+        "modo": "fijo",
+        "talla": "M",
+        "cantidad": 1,
+        "precio_unitario": 69.00,
+        "importe": 69.00
+      }
+    ],
+    "totales": {
+      "subtotal": 69.00,
+      "descuento": 0.00,
+      "envio": 4.95,
+      "base_imponible": 61.12,
+      "iva": 12.83,
+      "total": 73.95
+    },
+    "envio": {
+      "metodo": "estandar",
+      "zona": "peninsula",
+      "cp": "30107",
+      "ciudad": "Guadalupe",
+      "provincia": "Murcia"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "id": "c7e9a1b3-5d6f-4e8a-b0c2-4d6e8f0a2b34",
+  "tipo": "support.requested",
+  "ocurrido_en": "2026-11-10T11:42:03+01:00",
+  "origen": "servidor",
+  "sesion_id": "3b9e7c21-58d4-4f0a-9c2e-7a1d6b4e8f90",
+  "datos": {
+    "codigo": "INC-261110-H7QA",
+    "motivo": "envio",
+    "pedido": "NCZ-261104-K7M2QP"
+  },
+  "incidencia": {
+    "codigo": "INC-261110-H7QA",
+    "motivo": "envio",
+    "mensaje": "El seguimiento dice que mi pedido está enviado desde hace 5 días, pero todavía no me ha llegado. ¿Podéis revisarlo?",
+    "creada_en": "2026-11-10T11:42:03+01:00",
+    "cliente": {
+      "nombre": "Marcos Ibáñez (prueba)",
+      "email": "marcos.ibanez@ejemplo.test"
+    },
+    "pedido_codigo": "NCZ-261104-K7M2QP"
+  }
+}

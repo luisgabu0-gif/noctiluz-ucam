@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "id": "e0f1a2b3-c4d5-4e6f-8a9b-0c1d2e3f4a56",
+  "tipo": "order.created",
+  "ocurrido_en": "2026-11-04T18:45:00+01:00",
+  "origen": "servidor",
+  "sesion_id": null,
+  "datos": {
+    "codigo": "NCZ-261104-ZZ99TT",
+    "total": 0,
+    "lineas": 0,
+    "metodo_envio": "estandar",
+    "cupon": null
+  },
+  "pedido": {
+    "codigo": "NCZ-261104-ZZ99TT",
+    "estado": "creado",
+    "creado_en": "2026-11-04T18:45:00+01:00",
+    "cliente": {
+      "nombre": "Sara Nieto (prueba)",
+      "email": "sara.nieto@ejemplo.test",
+      "telefono": null
+    },
+    "lineas": [],
+    "totales": {
+      "subtotal": 0,
+      "descuento": 0,
+      "envio": 4.95,
+      "base_imponible": 4.09,
+      "iva": 0.86,
+      "total": 4.95
+    },
+    "envio": {
+      "metodo": "estandar",
+      "zona": "peninsula",
+      "cp": "30001",
+      "ciudad": "Murcia",
+      "provincia": "Murcia"
+    }
+  }
+}
